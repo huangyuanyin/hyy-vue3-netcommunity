@@ -1,0 +1,283 @@
+<!--
+  * @Description: 发帖子
+  * @Author: maxf
+  * @Date: 2021-12-12 22:49:29
+  * @LastEditors: maxf
+  * @LastEditTime: 2022-03-25 18:54:07
+  * @FilePath: \vue3-netforum\src\forum\components\ForumPost.vue
+-->
+<template>
+  <div>
+    <el-card :style="{ 'min-height': minHeight }">
+      <template #header>
+        <el-button @click="goBack">
+          <el-icon><Back /></el-icon>返回
+        </el-button>
+      </template>
+      <el-form :model="form" ref="formRef" :rules="formRules" 
+        size="large" label-width="100px">
+        <el-form-item label="分类" prop="category">
+          <el-space>
+            <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
+              :props="{ value:'id', checkStrictly: true }" clearable
+              :show-all-levels="false" />
+            <span style="margin-left: 30px">标签</span>
+            <el-cascader :options="taglist" v-model="form.tags"
+              :props="{ value:'id', label: 'name' }">
+            </el-cascader>
+          </el-space>
+        </el-form-item>
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="form.title" show-word-limit maxlength="200"
+            placeholder="请输入标题" type="text"></el-input>
+        </el-form-item>
+        <div class="tinymce">
+          <tinymce-com v-model="value" placeholder="请输入帖子详情内容(不少于10个字)"></tinymce-com>
+        </div>
+        <el-form-item label="word解析">
+          <input type="file" accept=".docx, .doc" @change="loadWord" />
+        </el-form-item>
+        <el-form-item label="附件">
+          <span>暂不支持</span>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="saveHandle" round>发布文章</el-button>
+          <el-button @click="previewHandle" round>预览文章</el-button>
+          <el-button @click="draftHandle" round disabled>保存草稿</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+    <el-dialog title="预览" v-model="dialog" width="60%">
+      <div v-html="form.body"></div>
+      <!-- <div class="markdown-body" v-html="form.content"></div> -->
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { ref, reactive, toRefs, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router';
+import { ElMessage } from "element-plus";
+import { getCategorysInfo } from '@/api/category.js'
+import { upload } from '@/api/common.js'
+import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
+import { getTag } from "@/api/tag.js"
+import Tinymce from '@/components/tinymce'
+export default {
+  components: {
+    'tinymce-com': Tinymce
+  },
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const store = useStore()
+    // 工作空间
+    const spaceid = computed(() => sessionStorage.getItem('spaceid'));
+    // 节点数据
+    const node = computed(() => store.getters.node);
+    // 最小高度
+    const minHeight = computed(() => {
+      return window.innerHeight - 55 + "px";
+    });
+    // 预览对话框
+    const dialog = ref(false)
+    // 节点数据
+    const treeData = ref([])
+    // 标签列表
+    const taglist = ref([])
+    // 富文本数据
+    const state = reactive({
+      value: ''
+    })
+
+    const formRef = ref(null);
+    // 表单
+    const form = reactive({
+      category: '',
+      title: '',
+      tags: [],
+      type: 'a',
+      body: ''
+    })
+    // 表单校验
+    const formRules = reactive({
+      category: [{ required: true, message: '请选择所属话题', trigger: 'change'}],
+      title: [{ required: true, message: '请输入标题', trigger: 'blur'}]
+    })
+
+    // 获取节点数据
+    const getNodeList = () => {
+      getCategorysInfo(spaceid.value).then((res) => {
+        treeData.value = res.data
+      })
+    }
+
+    // 获取标签列表
+    const getTagList = () => {
+      getTag().then(res => {
+        taglist.value = res.data
+      })
+    }
+
+    // 获取帖子数据
+    const getForumData = () => {
+      getForumInfo(route.query.tid).then(res => {
+        form.title = res.data.title
+        form.category = res.data.category
+        form.tags = res.data.tags
+        state.value = res.data.body
+      })
+    };
+
+    getTagList()
+    getNodeList()
+    form.category = node.value.id
+
+    // 监控 文章编辑
+    watch(() => route.query.tid, () => {
+      if (route.query.tid) {
+        getForumData()
+      }
+    })
+
+    onMounted(() => {
+      getNodeList()
+      if (route.query.tid) {
+        getForumData()
+      }
+    })
+
+    const loadWord = (evt) => {
+      const files = evt.target.files
+      if (files == null || files.length == 0) {
+        alert('No files wait for import')
+        return
+      }
+      let name = files[0].name
+      // console.log(name)
+      // console.log(files[0])
+      let formData = new FormData();
+      let header = {
+        "Content-Type": "multipart/form-data"
+      };
+      formData.append("file", files[0]);
+      formData.append("type", 'html');
+      upload(header, formData).then(res => {
+        form.title = name
+        state.value = res.data
+      })
+    }
+
+    // 返回
+    const goBack = () => {
+      router.push({name: 'subbooks'})
+    }
+
+    // 关闭事件
+    const handleClose = () => {
+      formRef.value.resetFields()
+      state.value = ''
+      form.body = ''
+      router.push({name: 'subbooks', params: {wRefresh: true}})
+    }
+
+    const handleChange = (id) => {
+      var len = id.length
+      form.category = id[len-1]
+    }
+
+    // 发布文章
+    const saveHandle = () => {
+      if (route.query.tid) {
+        updateApi()
+      } else {
+        addApi()
+      }
+    }
+
+    // 新增文章
+    const addApi = () => {
+      form.body = state.value
+      form.author = sessionStorage.getItem('username')
+      formRef.value.validate((valid) => {
+        if (!valid) return
+        addForum(form).then(res => {
+          ElMessage({
+            message: "新增成功",
+            type: "success",
+          });
+          handleClose()
+        })
+      })
+    }
+
+    // 文章编辑
+    const updateApi = () => {
+      form.body = state.value
+      form.author = sessionStorage.getItem('username')
+      formRef.value.validate((valid) => {
+        if (!valid) return
+        updateForum(route.query.tid, form).then(res => {
+          ElMessage({
+            message: "编辑成功！",
+            type: "success",
+          });
+          handleClose()
+        })
+      })
+    }
+
+    // 预览
+    const previewHandle = () => {
+      form.body = state.value
+      dialog.value = true
+    }
+
+    // 保存草稿
+    const draftHandle = () => {
+      formRef.value.validate((valid) => {
+        if (!valid) return
+        ElMessage({
+          message: "暂不支持",
+          type: "warning",
+        });
+      })
+    }
+
+    return {
+      ...toRefs(state),
+      minHeight,
+      treeData,
+      node,
+      form,
+      formRef,
+      formRules,
+      taglist,
+      dialog,
+      previewHandle,
+      saveHandle,
+      draftHandle,
+      handleChange,
+      goBack,
+      loadWord,
+    }
+  },
+}
+</script>
+
+<style scoped>
+/* .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+} */
+.tinymce {
+  margin-left: 100px;
+  margin-bottom: 30px;
+  width: 80%;
+}
+.el-input {
+  width: 80%;
+}
+</style>

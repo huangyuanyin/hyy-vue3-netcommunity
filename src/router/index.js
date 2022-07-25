@@ -1,0 +1,145 @@
+/*
+ * @Description: 路由管理
+ * @Author: maxf
+ * @Date: 2021-12-05 11:41:32
+ * @LastEditors: maxf
+ * @LastEditTime: 2022-03-15 11:41:32
+ * @FilePath: \vue3-netforum\src\router\index.js
+ */
+import { createRouter, createWebHashHistory } from 'vue-router'
+import Home from "../views/Home.vue"
+
+const routes = [
+  {
+    path: '/',
+    redirect: '/dashboard'
+  }, {
+      path: "/",
+      name: "Home",
+      component: Home,
+      children: [
+        {
+          path: "/dashboard",
+          name: "dashboard",
+          meta: {
+            title: '系统首页'
+          },
+          component: () => import(/* webpackChunkName: "dashboard" */ "../views/Dashboard.vue")
+        }, {
+          path: '/tag',
+          name: 'tag',
+          meta: {
+            title: '标签'
+          },
+          component: () => import(/* webpackChunkName: "scene" */ "../views/tags/Index.vue")
+        }, {
+          path: '/note',
+          name: 'note',
+          meta: {
+            title: '小记'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/note/Index.vue")
+        }, {
+          path: '/books',
+          name: 'books',
+          meta: {
+            title: '我的知识库'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/books/Index.vue")
+        }, {
+          path: '/subbooks',
+          name: 'subbooks',
+          meta: {
+            title: '知识库详情'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/books/subooks/Index.vue")
+        }, {
+          path: '/excel',
+          name: 'excel',
+          meta: {
+            title: 'Excel文档'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/books/subooks/excel/Index.vue")
+        }, {
+          path: '/tiny',
+          name: 'tiny',
+          meta: {
+            title: '富文本编辑'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/books/subooks/tiny/Index.vue")
+        }, {
+          path: '/md',
+          name: 'md',
+          meta: {
+            title: 'markdown编辑器'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/books/subooks/md/Index.vue")
+        }, {
+          path: '/detail',
+          name: 'detail',
+          meta: {
+            title: '知识库详情'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/books/subooks/word/Index.vue")
+        }, {
+          path: '/search',
+          name: 'search',
+          meta: {
+            title: '全局筛选'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/search/Index.vue")
+        }, {
+          path: '/trash',
+          name: 'trash',
+          meta: {
+            title: '回收站'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/trash/Index.vue")
+        }
+      ]
+  }, {
+      path: "/login",
+      name: "Login",
+      meta: {
+        title: '登录'
+      },
+      component: () => import(/* webpackChunkName: "login" */ "../views/Login.vue")
+  }
+];
+
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes
+});
+
+import store from '@/store'
+if (sessionStorage.getItem('token')) {
+  store.commit('user/SET_TOKEN', sessionStorage.getItem('token'))
+}
+
+if (sessionStorage.getItem('siderbar') == '1') {
+  store.commit("app/handleSiderbar", true)
+}
+if (sessionStorage.getItem('siderbar') == '2') {
+  store.commit("app/handleSiderbar", false)
+}
+
+// let node = sessionStorage.getItem('node')
+// console.log(node.value)
+// if () {
+//   console.log(sessionStorage.getItem('node'))
+//   store.commit("books/SET_NODE_DATA", sessionStorage.getItem('node'));
+// }
+
+router.beforeEach((to, from, next) => {
+  document.title = `信安知识库`;
+  // 获取Token
+  const token = sessionStorage.getItem('token');
+  if (token || to.path === '/login') {
+    next();
+  } else {
+    next('/login');
+  }
+});
+
+export default router;

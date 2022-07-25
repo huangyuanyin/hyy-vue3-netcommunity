@@ -1,0 +1,41 @@
+{
+  "name": "vue3-netforum",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@element-plus/icons": "^0.0.11",
+    "@kangc/v-md-editor": "^2.3.15",
+    "@tinymce/tinymce-vue": "^4.0.2",
+    "axios": "^0.26.0",
+    "core-js": "^3.6.5",
+    "dayjs": "^1.10.7",
+    "docx-preview": "^0.1.11",
+    "element-plus": "^2.2.6",
+    "exceljs": "^4.3.0",
+    "file-saver": "^2.0.5",
+    "jquery": "^3.6.0",
+    "jszip": "^3.10.0",
+    "jwt-decode": "^3.1.2",
+    "luckyexcel": "^1.0.1",
+    "mavon-editor": "^3.0.0-beta",
+    "tinymce": "^5.8.0",
+    "typescript": "^4.7.3",
+    "vue": "^3.2.37",
+    "vue-router": "^4.0.16",
+    "vuex": "^4.0.2",
+    "webpack": "^4.46.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.2.37",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2"
+  }
+}
