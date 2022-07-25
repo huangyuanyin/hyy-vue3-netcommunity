@@ -3,14 +3,15 @@
     <el-table :data="datalist">
       <el-table-column label="名称" prop="name">
         <template #default="scope">
-          <el-button type="primary" plain @click="handleOpen(scope.row)">{{scope.row.name}}</el-button>
+          <el-button type="primary" plain @click="handleOpen(scope.row)">{{ scope.row.name }}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" prop="last_mod_time"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">Edit</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(scope.row.id)" :disabled="role !== 'admin'">Delete</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(scope.row.id)" :disabled="role !== 'admin'">Delete
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -30,7 +31,7 @@ export default {
     data: Object
   },
   components: {
-    'dialog-com':dialogBook
+    'dialog-com': dialogBook
   },
   setup(props, ctx) {
     const store = useStore()
@@ -52,13 +53,13 @@ export default {
     watch(() => props.data, () => {
       datalist.value = props.data
     })
-    
+
     // 知识库跳转
     const handleOpen = (book) => {
       store.commit("app/handleSiderbar", true)
       sessionStorage.setItem("siderbar", '1')
       sessionStorage.setItem("spaceid", book.id)
-      sessionStorage.setItem("spacename", book.name)
+      sessionStorage.setItem("spacename", book.name) // 知识库名称
       // store.commit("app/SET_SPACES", book);
       router.push('/subbooks');
     }
@@ -76,24 +77,24 @@ export default {
 
     // 删除
     const handleDelete = (id) => {
-       ElMessageBox.confirm("确定要删除吗？", "提示", {
+      ElMessageBox.confirm("确定要删除吗？", "提示", {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
         type: "warning",
         draggable: true,
       })
-      .then(() => {
-        deleteCategorys(id).then(res => {
-          ElMessage.success("删除成功");
-          getMyBooks()
+        .then(() => {
+          deleteCategorys(id).then(res => {
+            ElMessage.success("删除成功");
+            getMyBooks()
+          })
         })
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: 'Delete canceled',
-        })
-      });
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: 'Delete canceled',
+          })
+        });
     }
 
 
