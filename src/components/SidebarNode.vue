@@ -41,7 +41,7 @@
             <span :title="node.label">{{ node.label }}</span>
             <div>
               <!-- +号 -->
-              <el-dropdown @command="handleNewInstruction" trigger="click" @visible-change="showIcon">
+              <el-dropdown @command="handleNewInstruction" trigger="hover" @visible-change="showIcon">
                 <span class="left-button" ref="leftButton">
                   <el-icon>
                     <Plus />
@@ -49,6 +49,7 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
+                    <el-dropdown-item :command="'add' + ',' + data.id">新建分组</el-dropdown-item>
                     <el-dropdown-item command="article">新建文章(富文本)</el-dropdown-item>
                     <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
                     <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item>
@@ -68,7 +69,7 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item>
+                    <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
                     <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label">编辑</el-dropdown-item>
                     <el-dropdown-item :command="'remove' + ',' + data.id">删除</el-dropdown-item>
                   </el-dropdown-menu>
@@ -182,6 +183,11 @@ export default {
 
     // 新建指令
     const handleNewInstruction = (value) => {
+      let tmp = value.split(',')
+      if (tmp[0] === 'add') {
+        parent_id.value = tmp[1]
+        dialogNode.value = true
+      }
       if (value == 'excel') {
         router.push('/excel')
         // router.push({name: 'excel'} );
@@ -189,7 +195,12 @@ export default {
         // dialogNode.value = true
       }
       if (value == 'article') {
-        router.push('/tiny')
+        router.push({
+          path: '/tiny',
+          query: {
+            type: "notShow"
+          }
+        })
       }
       if (value == 'word') {
         router.push('/md')
