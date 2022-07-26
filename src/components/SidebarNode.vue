@@ -39,20 +39,42 @@
         <template #default="{ node, data }">
           <span class="custom-tree-node">
             <span :title="node.label">{{ node.label }}</span>
-            <el-dropdown @command="handleRoot">
-              <span>
-                <el-icon>
-                  <more-filled />
-                </el-icon>
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item>
-                  <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label">编辑</el-dropdown-item>
-                  <el-dropdown-item :command="'remove' + ',' + data.id">删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
+            <div>
+              <!-- +号 -->
+              <el-dropdown @command="handleNewInstruction" trigger="click" @visible-change="showIcon">
+                <span class="left-button" ref="leftButton">
+                  <el-icon>
+                    <Plus />
+                  </el-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="article">新建文章(富文本)</el-dropdown-item>
+                    <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
+                    <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item>
+                    <el-dropdown-item command="mindmap" disabled>新建思维导图</el-dropdown-item>
+                    <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
+                    <el-dropdown-item command="ppt" disabled>新建PPT</el-dropdown-item>
+                    <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              <!-- 更多 -->
+              <el-dropdown @command="handleRoot">
+                <span>
+                  <el-icon>
+                    <more-filled />
+                  </el-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item>
+                    <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label">编辑</el-dropdown-item>
+                    <el-dropdown-item :command="'remove' + ',' + data.id">删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
           </span>
         </template>
       </el-tree>
@@ -87,7 +109,7 @@
 </template>
 
 <script>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -114,6 +136,7 @@ export default {
       children: 'children',
       label: 'label',
     }
+    const leftButton = ref(null)
     const form = ref({
       name: ''
     })
@@ -155,6 +178,34 @@ export default {
       if (tmp[0] === 'remove') {
         deleteApi(tmp[1])
       }
+    }
+
+    // 新建指令
+    const handleNewInstruction = (value) => {
+      if (value == 'excel') {
+        router.push('/excel')
+        // router.push({name: 'excel'} );
+        // parent_id.value = space.value.id  
+        // dialogNode.value = true
+      }
+      if (value == 'article') {
+        router.push('/tiny')
+      }
+      if (value == 'word') {
+        router.push('/md')
+      }
+      if (value == 'mindmap') {
+        router.push('/mindmap')
+      }
+    }
+
+    // 监听下拉菜单的显示/隐藏
+    const showIcon = (hidden) => {
+      if (hidden === true) {
+        leftButton.value.style.display = "block"
+        return
+      }
+      leftButton.value.style.display = ""
     }
 
     // 对话框关闭事件
@@ -252,7 +303,10 @@ export default {
       handleNodeClick,
       handleCommand,
       handleAdd,
-      handleEdit
+      handleNewInstruction,
+      handleEdit,
+      showIcon,
+      leftButton
     }
   },
 }
@@ -279,6 +333,11 @@ export default {
   width: 100%;
 }
 
+.left-button {
+  margin-right: 15px;
+  display: none;
+}
+
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -297,5 +356,9 @@ export default {
 } */
 .sidebar>ul {
   height: 100%;
+}
+
+.custom-tree-node:hover .left-button {
+  display: block;
 }
 </style>
