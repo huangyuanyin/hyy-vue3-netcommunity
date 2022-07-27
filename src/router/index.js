@@ -134,11 +134,11 @@ if (sessionStorage.getItem('siderbar') == '2') {
 router.beforeEach((to, from, next) => {
   document.title = `信安知识库`;
   // 解决进入知识库后,返回上一页面,左侧导航菜单不变的bug
-  if(from.path == "/subbooks"){
+  if(from.path == "/subbooks" && to.path =="/books"){
     sessionStorage.setItem('siderbar','2')
     store.commit("app/handleSiderbar", false)
   }
-  if(from.path == "/books"){
+  if(from.path == "/books" && to.path=="/subbooks"){
     sessionStorage.setItem('siderbar','1')
     store.commit("app/handleSiderbar", true)
   }
