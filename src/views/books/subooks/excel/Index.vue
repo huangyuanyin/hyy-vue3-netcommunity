@@ -1,36 +1,33 @@
 <template>
   <div>
-  <div id="luckysheet"></div>
-  <div class="operate">
-    <el-button @click="downloadExcel">导出</el-button>
-    <el-button type="primary" @click="dialogOpen" style="margin-right: 30px">保存</el-button>
-    <input type="file" accept=".xlsx" @change="loadExcel" />
-  </div>
-  <el-dialog title="新增/编辑文档" v-model="dialog" draggable width="700px">
-    <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
-      <el-form-item label="分类" prop="category">
-        <el-space>
-          <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
-            :props="{ value:'id', checkStrictly: true }" clearable
-            :show-all-levels="false" />
-          <span style="margin-left: 30px">标签</span>
-          <el-cascader :options="taglist" v-model="form.tags"
-            :props="{ value:'id', label: 'name' }">
-          </el-cascader>
-        </el-space>
-      </el-form-item>
-      <el-form-item label="文档名称" prop="title">
-        <el-input v-model="form.title" show-word-limit maxlength="200"
-          placeholder="请输入文档名称" type="text"></el-input>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleSave">确 定</el-button>
-      </span>
-    </template>
-  </el-dialog>
+    <div id="luckysheet"></div>
+    <div class="operate">
+      <el-button @click="downloadExcel">导出</el-button>
+      <el-button type="primary" @click="dialogOpen" style="margin-right: 30px">保存</el-button>
+      <input type="file" accept=".xlsx" @change="loadExcel" />
+    </div>
+    <el-dialog title="新增/编辑文档" v-model="dialog" draggable width="700px">
+      <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
+        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
+          <el-space>
+            <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
+              :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
+            <span style="margin-left: 30px">标签</span>
+            <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }">
+            </el-cascader>
+          </el-space>
+        </el-form-item>
+        <el-form-item label="文档名称" prop="title">
+          <el-input v-model="form.title" show-word-limit maxlength="200" placeholder="请输入文档名称" type="text"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialog = false">取 消</el-button>
+          <el-button type="primary" @click="handleSave">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -39,7 +36,7 @@ import { ref, reactive, onMounted, watch, computed } from 'vue'
 import { exportExcel } from '@/utils/export'
 import { ElMessage } from "element-plus";
 import { useStore } from 'vuex'
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getCategorysInfo } from '@/api/category.js'
 import { getTag } from "@/api/tag.js"
@@ -49,9 +46,21 @@ const store = useStore()
 const route = useRoute();
 const router = useRouter();
 const node = computed(() => store.getters.node);
+watch(
+  () => route.query,
+  (newVal, oldVal) => {
+    if (route.query && route.query.category) {
+      categoryId.value = route.query.category
+    } else {
+      categoryId.value = ''
+    }
+  },
+)
 // 工作空间标题名
 const spaceid = computed(() => sessionStorage.getItem('spaceid'));
 // const jsonData = ref({})
+// 路由传参
+const categoryId = ref("")
 const dialog = ref(false)
 const editCategory = ref('')
 // 节点数据
@@ -69,8 +78,8 @@ const form = reactive({
 const formRef = ref(null);
 // 表单校验
 const formRules = reactive({
-  category: [{ required: true, message: '请选择所属分类', trigger: 'change'}],
-  title: [{ required: true, message: '请输入标题', trigger: 'blur'}]
+  category: [{ required: true, message: '请选择所属分类', trigger: 'change' }],
+  title: [{ required: true, message: '请输入标题', trigger: 'blur' }]
 })
 
 // 获取节点数据
@@ -112,7 +121,7 @@ const loadExcel = (evt) => {
     // jsonData.value = exportJson
 
     luckysheet.destroy()
-    
+
     luckysheet.create({
       container: 'luckysheet', //luckysheet is the container id
       showinfobar: true, //是否显示工具栏
@@ -131,6 +140,7 @@ const downloadExcel = () => {
 
 // !!! create luckysheet after mounted
 onMounted(() => {
+  categoryId.value = route.query.category || ''
   if (route.query.eid) {
     // console.log(route.query.eid)
     loadExcelForServer()
@@ -167,7 +177,7 @@ const loadExcelForServer = () => {
 
 const handleChange = (id) => {
   var len = id.length
-  form.category = id[len-1]
+  form.category = id[len - 1]
 }
 
 const dialogOpen = () => {
@@ -177,7 +187,7 @@ const dialogOpen = () => {
 
 const handleClose = () => {
   dialog.value = false
-  router.push({name: 'subbooks', params: {wRefresh: true}})
+  router.push({ name: 'subbooks', params: { wRefresh: true } })
 }
 
 const handleSave = () => {
@@ -233,9 +243,9 @@ const addApi = () => {
 .operate {
   left: 60px;
   position: fixed;
-  top:15px; 
-  width: 100%; 
-  position:absolute;
+  top: 15px;
+  width: 100%;
+  position: absolute;
 }
 
 #tip {
@@ -252,6 +262,7 @@ const addApi = () => {
   justify-content: center;
   display: flex;
 }
+
 /* 
 .luckysheet canvas {
   width: 100% !important;  

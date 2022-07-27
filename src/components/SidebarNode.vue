@@ -50,13 +50,13 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item :command="'add' + ',' + data.id">新建分组</el-dropdown-item>
-                    <el-dropdown-item command="article">新建文章(富文本)</el-dropdown-item>
-                    <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
-                    <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item>
-                    <el-dropdown-item command="mindmap" disabled>新建思维导图</el-dropdown-item>
-                    <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
-                    <el-dropdown-item command="ppt" disabled>新建PPT</el-dropdown-item>
-                    <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item>
+                    <el-dropdown-item :command="'article' + ',' + data.id">新建文章(富文本)</el-dropdown-item>
+                    <el-dropdown-item :command="'excel' + ',' + data.id">新建Excel</el-dropdown-item>
+                    <el-dropdown-item :command="'word' + ',' + data.id">新建文档(markdown)</el-dropdown-item>
+                    <el-dropdown-item :command="'mindmap' + ',' + data.id" disabled>新建思维导图</el-dropdown-item>
+                    <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>
+                    <el-dropdown-item :command="'ppt' + ',' + data.id" disabled>新建PPT</el-dropdown-item>
+                    <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建白板</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -188,25 +188,37 @@ export default {
         parent_id.value = tmp[1]
         dialogNode.value = true
       }
-      if (value == 'excel') {
-        router.push('/excel')
-        // router.push({name: 'excel'} );
-        // parent_id.value = space.value.id  
-        // dialogNode.value = true
-      }
-      if (value == 'article') {
+      if (tmp[0] == 'article') {
         router.push({
           path: '/tiny',
           query: {
-            type: "notShow"
+            category: tmp[1]
           }
         })
       }
-      if (value == 'word') {
-        router.push('/md')
+      if (tmp[0] == 'excel') {
+        router.push({
+          path: '/excel',
+          query: {
+            category: tmp[1]
+          }
+        })
       }
-      if (value == 'mindmap') {
-        router.push('/mindmap')
+      if (tmp[0] == 'word') {
+        router.push({
+          path: '/md',
+          query: {
+            category: tmp[1]
+          }
+        })
+      }
+      if (tmp[0] == 'mindmap') {
+        router.push({
+          path: '/mindmap',
+          query: {
+            category: tmp[1]
+          }
+        })
       }
     }
 

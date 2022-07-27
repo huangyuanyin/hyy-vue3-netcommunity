@@ -11,25 +11,23 @@
     <el-card :style="{ 'min-height': minHeight }">
       <template #header>
         <el-button @click="goBack">
-          <el-icon><Back /></el-icon>返回
+          <el-icon>
+            <Back />
+          </el-icon>返回
         </el-button>
       </template>
-      <el-form :model="form" ref="formRef" :rules="formRules" 
-        size="large" label-width="100px">
-        <el-form-item label="分类" prop="category">
+      <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
+        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
-              :props="{ value:'id', checkStrictly: true }" clearable
-              :show-all-levels="false" />
+              :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
             <span style="margin-left: 30px">标签</span>
-            <el-cascader :options="taglist" v-model="form.tags"
-              :props="{ value:'id', label: 'name' }">
+            <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }">
             </el-cascader>
           </el-space>
         </el-form-item>
         <el-form-item label="标题" prop="title">
-          <el-input v-model="form.title" show-word-limit maxlength="200"
-            placeholder="请输入标题" type="text"></el-input>
+          <el-input v-model="form.title" show-word-limit maxlength="200" placeholder="请输入标题" type="text"></el-input>
         </el-form-item>
         <div class="tinymce">
           <tinymce-com v-model="value" placeholder="请输入帖子详情内容(不少于10个字)"></tinymce-com>
@@ -86,6 +84,8 @@ export default {
     const treeData = ref([])
     // 标签列表
     const taglist = ref([])
+    // 路由传参
+    const categoryId = ref("")
     // 富文本数据
     const state = reactive({
       value: ''
@@ -102,8 +102,8 @@ export default {
     })
     // 表单校验
     const formRules = reactive({
-      category: [{ required: true, message: '请选择所属话题', trigger: 'change'}],
-      title: [{ required: true, message: '请输入标题', trigger: 'blur'}]
+      category: [{ required: true, message: '请选择所属话题', trigger: 'change' }],
+      title: [{ required: true, message: '请输入标题', trigger: 'blur' }]
     })
 
     // 获取节点数据
@@ -140,8 +140,15 @@ export default {
         getForumData()
       }
     })
-
+    watch(() => route.query, () => {
+      if (route.query && route.query.category) {
+        categoryId.value = route.query.category
+      } else {
+        categoryId.value = ''
+      }
+    })
     onMounted(() => {
+      categoryId.value = route.query.category || ''
       getNodeList()
       if (route.query.tid) {
         getForumData()
@@ -171,7 +178,7 @@ export default {
 
     // 返回
     const goBack = () => {
-      router.push({name: 'subbooks'})
+      router.push({ name: 'subbooks' })
     }
 
     // 关闭事件
@@ -179,12 +186,12 @@ export default {
       formRef.value.resetFields()
       state.value = ''
       form.body = ''
-      router.push({name: 'subbooks', params: {wRefresh: true}})
+      router.push({ name: 'subbooks', params: { wRefresh: true } })
     }
 
     const handleChange = (id) => {
       var len = id.length
-      form.category = id[len-1]
+      form.category = id[len - 1]
     }
 
     // 发布文章
@@ -261,6 +268,7 @@ export default {
       handleChange,
       goBack,
       loadWord,
+      categoryId
     }
   },
 }
@@ -277,6 +285,7 @@ export default {
   margin-bottom: 30px;
   width: 80%;
 }
+
 .el-input {
   width: 80%;
 }

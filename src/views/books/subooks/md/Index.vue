@@ -3,25 +3,23 @@
     <el-card :style="{ 'min-height': minHeight }">
       <template #header>
         <el-button type="primary" @click="goBack">
-          <el-icon><Back /></el-icon>返回
+          <el-icon>
+            <Back />
+          </el-icon>返回
         </el-button>
       </template>
-      <el-form :model="form" ref="formRef" :rules="formRules" 
-        size="large" label-width="100px">
-        <el-form-item label="分类" prop="category">
+      <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
+        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
-              :props="{ value:'id', checkStrictly: true }" clearable
-              :show-all-levels="false" />
+              :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
             <span style="margin-left: 30px">标签</span>
-            <el-cascader :options="taglist" v-model="form.tags"
-              :props="{ value:'id', label: 'name' }">
+            <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }">
             </el-cascader>
           </el-space>
         </el-form-item>
         <el-form-item label="标题" prop="title">
-          <el-input v-model="form.title" show-word-limit maxlength="200"
-            placeholder="请输入标题" type="text"></el-input>
+          <el-input v-model="form.title" show-word-limit maxlength="200" placeholder="请输入标题" type="text"></el-input>
         </el-form-item>
         <el-form-item>
           <markdown-com :data="md" @input="getMd"></markdown-com>
@@ -70,7 +68,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const store = useStore()
-     // 最小高度
+    // 最小高度
     const minHeight = computed(() => {
       return window.innerHeight - 55 + "px";
     });
@@ -85,6 +83,8 @@ export default {
     // md编辑器数据
     const md = ref('')
     const formRef = ref(null);
+    // 路由传参
+    const categoryId = ref("")
     // 表单
     const form = reactive({
       category: '',
@@ -95,8 +95,8 @@ export default {
     })
     // 表单校验
     const formRules = reactive({
-      category: [{ required: true, message: '请选择所属分类', trigger: 'change'}],
-      title: [{ required: true, message: '请输入标题', trigger: 'blur'}]
+      category: [{ required: true, message: '请选择所属分类', trigger: 'change' }],
+      title: [{ required: true, message: '请输入标题', trigger: 'blur' }]
     })
 
     // 获取节点数据
@@ -127,7 +127,7 @@ export default {
     getTagList()
     form.category = node.value.id
     // md.value = ''
-    
+
 
     // 监控 文章编辑
     watch(() => route.query.mid, () => {
@@ -135,8 +135,17 @@ export default {
         getForumData()
       }
     })
+    watch(() => route.query, () => {
+      if (route.query && route.query.category) {
+        categoryId.value = route.query.category
+      } else {
+        categoryId.value = ''
+      }
+    },
+    )
 
     onMounted(() => {
+      categoryId.value = route.query.category || ''
       md.value = ''
       if (route.query.mid) {
         getForumData()
@@ -145,14 +154,14 @@ export default {
 
     // 获取md数据
     const getMd = (evt) => {
-      if (typeof(evt) == 'string') {
+      if (typeof (evt) == 'string') {
         form.body = evt
       }
     }
 
     const handleChange = (id) => {
       var len = id.length
-      form.category = id[len-1]
+      form.category = id[len - 1]
     }
 
     // 上传word
@@ -179,7 +188,7 @@ export default {
       formRef.value.resetFields()
       md.value = ''
       form.body = ''
-      router.push({name: 'subbooks', params: {wRefresh: true}})
+      router.push({ name: 'subbooks', params: { wRefresh: true } })
     }
 
     // 发布事件
@@ -223,7 +232,7 @@ export default {
 
     // 返回
     const goBack = () => {
-      router.push({name: 'subbooks'})
+      router.push({ name: 'subbooks' })
     }
 
     return {
@@ -240,7 +249,8 @@ export default {
       handleChange,
       loadWord,
       handleClose,
-      saveHandle
+      saveHandle,
+      categoryId
     }
   },
 }
