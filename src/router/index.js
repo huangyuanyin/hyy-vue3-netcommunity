@@ -138,6 +138,10 @@ router.beforeEach((to, from, next) => {
     sessionStorage.setItem('siderbar','2')
     store.commit("app/handleSiderbar", false)
   }
+  if(from.path == "/books"){
+    sessionStorage.setItem('siderbar','1')
+    store.commit("app/handleSiderbar", true)
+  }
   // 获取Token
   const token = sessionStorage.getItem('token');
   if (token || to.path === '/login') {
