@@ -173,15 +173,15 @@ export default {
 
     // 获取帖子数据
     const getForumData = () => {
-      getForumInfo(route.query.wid).then(res => {
+      getForumInfo(route.params.wid).then(res => {
         fourumdata.value = res.data
       })
     };
 
     getForumData()
 
-    watch(() => route.query.wid, () => {
-      if (route.query.wid) {
+    watch(() => route.params.wid, () => {
+      if (route.params.wid) {
         getForumData()
       }
     })
@@ -216,9 +216,9 @@ export default {
     // 编辑按钮
     const handleEdit = () => {
       if (fourumdata.value.type == 'a') {
-        router.push({ name: 'tiny', query: { tid: route.query.wid } })
+        router.push({ name: 'tiny', params: { tid: route.params.wid } })
       } else {
-        router.push({ name: 'md', query: { mid: route.query.wid } })
+        router.push({ name: 'md', params: { mid: route.params.wid } })
       }
     }
 
@@ -249,7 +249,7 @@ export default {
         draggable: true,
       })
         .then(() => {
-          deleteForum(route.query.wid).then(res => {
+          deleteForum(route.params.wid).then(res => {
             ElMessage.success("删除成功");
             // router.go(-1)
             router.push({ name: 'subbooks', params: { wRefresh: true } })
