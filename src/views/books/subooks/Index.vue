@@ -3,12 +3,17 @@
     <el-card>
       <el-container>
         <el-header height="30px" style="width: 90%; margin-left: 5%">
-          <span>{{node.label}}</span>
+          <span>{{ node.label }}</span>
           <el-button text style="float: right" @click="handleRefresh">
-            <el-icon><Refresh /></el-icon></el-button>
+            <el-icon>
+              <Refresh />
+            </el-icon>
+          </el-button>
           <el-dropdown trigger="click" @command="handleCommand" style="float: right">
             <el-button text>
-              <el-icon size="large"><CirclePlus /></el-icon>
+              <el-icon size="large">
+                <CirclePlus />
+              </el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
@@ -61,49 +66,45 @@
                   </el-col>
                   <el-col :span="4" :offset="11" class="statistics">
                     <el-button text @click="handleOpen(question.type, question.id)">
-                      <el-icon :size="16"><View /></el-icon></el-button>
+                      <el-icon :size="16">
+                        <View />
+                      </el-icon>
+                    </el-button>
                     <span>{{ question.views }}</span>
                     <el-button text @click="answerHandle(question.id)">
-                      <el-icon :size="16" color="#000000"><chat-dot-round /></el-icon>
+                      <el-icon :size="16" color="#000000">
+                        <chat-dot-round />
+                      </el-icon>
                     </el-button>
                     <span>{{ question.s_comments.length }}</span>
-                    <el-button text @click="handleEdit(question.type, question.id)"><el-icon :size="16"><Edit /></el-icon></el-button>
+                    <el-button text @click="handleEdit(question.type, question.id)">
+                      <el-icon :size="16">
+                        <Edit />
+                      </el-icon>
+                    </el-button>
                   </el-col>
                 </el-row>
               </el-card>
             </li>
           </ul>
-          <el-pagination style="margin-top: 10px"
-            :total="total" 
-            :current-page="page" 
-            :page-size="size"
-            :page-sizes="[10, 20, 50, 100]"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" 
+          <el-pagination style="margin-top: 10px" :total="total" :current-page="page" :page-size="size"
+            :page-sizes="[10, 20, 50, 100]" @size-change="handleSizeChange" @current-change="handleCurrentChange"
             layout="total, sizes, prev, pager, next, jumper"></el-pagination>
         </el-main>
       </el-container>
     </el-card>
-    <el-drawer v-model="drawer"
-      title="快速筛选"
-      direction="rtl">
+    <el-drawer v-model="drawer" title="快速筛选" direction="rtl">
       <el-form :model="form" label-width="80px" size="large">
         <el-form-item label="标题">
           <el-input v-model="form.title" placeholder="请输入标题关键字"></el-input>
         </el-form-item>
         <el-form-item label="知识库">
           <!-- <el-input v-model="form.body" placeholder="知识库内容"></el-input> -->
-          <el-input
-            v-model="form.body"
-            :autosize="{ minRows: 2, maxRows: 4 }"
-            type="textarea"
-            placeholder="请输入要检索的知识库内容"
-          />
+          <el-input v-model="form.body" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
+            placeholder="请输入要检索的知识库内容" />
         </el-form-item>
         <el-form-item label="标签">
-          <el-cascader :options="taglist" v-model="form.tags"
-            clearable
-            :props="{ value:'id', label: 'name' }">
+          <el-cascader :options="taglist" v-model="form.tags" clearable :props="{ value: 'id', label: 'name' }">
           </el-cascader>
         </el-form-item>
         <!-- <el-form-item label=""></el-form-item> -->
@@ -192,13 +193,13 @@ export default {
     // getDataList()
 
     // 监听
-    watch(() => node.value.id, ()=> {
+    watch(() => node.value.id, () => {
       // console.log(node.value)
       getDataList()
     })
 
     // 监听是否刷新
-    watch(() => route.params.wRefresh, ()=> {
+    watch(() => route.params.wRefresh, () => {
       if (route.params.wRefresh) {
         getDataList()
       }
@@ -214,7 +215,7 @@ export default {
       form.body = ''
       form.tags = ''
       drawer.value = false
-      
+
     }
 
     // 筛选事件
@@ -261,29 +262,29 @@ export default {
     // 跳转至数据展示
     const handleOpen = (type, id) => {
       if (type == 'a' || type == 'w') {
-        router.push({name: 'detail', params: {wid: id}})
+        router.push({ name: 'detail', query: { wid: id } })
       }
       if (type == 'e') {
-        router.push({name: 'excel', query: {eid: id}})
+        router.push({ name: 'excel', query: { eid: id } })
       }
     }
 
     // 数据编辑
     const handleEdit = (type, id) => {
-      if (type == 'a' ) {
-        router.push({name: 'tiny', query: {tid: id}})
-      } 
-      if (type == 'w' ) {
-        router.push({name: 'md', query: {mid: id}})
+      if (type == 'a') {
+        router.push({ name: 'tiny', query: { tid: id } })
       }
-      if (type == 'e' ) {
-        router.push({name: 'excel', query: {eid: id}})
+      if (type == 'w') {
+        router.push({ name: 'md', query: { mid: id } })
+      }
+      if (type == 'e') {
+        router.push({ name: 'excel', query: { eid: id } })
       }
     }
 
     // 回复响应
     const answerHandle = (id) => {
-      router.push({name: 'detail', params: {wid: id, status: 'answer'}})
+      router.push({ name: 'detail', params: { wid: id, status: 'answer' } })
     }
 
     // 移除
@@ -324,17 +325,21 @@ export default {
 .el-container {
   padding: 0px;
 }
+
 .dialog-footer {
   float: left;
 }
+
 .infinite-list {
   padding: 0;
   margin: 0;
   list-style: none
 }
+
 .title {
   color: #2c3e50;
 }
+
 .subscript {
   margin-top: 13px;
   margin-bottom: 10px;
@@ -342,28 +347,34 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .user-avator {
   margin-left: 14px;
 }
+
 .user-avator img {
   display: block;
   width: 25px;
   height: 25px;
   border-radius: 50%;
 }
+
 .user-name {
   font-size: 14px;
   color: #999;
 }
+
 .time {
   font-size: 12px;
   color: #999;
 }
+
 .statistics {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
+
 .statistics span {
   margin-right: 5px;
   font-size: 14px;

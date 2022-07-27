@@ -20,17 +20,21 @@
                     <img src="@/assets/img/1.png" />
                   </el-button>
                 </el-tooltip>
-                <span>{{fourumdata.linknum}}</span>
+                <span>{{ fourumdata.linknum }}</span>
               </el-space>
             </el-row>
             <el-row class="collect">
               <el-space direction="vertical" :size="12">
                 <el-tooltip content="编辑" placement="left" :show-after="500">
                   <el-button text @click="handleEdit">
-                    <i><el-icon :size="24" color="#000000"><Edit /></el-icon></i>
+                    <i>
+                      <el-icon :size="24" color="#000000">
+                        <Edit />
+                      </el-icon>
+                    </i>
                   </el-button>
                 </el-tooltip>
-                <span>{{fourumdata.collertnum}}</span>
+                <span>{{ fourumdata.collertnum }}</span>
               </el-space>
             </el-row>
             <el-row class="collect">
@@ -38,18 +42,24 @@
                 <el-tooltip content="回复" placement="right" :show-after="500">
                   <el-button text>
                     <i>
-                      <el-icon :size="24" color="#000000" @click="answerHandle"><comment /></el-icon>
+                      <el-icon :size="24" color="#000000" @click="answerHandle">
+                        <comment />
+                      </el-icon>
                     </i>
                   </el-button>
                 </el-tooltip>
-                <span>{{fourumdata.comment_num}}</span>
+                <span>{{ fourumdata.comment_num }}</span>
               </el-space>
             </el-row>
             <el-row class="collect">
               <el-space direction="vertical" :size="12">
                 <el-tooltip content="返回" placement="right" :show-after="500">
                   <el-button text>
-                    <i><el-icon :size="24" color="#000000" @click="goBack"><Back /></el-icon></i>
+                    <i>
+                      <el-icon :size="24" color="#000000" @click="goBack">
+                        <Back />
+                      </el-icon>
+                    </i>
                   </el-button>
                 </el-tooltip>
               </el-space>
@@ -63,10 +73,14 @@
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item command="delete">
-                        <el-icon><delete /></el-icon>删除
+                        <el-icon>
+                          <delete />
+                        </el-icon>删除
                       </el-dropdown-item>
                       <el-dropdown-item command="update" disabled>
-                        <el-icon><Checked /></el-icon>评审
+                        <el-icon>
+                          <Checked />
+                        </el-icon>评审
                       </el-dropdown-item>
                       <!-- <el-dropdown-item command="update">
                         <el-icon><edit /></el-icon>编辑
@@ -80,39 +94,39 @@
         </el-col>
         <el-col :span="18" :offset="1">
           <!-- <el-card shadow="never" :body-style="{ padding: '30px' }"> -->
-            <el-row>
-              <span class="title">{{fourumdata.title}}</span>
-            </el-row>
-            <el-row class="topinfo">
-              <el-col :span="2" class="user">
-                <div>
-                  <img src="@/assets/img/img.jpg" />
-                </div>
-                <span>{{fourumdata.author}}</span>
-              </el-col>
-              <el-col :span="4" :offset="18">
-                <time class="time">{{fourumdata.pub_time}}</time>
-              </el-col>
-            </el-row>
-            <el-row style="margin-top: 30px">
-              <markdown-com :data="fourumdata.body"></markdown-com>
-            </el-row>
-            <!-- v-md-editor -->
-            <!-- <el-row style="margin-top: 30px">
+          <el-row>
+            <span class="title">{{ fourumdata.title }}</span>
+          </el-row>
+          <el-row class="topinfo">
+            <el-col :span="2" class="user">
+              <div>
+                <img src="@/assets/img/img.jpg" />
+              </div>
+              <span>{{ fourumdata.author }}</span>
+            </el-col>
+            <el-col :span="4" :offset="18">
+              <time class="time">{{ fourumdata.pub_time }}</time>
+            </el-col>
+          </el-row>
+          <el-row style="margin-top: 30px">
+            <markdown-com :data="fourumdata.body"></markdown-com>
+          </el-row>
+          <!-- v-md-editor -->
+          <!-- <el-row style="margin-top: 30px">
               <v-md-preview :text="fourumdata.body"></v-md-preview>
             </el-row> -->
-            <el-row class="bottom">
-              <el-col :span="6">
-                <!-- <el-tag size="large" type="success">{{fourumdata.tags[0].name}}</el-tag> -->
-              </el-col>
-            </el-row>
-            <!-- 回复列表 -->
-            <answer-list-com :refresh="isRefresh" id="answerlist"></answer-list-com>
+          <el-row class="bottom">
+            <el-col :span="6">
+              <!-- <el-tag size="large" type="success">{{fourumdata.tags[0].name}}</el-tag> -->
+            </el-col>
+          </el-row>
+          <!-- 回复列表 -->
+          <answer-list-com :refresh="isRefresh" id="answerlist"></answer-list-com>
           <!-- </el-card> -->
         </el-col>
       </el-row>
-        
-        <!-- <el-col :span="20" :offset="2">
+
+      <!-- <el-col :span="20" :offset="2">
           <markdown-com :data="fourumdata.body"></markdown-com>
         </el-col> -->
       <!-- </el-row> -->
@@ -159,15 +173,15 @@ export default {
 
     // 获取帖子数据
     const getForumData = () => {
-      getForumInfo(route.params.wid).then(res => {
+      getForumInfo(route.query.wid).then(res => {
         fourumdata.value = res.data
       })
     };
 
     getForumData()
 
-    watch(() => route.params.wid, () => {
-      if (route.params.wid) {
+    watch(() => route.query.wid, () => {
+      if (route.query.wid) {
         getForumData()
       }
     })
@@ -201,10 +215,10 @@ export default {
 
     // 编辑按钮
     const handleEdit = () => {
-      if (fourumdata.value.type == 'a' ) {
-        router.push({name: 'tiny', query: {tid: route.params.wid}})
+      if (fourumdata.value.type == 'a') {
+        router.push({ name: 'tiny', query: { tid: route.query.wid } })
       } else {
-        router.push({name: 'md', query: {mid: route.params.wid}})
+        router.push({ name: 'md', query: { mid: route.query.wid } })
       }
     }
 
@@ -234,19 +248,19 @@ export default {
         type: "warning",
         draggable: true,
       })
-      .then(() => {
-        deleteForum(route.params.wid).then(res => {
-          ElMessage.success("删除成功");
-          // router.go(-1)
-          router.push({name: 'subbooks', params: {wRefresh: true}})
+        .then(() => {
+          deleteForum(route.query.wid).then(res => {
+            ElMessage.success("删除成功");
+            // router.go(-1)
+            router.push({ name: 'subbooks', params: { wRefresh: true } })
+          })
         })
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: 'Delete canceled',
-        })
-      });
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: 'Delete canceled',
+          })
+        });
     };
 
     return {
@@ -274,20 +288,24 @@ export default {
   font-family: "宋体";
   color: black;
 }
+
 .topinfo {
   margin-top: 30px;
 }
+
 .topinfo .user {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .topinfo .user img {
   display: block;
   width: 30px;
   height: 30px;
   border-radius: 50%;
 }
+
 .topinfo .user span {
   font-size: 16px;
   line-height: 20px;
@@ -295,27 +313,33 @@ export default {
   margin-left: 15px;
   color: #606266;
 }
+
 .topinfo .time {
   line-height: 20px;
   font-size: 14px;
   color: #999;
 }
+
 .suspension {
   position: fixed;
 }
+
 .suspension img {
   display: block;
   width: 35px;
   height: 35px;
   border-radius: 50%;
 }
+
 .collect {
   margin-top: 25px;
   margin-left: 5px;
 }
+
 .more {
   margin-top: 15px;
 }
+
 .more img {
   display: block;
   margin-left: 14px;
@@ -323,6 +347,7 @@ export default {
   height: 40px;
   border-radius: 50%;
 }
+
 .bottom {
   margin-top: 30px;
   display: flex;
