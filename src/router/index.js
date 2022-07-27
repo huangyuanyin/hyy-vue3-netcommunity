@@ -133,6 +133,11 @@ if (sessionStorage.getItem('siderbar') == '2') {
 
 router.beforeEach((to, from, next) => {
   document.title = `信安知识库`;
+  // 解决进入知识库后,返回上一页面,左侧导航菜单不变的bug
+  if(from.path == "/subbooks"){
+    sessionStorage.setItem('siderbar','2')
+    store.commit("app/handleSiderbar", false)
+  }
   // 获取Token
   const token = sessionStorage.getItem('token');
   if (token || to.path === '/login') {
