@@ -38,6 +38,7 @@ export default {
       sessionStorage.setItem('token', '')
       sessionStorage.setItem('nickname', '')
       sessionStorage.setItem('username', '')
+      sessionStorage.setItem('siderbar','2')
       state.token = ''
       state.username = ''
       state.nickname = ''
