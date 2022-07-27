@@ -203,6 +203,7 @@ export default {
     // 新增
     const addApi = () => {
       form.author = sessionStorage.getItem('username')
+      form.category = categoryId.value
       formRef.value.validate((valid) => {
         if (!valid) return
         addForum(form).then(res => {
@@ -218,6 +219,7 @@ export default {
     // 文章编辑
     const updateApi = () => {
       form.author = sessionStorage.getItem('username')
+      form.category = categoryId.value
       formRef.value.validate((valid) => {
         if (!valid) return
         updateForum(route.query.mid, form).then(res => {

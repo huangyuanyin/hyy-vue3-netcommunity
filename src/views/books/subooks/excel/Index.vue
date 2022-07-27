@@ -203,6 +203,7 @@ const updateApi = () => {
   var excelData = luckysheet.getAllSheets();
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
+  form.category = categoryId.value
   updateForum(route.query.eid, form).then(res => {
     ElMessage({
       message: "编辑成功",
@@ -215,6 +216,7 @@ const updateApi = () => {
 // 新增
 const addApi = () => {
   var excelData = luckysheet.getAllSheets();
+  form.category = categoryId.value
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
   addForum(form).then(res => {
