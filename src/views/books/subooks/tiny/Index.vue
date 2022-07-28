@@ -57,7 +57,7 @@ import { ref, reactive, toRefs, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from "element-plus";
-import { getCategorysInfo } from '@/api/category.js'
+import { getCategorysInfo, addCategorys } from '@/api/category.js'
 import { upload } from '@/api/common.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from "@/api/tag.js"
@@ -205,18 +205,14 @@ export default {
 
     // 新增文章
     const addApi = () => {
-      form.category = categoryId.value
+      if (route.query && route.query.category) {
+        form.category = categoryId.value
+      }
       form.body = state.value
       form.author = sessionStorage.getItem('username')
       formRef.value.validate((valid) => {
         if (!valid) return
-        addForum(form).then(res => {
-          ElMessage({
-            message: "新增成功",
-            type: "success",
-          });
-          handleClose()
-        })
+        save()
       })
     }
 
@@ -234,6 +230,29 @@ export default {
           });
           handleClose()
         })
+      })
+    }
+
+    // getApi
+    const save = () => {
+      let params = {
+        name: form.title,
+        parent_category: form.category,
+        type: form.type
+      }
+      // 新增节点
+      addCategorys(params).then((res) => {
+        if (res.code == 1000) {
+          form.category = res.data
+          // 新增文章
+          addForum(form).then(res => {
+            ElMessage({
+              message: "新增成功",
+              type: "success",
+            });
+            handleClose()
+          })
+        }
       })
     }
 
@@ -270,7 +289,8 @@ export default {
       handleChange,
       goBack,
       loadWord,
-      categoryId
+      categoryId,
+      save
     }
   },
 }

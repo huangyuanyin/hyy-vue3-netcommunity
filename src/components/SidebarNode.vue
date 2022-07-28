@@ -318,6 +318,10 @@ export default {
           router.push({ path: '/excel', query: { eid: node.articleId } })
           console.log("e", node.articleId)
           break;
+        case 'a':
+          router.push({ name: 'detail', params: { wid: node.articleId } })
+          console.log("e", node.articleId)
+          break;
       }
     }
 
