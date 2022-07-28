@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, computed } from 'vue'
+import { ref, reactive, onMounted, watch, computed, inject } from 'vue'
 import { exportExcel } from '@/utils/export'
 import { ElMessage } from "element-plus";
 import { useStore } from 'vuex'
@@ -42,6 +42,7 @@ import { getCategorysInfo, addCategorys } from '@/api/category.js'
 import { getTag } from "@/api/tag.js"
 import LuckyExcel from 'luckyexcel'
 
+const reload = inject('reload')
 const store = useStore()
 const route = useRoute();
 const router = useRouter();
@@ -242,6 +243,7 @@ const save = () => {
           type: "success",
         });
         handleClose()
+        reload()
       })
     }
   })

@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { ref, reactive, toRefs, computed, watch, onMounted } from 'vue'
+import { ref, reactive, toRefs, computed, watch, onMounted, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from "element-plus";
@@ -67,6 +67,7 @@ export default {
     'tinymce-com': Tinymce
   },
   setup() {
+    const reload = inject('reload')
     const router = useRouter();
     const route = useRoute();
     const store = useStore()
@@ -251,6 +252,7 @@ export default {
               type: "success",
             });
             handleClose()
+            reload()
           })
         }
       })
@@ -290,7 +292,8 @@ export default {
       goBack,
       loadWord,
       categoryId,
-      save
+      save,
+      reload
     }
   },
 }

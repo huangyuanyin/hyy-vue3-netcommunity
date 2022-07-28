@@ -7,23 +7,37 @@
   * @FilePath: \vue3-netforum\src\App.vue
 -->
 <template>
-    <router-view/>
+  <router-view v-if="isRouterAlive" />
 </template>
 
 <script>
 import axios from 'axios';
+import { nextTick, provide, ref } from "vue"
 export default {
   setup() {
+    const isRouterAlive = ref(true)
+    const reload = () => {
+      isRouterAlive.value = false
+      nextTick(() => {
+        isRouterAlive.value = true
+      })
+      console.log("刷新...", isRouterAlive.value);
+    }
     const setServerConfig = () => {
       axios.get('./../netforum/static/config.json').then((res) => {
-      // axios.get('./../static/config.json').then((res) => {
+        // axios.get('./../static/config.json').then((res) => {
         // console.log(res.data.BASE_URL)
         axios.defaults.baseURL = res.data.BASE_URL;
         sessionStorage.setItem("CONSOLE_URL", res.data.CONSOLE_URL)
       })
     }
     setServerConfig()
+    provide('reload', reload)
+    return {
+      isRouterAlive, reload
+    }
   }
+
 };
 </script>
 <style scoped>

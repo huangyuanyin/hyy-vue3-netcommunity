@@ -50,7 +50,7 @@ import { mavonEditor } from 'mavon-editor'
 import markdown from '@/components/markdown/Index.vue'
 import 'mavon-editor/dist/css/index.css';
 
-import { ref, computed, reactive, watch, onMounted } from "vue";
+import { ref, computed, reactive, watch, onMounted, inject } from "vue";
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from "element-plus";
@@ -65,6 +65,7 @@ export default {
     'markdown-com': markdown
   },
   setup() {
+    const reload = inject('reload')
     const router = useRouter();
     const route = useRoute();
     const store = useStore()
@@ -221,6 +222,7 @@ export default {
             type: "success",
           });
           handleClose()
+          reload()
         })
       })
     }
@@ -268,7 +270,7 @@ export default {
       handleClose,
       saveHandle,
       categoryId,
-      save
+      save, reload
     }
   },
 }
