@@ -54,7 +54,7 @@ import { ref, computed, reactive, watch, onMounted } from "vue";
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from "element-plus";
-import { getCategorysInfo } from '@/api/category.js'
+import { getCategorysInfo, addCategorys } from '@/api/category.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from "@/api/tag.js"
 import { upload } from '@/api/common.js'
@@ -203,16 +203,9 @@ export default {
     // 新增
     const addApi = () => {
       form.author = sessionStorage.getItem('username')
-      form.category = categoryId.value
       formRef.value.validate((valid) => {
         if (!valid) return
-        addForum(form).then(res => {
-          ElMessage({
-            message: "新增成功",
-            type: "success",
-          });
-          handleClose()
-        })
+        save()
       })
     }
 
@@ -232,6 +225,28 @@ export default {
       })
     }
 
+    // getApi
+    const save = () => {
+      let params = {
+        name: form.title,
+        parent_category: form.category,
+        type: form.type
+      }
+      // 新增节点
+      addCategorys(params).then((res) => {
+        if (res.code == 1000) {
+          form.category = res.data
+          // 新增markdown
+          addForum(form).then(res => {
+            ElMessage({
+              message: "新增成功",
+              type: "success",
+            });
+            handleClose()
+          })
+        }
+      })
+    }
     // 返回
     const goBack = () => {
       router.push({ name: 'subbooks' })
@@ -252,7 +267,8 @@ export default {
       loadWord,
       handleClose,
       saveHandle,
-      categoryId
+      categoryId,
+      save
     }
   },
 }

@@ -38,7 +38,7 @@ import { ElMessage } from "element-plus";
 import { useStore } from 'vuex'
 import { useRoute, useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
-import { getCategorysInfo } from '@/api/category.js'
+import { getCategorysInfo, addCategorys } from '@/api/category.js'
 import { getTag } from "@/api/tag.js"
 import LuckyExcel from 'luckyexcel'
 
@@ -216,18 +216,36 @@ const updateApi = () => {
 // 新增
 const addApi = () => {
   var excelData = luckysheet.getAllSheets();
-  form.category = categoryId.value
+  if (route.query && route.query.category) {
+    form.category = categoryId.value
+  }
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
-  addForum(form).then(res => {
-    ElMessage({
-      message: "新增成功",
-      type: "success",
-    });
-    handleClose()
-  })
+  save()
 }
 
+// getApi
+const save = () => {
+  let params = {
+    name: form.title,
+    parent_category: form.category,
+    type: form.type
+  }
+  // 新增节点
+  addCategorys(params).then((res) => {
+    if (res.code == 1000) {
+      form.category = res.data
+      // 新增excel
+      addForum(form).then(res => {
+        ElMessage({
+          message: "新增成功",
+          type: "success",
+        });
+        handleClose()
+      })
+    }
+  })
+}
 </script>
 
 <style  scoped>

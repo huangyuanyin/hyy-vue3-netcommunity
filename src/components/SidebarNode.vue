@@ -297,7 +297,6 @@ export default {
 
     // 节点点击事件
     const handleNodeClick = (node) => {
-
       let nodedata = {
         'label': node.label,
         'id': node.id
@@ -305,7 +304,21 @@ export default {
       console.log(nodedata)
       store.commit("books/SET_NODE_DATA", node);
       sessionStorage.setItem('node', nodedata)
-      router.push({ path: '/subbooks' });
+      // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
+      switch (node.type) {
+        case "l":
+          console.log("l")
+          router.push({ path: '/subbooks' });
+          break;
+        case 'w':
+          router.push({ name: 'detail', params: { wid: node.articleId } })
+          console.log("w", node.articleId)
+          break;
+        case 'e':
+          router.push({ path: '/excel', query: { eid: node.articleId } })
+          console.log("e", node.articleId)
+          break;
+      }
     }
 
     return {
