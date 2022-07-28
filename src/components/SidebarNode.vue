@@ -181,7 +181,7 @@ export default {
       }
     }
 
-    // 新建指令
+    // 新建指令 => +号按钮
     const handleNewInstruction = (value) => {
       let tmp = value.split(',')
       if (tmp[0] === 'add') {
