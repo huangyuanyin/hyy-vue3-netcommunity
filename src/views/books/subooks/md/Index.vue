@@ -9,7 +9,7 @@
         </el-button>
       </template>
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
-        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
+        <el-form-item label="分类" prop="category" v-if="categoryId === '' || isEdit == 'edit'">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
               :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
@@ -69,6 +69,8 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const store = useStore()
+    // 是否为编辑
+    const isEdit = route.query.type
     // 最小高度
     const minHeight = computed(() => {
       return window.innerHeight - 55 + "px";
@@ -288,7 +290,7 @@ export default {
       handleClose,
       saveHandle,
       categoryId,
-      save, reload, getSaveApi
+      save, reload, getSaveApi, isEdit
     }
   },
 }
