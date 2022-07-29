@@ -204,7 +204,6 @@ const updateApi = () => {
   var excelData = luckysheet.getAllSheets();
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
-  form.category = categoryId.value
   updateForum(route.query.eid, form).then(res => {
     ElMessage({
       message: "编辑成功",

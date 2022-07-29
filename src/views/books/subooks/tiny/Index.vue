@@ -17,7 +17,7 @@
         </el-button>
       </template>
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
-        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
+        <el-form-item label="分类" prop="category" v-if="categoryId === '' || isEdit == 'edit'">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
               :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
@@ -91,6 +91,7 @@ export default {
     const state = reactive({
       value: ''
     })
+    const isEdit = route.query.type
 
     const formRef = ref(null);
     // 表单
@@ -123,7 +124,7 @@ export default {
 
     // 获取帖子数据
     const getForumData = () => {
-      getForumInfo(route.query.tid).then(res => {
+      getForumInfo(route.params.tid).then(res => {
         form.title = res.data.title
         form.category = res.data.category
         form.tags = res.data.tags
@@ -136,8 +137,8 @@ export default {
     form.category = node.value.id
 
     // 监控 文章编辑
-    watch(() => route.query.tid, () => {
-      if (route.query.tid) {
+    watch(() => route.params.tid, () => {
+      if (route.params.tid) {
         getForumData()
       }
     })
@@ -151,7 +152,7 @@ export default {
     onMounted(() => {
       categoryId.value = route.query.category || ''
       getNodeList()
-      if (route.query.tid) {
+      if (route.params.tid) {
         getForumData()
       }
     })
@@ -197,7 +198,7 @@ export default {
 
     // 发布文章
     const saveHandle = () => {
-      if (route.query.tid) {
+      if (route.params.tid) {
         updateApi()
       } else {
         addApi()
@@ -224,7 +225,7 @@ export default {
       form.author = sessionStorage.getItem('username')
       formRef.value.validate((valid) => {
         if (!valid) return
-        updateForum(route.query.tid, form).then(res => {
+        updateForum(route.params.tid, form).then(res => {
           ElMessage({
             message: "编辑成功！",
             type: "success",
@@ -293,7 +294,8 @@ export default {
       loadWord,
       categoryId,
       save,
-      reload
+      reload,
+      isEdit
     }
   },
 }
