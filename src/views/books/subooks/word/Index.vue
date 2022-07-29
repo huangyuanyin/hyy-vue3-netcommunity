@@ -216,9 +216,11 @@ export default {
     // 编辑按钮
     const handleEdit = () => {
       if (fourumdata.value.type == 'a') {
+        console.log("aa", route.params.wid)
         router.push({ name: 'tiny', params: { tid: route.params.wid }, query: { category: fourumdata.value.category, type: "edit" } })
       } else {
-        console.log("fourumdata", fourumdata.value);
+        console.log("fourumdata", fourumdata.value,);
+        console.log("md", route.params.wid)
         router.push({ name: 'md', params: { mid: route.params.wid }, query: { category: fourumdata.value.category, type: "edit" } })
       }
     }

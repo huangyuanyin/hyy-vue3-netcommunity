@@ -214,7 +214,11 @@ export default {
       form.author = sessionStorage.getItem('username')
       formRef.value.validate((valid) => {
         if (!valid) return
-        save()
+        if (route.query.type == "right") {
+          getSaveApi(form)
+        } else {
+          save()
+        }
       })
     }
 
@@ -232,6 +236,17 @@ export default {
           });
           handleClose()
         })
+      })
+    }
+
+    // 新增文章 API
+    const getSaveApi = (form) => {
+      addForum(form).then(res => {
+        ElMessage({
+          message: "新增成功",
+          type: "success",
+        });
+        handleClose()
       })
     }
 
@@ -295,7 +310,8 @@ export default {
       categoryId,
       save,
       reload,
-      isEdit
+      isEdit,
+      getSaveApi
     }
   },
 }

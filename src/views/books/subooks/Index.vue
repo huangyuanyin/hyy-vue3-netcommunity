@@ -243,19 +243,19 @@ export default {
     // 指令事件
     const handleCommand = (value) => {
       if (value == 'excel') {
-        router.push('/excel')
+        router.push({ name: 'excel', query: { type: "right" } })
         // router.push({name: 'excel'} );
         // parent_id.value = space.value.id  
         // dialogNode.value = true
       }
       if (value == 'article') {
-        router.push('/tiny')
+        router.push({ name: 'tiny', query: { type: "right" } })
       }
       if (value == 'word') {
-        router.push('/md')
+        router.push({ name: 'md', query: { type: "right" } })
       }
       if (value == 'mindmap') {
-        router.push('/mindmap')
+        router.push({ name: 'mindmap', query: { type: "right" } })
       }
     }
 

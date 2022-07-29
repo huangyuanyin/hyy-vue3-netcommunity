@@ -221,7 +221,22 @@ const addApi = () => {
   }
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
-  save()
+  if (route.query.type == "right") {
+    getSaveApi(form)
+  } else {
+    save()
+  }
+}
+
+// 新增excel API
+const getSaveApi = (form) => {
+  addForum(form).then(res => {
+    ElMessage({
+      message: "新增成功",
+      type: "success",
+    });
+    handleClose()
+  })
 }
 
 // getApi

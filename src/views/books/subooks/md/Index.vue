@@ -116,7 +116,7 @@ export default {
 
     // 获取帖子数据
     const getForumData = () => {
-      getForumInfo(route.query.mid).then(res => {
+      getForumInfo(route.params.mid).then(res => {
         form.title = res.data.title
         form.category = res.data.category
         form.tags = res.data.tags
@@ -131,8 +131,8 @@ export default {
 
 
     // 监控 文章编辑
-    watch(() => route.query.mid, () => {
-      if (route.query.mid) {
+    watch(() => route.params.mid, () => {
+      if (route.params.mid) {
         getForumData()
       }
     })
@@ -149,7 +149,8 @@ export default {
       categoryId.value = route.query.category || ''
       form.category = categoryId.value
       md.value = ''
-      if (route.query.mid) {
+      console.log("route.params.mid", route.params.mid)
+      if (route.params.mid) {
         getForumData()
       }
     })
@@ -195,7 +196,7 @@ export default {
 
     // 发布事件
     const saveHandle = () => {
-      if (route.query.mid) {
+      if (route.params.mid) {
         updateApi()
       } else {
         addApi()
@@ -207,7 +208,11 @@ export default {
       form.author = sessionStorage.getItem('username')
       formRef.value.validate((valid) => {
         if (!valid) return
-        save()
+        if (route.query.type == "right") {
+          getSaveApi(form)
+        } else {
+          save()
+        }
       })
     }
 
@@ -217,13 +222,24 @@ export default {
       form.category = categoryId.value
       formRef.value.validate((valid) => {
         if (!valid) return
-        updateForum(route.query.mid, form).then(res => {
+        updateForum(route.params.mid, form).then(res => {
           ElMessage({
             message: "编辑成功！",
             type: "success",
           });
           handleClose()
         })
+      })
+    }
+
+    // 新增markdown API
+    const getSaveApi = (form) => {
+      addForum(form).then(res => {
+        ElMessage({
+          message: "新增成功",
+          type: "success",
+        });
+        handleClose()
       })
     }
 
@@ -246,7 +262,7 @@ export default {
               type: "success",
             });
             handleClose()
-            reload()   
+            reload()
           })
         }
       })
@@ -272,7 +288,7 @@ export default {
       handleClose,
       saveHandle,
       categoryId,
-      save, reload
+      save, reload, getSaveApi
     }
   },
 }
