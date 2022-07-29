@@ -147,6 +147,7 @@ export default {
 
     onMounted(() => {
       categoryId.value = route.query.category || ''
+      form.category = categoryId.value
       md.value = ''
       if (route.query.mid) {
         getForumData()
@@ -222,7 +223,6 @@ export default {
             type: "success",
           });
           handleClose()
-          reload()
         })
       })
     }
@@ -234,6 +234,7 @@ export default {
         parent_category: form.category,
         type: form.type
       }
+      console.log("aaaa", params);
       // 新增节点
       addCategorys(params).then((res) => {
         if (res.code == 1000) {
@@ -245,6 +246,7 @@ export default {
               type: "success",
             });
             handleClose()
+            reload()   
           })
         }
       })
