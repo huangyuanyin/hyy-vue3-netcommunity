@@ -298,7 +298,8 @@ export default {
     }
     // 返回
     const goBack = () => {
-      router.push({ name: 'subbooks' })
+      // router.push({ name: 'subbooks' })
+      router.go(-1)
     }
 
     return {
