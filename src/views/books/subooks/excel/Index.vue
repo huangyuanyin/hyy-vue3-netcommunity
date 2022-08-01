@@ -8,7 +8,7 @@
     </div>
     <el-dialog title="新增/编辑文档" v-model="dialog" draggable width="700px">
       <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
-        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
+        <el-form-item label="分类" prop="category" v-if="categoryId === '' && isRight != ''">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
               :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
@@ -38,7 +38,7 @@ import { ElMessage } from "element-plus";
 import { useStore } from 'vuex'
 import { useRoute, useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
-import { getCategorysInfo, addCategorys } from '@/api/category.js'
+import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.js'
 import { getTag } from "@/api/tag.js"
 import LuckyExcel from 'luckyexcel'
 import { judgeNodeType } from '@/utils/methods.js'
@@ -56,6 +56,7 @@ watch(
     } else {
       categoryId.value = ''
     }
+    isRight.value = route.query.isRight || ''
   },
 )
 // 工作空间标题名
@@ -69,6 +70,7 @@ const editCategory = ref('')
 const treeData = ref([])
 // 标签列表
 const taglist = ref([])
+const isRight = ref(route.query.isRight || '')
 // 表单
 const form = reactive({
   category: '',
@@ -142,7 +144,7 @@ const downloadExcel = () => {
 
 // !!! create luckysheet after mounted
 onMounted(() => {
-  categoryId.value = route.query.category || ''
+  console.log("isRight.value", isRight.value);
   if (route.query.eid) {
     // console.log(route.query.eid)
     loadExcelForServer()
@@ -205,13 +207,17 @@ const updateApi = () => {
   var excelData = luckysheet.getAllSheets();
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
-  updateForum(route.query.eid, form).then(res => {
-    ElMessage({
-      message: "编辑成功",
-      type: "success",
-    });
-    handleClose()
-  })
+  if (route.query && route.query.isRight == 'right') {
+    getUpdateForumApi(route.query.eid, form)
+  } else {
+    updateForum(route.query.eid, form).then(res => {
+      if (res.code === 1000) {
+        getUpdateCategorysApi()
+      }
+      handleClose()
+      reload()
+    })
+  }
 }
 
 // 新增
@@ -229,6 +235,17 @@ const addApi = () => {
   }
 }
 
+// 编辑excel API
+const getUpdateForumApi = (id, form) => {
+  updateForum(id, form).then(res => {
+    ElMessage({
+      message: "编辑成功！",
+      type: "success",
+    });
+    handleClose()
+  })
+}
+
 // 新增excel API
 const getSaveApi = (form) => {
   addForum(form).then(res => {
@@ -237,6 +254,17 @@ const getSaveApi = (form) => {
       type: "success",
     });
     handleClose()
+  })
+}
+
+// 更新节点 API
+const getUpdateCategorysApi = () => {
+  const title = { name: form.title }
+  updateCategorys(form.category, title).then((res) => {
+    ElMessage({
+      message: '编辑成功！',
+      type: 'success',
+    })
   })
 }
 

@@ -265,7 +265,7 @@ export default {
         router.push({ name: 'detail', params: { wid: id }, query: { isRight: "right" } })
       }
       if (type == 'e') {
-        router.push({ name: 'excel', query: { eid: id }, query: { isRight: "right" } })
+        router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
       }
     }
 
