@@ -262,10 +262,10 @@ export default {
     // 跳转至数据展示
     const handleOpen = (type, id) => {
       if (type == 'a' || type == 'w') {
-        router.push({ name: 'detail', params: { wid: id } })
+        router.push({ name: 'detail', params: { wid: id }, query: { isRight: "right" } })
       }
       if (type == 'e') {
-        router.push({ name: 'excel', query: { eid: id } })
+        router.push({ name: 'excel', query: { eid: id }, query: { isRight: "right" } })
       }
     }
 

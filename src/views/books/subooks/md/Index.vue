@@ -9,7 +9,7 @@
         </el-button>
       </template>
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
-        <el-form-item label="分类" prop="category" v-if="categoryId === '' || isEdit == 'edit'">
+        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
               :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
@@ -54,7 +54,7 @@ import { ref, computed, reactive, watch, onMounted, inject } from "vue";
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from "element-plus";
-import { getCategorysInfo, addCategorys } from '@/api/category.js'
+import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from "@/api/tag.js"
 import { upload } from '@/api/common.js'
@@ -69,8 +69,6 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const store = useStore()
-    // 是否为编辑
-    const isEdit = route.query.type
     // 最小高度
     const minHeight = computed(() => {
       return window.innerHeight - 55 + "px";
@@ -222,14 +220,41 @@ export default {
     const updateApi = () => {
       form.author = sessionStorage.getItem('username')
       form.category = categoryId.value
+      console.log("编辑...", form);
       formRef.value.validate((valid) => {
         if (!valid) return
-        updateForum(route.params.mid, form).then(res => {
-          ElMessage({
-            message: "编辑成功！",
-            type: "success",
-          });
-          handleClose()
+        if (route.query && route.query.isRight == 'right') {
+          getUpdateForumApi(route.params.mid, form)
+        } else {
+          updateForum(route.params.mid, form).then(res => {
+            if (res.code === 1000) {
+              getUpdateCategorysApi()
+            }
+            handleClose()
+            reload()
+          })
+        }
+      })
+    }
+
+    // 编辑文章 API
+    const getUpdateForumApi = (id, form) => {
+      updateForum(id, form).then(res => {
+        ElMessage({
+          message: "编辑成功！",
+          type: "success",
+        });
+        handleClose()
+      })
+    }
+
+    // 更新节点 API
+    const getUpdateCategorysApi = () => {
+      const title = { name: form.title }
+      updateCategorys(form.category, title).then((res) => {
+        ElMessage({
+          message: '编辑成功！',
+          type: 'success',
         })
       })
     }
@@ -290,7 +315,7 @@ export default {
       handleClose,
       saveHandle,
       categoryId,
-      save, reload, getSaveApi, isEdit
+      save, reload, getSaveApi
     }
   },
 }
