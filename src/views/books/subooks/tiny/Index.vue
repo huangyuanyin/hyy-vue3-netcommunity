@@ -62,6 +62,7 @@ import { upload } from '@/api/common.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from "@/api/tag.js"
 import Tinymce from '@/components/tinymce'
+import { judgeNodeType } from '@/utils/methods.js'
 export default {
   components: {
     'tinymce-com': Tinymce
@@ -110,7 +111,7 @@ export default {
     // 获取节点数据
     const getNodeList = () => {
       getCategorysInfo(spaceid.value).then((res) => {
-        treeData.value = res.data
+        treeData.value = judgeNodeType(res.data)
       })
     }
 

@@ -58,6 +58,8 @@ import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from "@/api/tag.js"
 import { upload } from '@/api/common.js'
+import { objectExpression } from '@babel/types';
+import { judgeNodeType } from '@/utils/methods.js'
 export default {
   name: 'editor',
   components: {
@@ -103,7 +105,7 @@ export default {
     // 获取节点数据
     const getNodeList = () => {
       getCategorysInfo(spaceid.value).then((res) => {
-        treeData.value = res.data
+        treeData.value = judgeNodeType(res.data)
       })
     }
 

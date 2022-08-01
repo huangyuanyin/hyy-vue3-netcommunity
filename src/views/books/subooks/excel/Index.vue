@@ -41,6 +41,7 @@ import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getCategorysInfo, addCategorys } from '@/api/category.js'
 import { getTag } from "@/api/tag.js"
 import LuckyExcel from 'luckyexcel'
+import { judgeNodeType } from '@/utils/methods.js'
 
 const reload = inject('reload')
 const store = useStore()
@@ -86,7 +87,7 @@ const formRules = reactive({
 // 获取节点数据
 const getNodeList = () => {
   getCategorysInfo(spaceid.value).then((res) => {
-    treeData.value = res.data
+    treeData.value = judgeNodeType(res.data)
   })
 }
 // 获取标签列表
