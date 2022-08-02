@@ -272,7 +272,7 @@ export default {
     // 数据编辑
     const handleEdit = (type, id) => {
       if (type == 'a') {
-        router.push({ name: 'tiny', query: { tid: id } })
+        router.push({ name: 'tiny', params: { tid: id }, query: { tid: id, type: "edit", isRight: "right" } })
       }
       if (type == 'w') {
         router.push({ name: 'md', query: { mid: id } })

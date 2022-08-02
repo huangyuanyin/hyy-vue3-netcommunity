@@ -224,7 +224,9 @@ export default {
 
     // 文章编辑
     const updateApi = () => {
-      form.category = categoryId.value
+      if (route.query && route.query.category) {
+        form.category = categoryId.value
+      }
       form.body = state.value
       form.author = sessionStorage.getItem('username')
       formRef.value.validate((valid) => {

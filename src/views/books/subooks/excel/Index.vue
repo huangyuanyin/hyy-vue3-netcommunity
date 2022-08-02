@@ -8,7 +8,7 @@
     </div>
     <el-dialog title="新增/编辑文档" v-model="dialog" draggable width="700px">
       <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
-        <el-form-item label="分类" prop="category" v-if="categoryId === '' && isRight != ''">
+        <el-form-item label="分类" prop="category" v-if="isRight == 'right'">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
               :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
@@ -56,7 +56,6 @@ watch(
     } else {
       categoryId.value = ''
     }
-    isRight.value = route.query.isRight || ''
   },
 )
 // 工作空间标题名
@@ -70,7 +69,7 @@ const editCategory = ref('')
 const treeData = ref([])
 // 标签列表
 const taglist = ref([])
-const isRight = ref(route.query.isRight || '')
+const isRight = ref('')
 // 表单
 const form = reactive({
   category: '',
@@ -144,7 +143,6 @@ const downloadExcel = () => {
 
 // !!! create luckysheet after mounted
 onMounted(() => {
-  console.log("isRight.value", isRight.value);
   if (route.query.eid) {
     // console.log(route.query.eid)
     loadExcelForServer()
@@ -154,6 +152,9 @@ onMounted(() => {
       container: 'luckysheet',
       lang: "zh", //中文
     })
+  }
+  if (route.query && route.query.type) {
+    isRight.value = route.query.type
   }
 })
 
