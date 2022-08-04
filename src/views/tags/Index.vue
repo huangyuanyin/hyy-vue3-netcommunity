@@ -1,11 +1,3 @@
-<!--
- * @Description: 标签
- * @Author: maxf
- * @Date: 2022-04-18 22:49:29
- * @LastEditors: maxf
- * @LastEditTime: 2022-04-18 22:54:07
- * @FilePath: \vue3-apitest\src\views\tags\Index.vue
--->
 <template>
   <div>
     <el-card>
@@ -20,7 +12,7 @@
         <el-table-column label="操作" width="250px">
           <template #default="scope">
             <el-button size="small" @click="handleUpdate(scope.row)">编辑</el-button>
-            <el-button type="danger" size="small"  @click="handleDelete(scope.row.id)">删除</el-button>
+            <el-button type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -33,13 +25,14 @@
         </el-pagination>
       </div> -->
     </el-card>
-     <!-- 对话框 -->
+    <!-- 对话框 -->
     <dialog-com :show="showDialog" :edit="editForm" :status="status" @input="getDialog"></dialog-com>
   </div>
 </template>
 
 <script>
 import { ref, reactive } from 'vue'
+import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getTag, deleteTag } from "@/api/tag.js"
 import dialog from './components/Dialog.vue'
@@ -48,6 +41,7 @@ export default {
     "dialog-com": dialog
   },
   setup() {
+    const router = useRouter();
     // 页码
     const page = ref(1);
     // 条数
@@ -106,20 +100,22 @@ export default {
         type: "warning",
         draggable: true,
       })
-      .then(() => {
-        deleteTag(id).then(res => {
-          ElMessage.success("删除成功");
-          getTableList()
+        .then(() => {
+          deleteTag(id).then(res => {
+            ElMessage.success("删除成功");
+            console.log("sdada");
+            getTableList()
+            router.push({ name: 'subbooks', params: { wRefresh: true } })
+          })
         })
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: 'Delete canceled',
-        })
-      });
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: 'Delete canceled',
+          })
+        });
     };
-    
+
     return {
       page,
       allTotal,
@@ -132,7 +128,8 @@ export default {
       getTableList,
       handleDelete,
       getDialog,
-      handleCurrentChange
+      handleCurrentChange,
+      router, reload
     }
   },
 }
@@ -144,10 +141,12 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+
 .text {
   font-size: 16px;
   font-weight: 900;
 }
+
 .pagination-block {
   margin: 10px 10px;
   float: right;

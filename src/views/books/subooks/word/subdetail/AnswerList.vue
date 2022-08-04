@@ -41,33 +41,43 @@
             </el-col>
             <el-col :span="2" :offset="14" class="answer-chat">
               <el-space>
-              <el-tooltip effect="dark" content="查看评论" placement="top">
-                <el-button type="text" @click="commentHandle(answer.id)">
-                  <i><el-icon style="margin-top: 3px" :size="16" color="#000000"><chat-line-square /></el-icon></i>
-                </el-button>
-              </el-tooltip>
-              <el-tooltip effect="dark" content="顶一下" placement="top">
-                <el-button type="text" @click="likeHandle(answer.id)">
-                  <img src="@/assets/img/like.png" />
-                </el-button>
-              </el-tooltip>
-              <el-tooltip effect="light" content="更多操作" placement="bottom">
-                <el-dropdown @command="answerHandleMore" trigger="click">
-                  <el-button type="text">
-                    <el-icon color="#000000"><more-filled /></el-icon>
+                <el-tooltip effect="dark" content="查看评论" placement="top">
+                  <el-button type="text" @click="commentHandle(answer.id)">
+                    <i>
+                      <el-icon style="margin-top: 3px" :size="16" color="#000000">
+                        <chat-line-square />
+                      </el-icon>
+                    </i>
                   </el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item :command="'delete'+','+answer.id">
-                        <el-icon><delete /></el-icon>删除
-                      </el-dropdown-item>
-                      <el-dropdown-item :command="'update'+','+answer.id">
-                        <el-icon><edit /></el-icon>编辑
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </el-tooltip>
+                </el-tooltip>
+                <el-tooltip effect="dark" content="顶一下" placement="top">
+                  <el-button type="text" @click="likeHandle(answer.id)">
+                    <img src="@/assets/img/like.png" />
+                  </el-button>
+                </el-tooltip>
+                <el-tooltip effect="light" content="更多操作" placement="bottom">
+                  <el-dropdown @command="answerHandleMore" trigger="click">
+                    <el-button type="text">
+                      <el-icon color="#000000">
+                        <more-filled />
+                      </el-icon>
+                    </el-button>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item :command="'delete' + ',' + answer.id">
+                          <el-icon>
+                            <delete />
+                          </el-icon>删除
+                        </el-dropdown-item>
+                        <el-dropdown-item :command="'update' + ',' + answer.id">
+                          <el-icon>
+                            <edit />
+                          </el-icon>编辑
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
+                </el-tooltip>
               </el-space>
             </el-col>
           </el-row>
@@ -94,7 +104,7 @@
 
 <script>
 import { ref, reactive, toRefs, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import "mavon-editor/dist/css/index.css";
 import { getComments, addComment, deleteComment } from '@/api/comment.js'
@@ -111,6 +121,7 @@ export default {
   },
   setup(props, ctx) {
     const route = useRoute();
+    const router = useRouter();
     // 总评论数
     const total = ref(100);
     // 页码
@@ -128,7 +139,7 @@ export default {
     const state = reactive({
       value: ''
     })
-    
+
     // 监听
     // watch(() => props.refresh, () => {
     //   if (props.refresh > 0) {
@@ -187,9 +198,9 @@ export default {
         deleteApi(tmp[1]);
       } else {
         ElMessage({
-        message: "暂不支持",
-        type: "warning",
-      });
+          message: "暂不支持",
+          type: "warning",
+        });
       }
     };
 
@@ -236,18 +247,19 @@ export default {
         type: "warning",
         draggable: true,
       })
-      .then(() => {
-        deleteComment(id).then(res => {
-          ElMessage.success("删除成功");
-          getAnswerList();
+        .then(() => {
+          deleteComment(id).then(res => {
+            ElMessage.success("删除成功");
+            getAnswerList();
+            router.push({ name: 'subbooks', params: { wRefresh: true } })
+          })
         })
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: 'Delete canceled',
-        })
-      });
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: 'Delete canceled',
+          })
+        });
     };
 
     return {
@@ -266,7 +278,7 @@ export default {
       handleCurrentChange,
       handleCommand,
       confirmHandle,
-      answerHandleMore
+      answerHandleMore, router
     };
   },
 };
@@ -279,17 +291,20 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+
 .pagination {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .answer-chat img {
   display: block;
   width: 25px;
   height: 25px;
   border-radius: 50%;
 }
+
 .answer-user img {
   display: block;
   margin-left: 10px;
@@ -297,6 +312,7 @@ export default {
   height: 35px;
   border-radius: 50%;
 }
+
 .answer-author {
   /* margin-left: 5px; */
   font-size: 14px;
@@ -304,6 +320,7 @@ export default {
   font-weight: 500;
   color: #303133;
 }
+
 .el-dropdown-link {
   cursor: pointer;
   display: flex;
@@ -312,8 +329,9 @@ export default {
   font-weight: 700;
   font-family: "宋体";
 }
+
 .confirm {
-  color:white;
+  color: white;
   float: right;
   margin-top: 20px;
 }

@@ -285,6 +285,7 @@ export default {
           deleteCategorys(id).then(res => {
             ElMessage.success("删除成功");
             getNodeList()
+            router.push({ name: 'subbooks', params: { wRefresh: true } })
           })
         })
         .catch(() => {

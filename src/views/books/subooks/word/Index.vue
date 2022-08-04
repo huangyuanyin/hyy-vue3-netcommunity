@@ -254,7 +254,6 @@ export default {
         .then(() => {
           deleteForum(route.params.wid).then(res => {
             ElMessage.success("删除成功");
-            // router.go(-1)
             router.push({ name: 'subbooks', params: { wRefresh: true } })
           })
         })
