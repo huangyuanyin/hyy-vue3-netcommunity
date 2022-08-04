@@ -202,6 +202,13 @@ export default {
 
     // 发布文章
     const saveHandle = () => {
+      if (state.value == '') {
+        ElMessage({
+          message: "内容不能为空",
+          type: "warning",
+        });
+        return
+      }
       if (route.params.tid) {
         updateApi()
       } else {

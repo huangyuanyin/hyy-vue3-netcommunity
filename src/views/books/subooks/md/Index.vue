@@ -21,7 +21,7 @@
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" show-word-limit maxlength="200" placeholder="请输入标题" type="text"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="body">
           <markdown-com :data="md" @input="getMd"></markdown-com>
         </el-form-item>
         <!-- <el-form-item>
@@ -100,7 +100,8 @@ export default {
     // 表单校验
     const formRules = reactive({
       category: [{ required: true, message: '请选择所属分类', trigger: 'change' }],
-      title: [{ required: true, message: '请输入标题', trigger: 'blur' }]
+      title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+      body: [{ required: true, message: '内容不能为空', trigger: 'blur' }]
     })
 
     // 获取节点数据
