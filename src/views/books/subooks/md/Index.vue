@@ -9,7 +9,7 @@
         </el-button>
       </template>
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
-        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
+        <el-form-item label="分类" prop="category" v-if="isRight === 'right' || categoryId === ''">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
               :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
@@ -58,7 +58,6 @@ import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from "@/api/tag.js"
 import { upload } from '@/api/common.js'
-import { objectExpression } from '@babel/types';
 import { judgeNodeType } from '@/utils/methods.js'
 export default {
   name: 'editor',
@@ -71,6 +70,8 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const store = useStore()
+    // 是否显示分类
+    const isRight = ref("")
     // 最小高度
     const minHeight = computed(() => {
       return window.innerHeight - 55 + "px";
@@ -138,17 +139,24 @@ export default {
         getForumData()
       }
     })
+
     watch(() => route.query, () => {
       if (route.query && route.query.category) {
         categoryId.value = route.query.category
       } else {
         categoryId.value = ''
       }
-    },
-    )
+      // 监控 是否显示分类
+      if (route.query && route.query.isRight) {
+        isRight.value = route.query.isRight
+      } else {
+        isRight.value = ''
+      }
+    })
 
     onMounted(() => {
       categoryId.value = route.query.category || ''
+      isRight.value = route.query.isRight || ''
       form.category = categoryId.value
       md.value = ''
       console.log("route.params.mid", route.params.mid)
@@ -164,6 +172,7 @@ export default {
       }
     }
 
+    // 选择分类ID
     const handleChange = (id) => {
       var len = id.length
       form.category = id[len - 1]
@@ -221,7 +230,6 @@ export default {
     // 文章编辑
     const updateApi = () => {
       form.author = sessionStorage.getItem('username')
-      form.category = categoryId.value
       console.log("编辑...", form);
       formRef.value.validate((valid) => {
         if (!valid) return
@@ -318,7 +326,7 @@ export default {
       handleClose,
       saveHandle,
       categoryId,
-      save, reload, getSaveApi
+      save, reload, getSaveApi, isRight
     }
   },
 }

@@ -275,7 +275,7 @@ export default {
         router.push({ name: 'tiny', params: { tid: id }, query: { tid: id, type: "edit", isRight: "right" } })
       }
       if (type == 'w') {
-        router.push({ name: 'md', query: { mid: id } })
+        router.push({ name: 'md', params: { mid: id }, query: { type: "edit", isRight: "right" } })
       }
       if (type == 'e') {
         router.push({ name: 'excel', query: { eid: id } })
