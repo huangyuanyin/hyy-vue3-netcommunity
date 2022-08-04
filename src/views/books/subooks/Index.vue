@@ -243,10 +243,7 @@ export default {
     // 指令事件
     const handleCommand = (value) => {
       if (value == 'excel') {
-        router.push({ name: 'excel', query: { type: "right" } })
-        // router.push({name: 'excel'} );
-        // parent_id.value = space.value.id  
-        // dialogNode.value = true
+        router.push({ name: 'excel', query: { isRight: "right" } })
       }
       if (value == 'article') {
         router.push({ name: 'tiny', query: { type: "right" } })
@@ -278,7 +275,7 @@ export default {
         router.push({ name: 'md', params: { mid: id }, query: { type: "edit", isRight: "right" } })
       }
       if (type == 'e') {
-        router.push({ name: 'excel', query: { eid: id } })
+        router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
       }
     }
 

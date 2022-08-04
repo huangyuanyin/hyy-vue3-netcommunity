@@ -56,6 +56,12 @@ watch(
     } else {
       categoryId.value = ''
     }
+    // 监控 是否显示分类
+    if (route.query && route.query.isRight) {
+      isRight.value = route.query.isRight
+    } else {
+      isRight.value = ''
+    }
   },
 )
 // 工作空间标题名
@@ -69,7 +75,8 @@ const editCategory = ref('')
 const treeData = ref([])
 // 标签列表
 const taglist = ref([])
-const isRight = ref('')
+// 是否显示分类
+const isRight = ref("")
 // 表单
 const form = reactive({
   category: '',
@@ -141,10 +148,9 @@ const downloadExcel = () => {
   exportExcel(luckysheet.getAllSheets(), luckysheet.toJson().title)
 }
 
-// !!! create luckysheet after mounted
 onMounted(() => {
+  isRight.value = route.query.isRight || ''
   if (route.query.eid) {
-    // console.log(route.query.eid)
     loadExcelForServer()
   } else {
     form.category = node.value.id
@@ -152,9 +158,6 @@ onMounted(() => {
       container: 'luckysheet',
       lang: "zh", //中文
     })
-  }
-  if (route.query && route.query.type) {
-    isRight.value = route.query.type
   }
 })
 
@@ -229,7 +232,7 @@ const addApi = () => {
   }
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
-  if (route.query.type == "right") {
+  if (route.query.isRight == "right") {
     getSaveApi(form)
   } else {
     save()
