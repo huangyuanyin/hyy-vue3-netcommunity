@@ -227,9 +227,7 @@ const updateApi = () => {
 // 新增
 const addApi = () => {
   var excelData = luckysheet.getAllSheets();
-  if (route.query && route.query.category) {
-    form.category = categoryId.value
-  }
+  form.category = categoryId.value = route.query.category || ''
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
   if (route.query.isRight == "right") {
