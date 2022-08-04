@@ -153,7 +153,7 @@ export default {
     })
 
     onMounted(() => {
-      categoryId.value = route.query.category || ''
+      form.category = categoryId.value = route.query.category || ''
       isRight.value = route.query.isRight || ''
       getNodeList()
       if (route.params.tid) {

@@ -156,11 +156,9 @@ export default {
     })
 
     onMounted(() => {
-      categoryId.value = route.query.category || ''
+      form.category = categoryId.value = route.query.category || ''
       isRight.value = route.query.isRight || ''
-      form.category = categoryId.value
       md.value = ''
-      console.log("route.params.mid", route.params.mid)
       if (route.params.mid) {
         getForumData()
       }
