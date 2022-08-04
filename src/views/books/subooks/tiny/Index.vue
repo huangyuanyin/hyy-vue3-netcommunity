@@ -1,11 +1,3 @@
-<!--
-  * @Description: 发帖子
-  * @Author: maxf
-  * @Date: 2021-12-12 22:49:29
-  * @LastEditors: maxf
-  * @LastEditTime: 2022-03-25 18:54:07
-  * @FilePath: \vue3-netforum\src\forum\components\ForumPost.vue
--->
 <template>
   <div>
     <el-card :style="{ 'min-height': minHeight }">
@@ -17,7 +9,7 @@
         </el-button>
       </template>
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
-        <el-form-item label="分类" prop="category" v-if="categoryId === ''">
+        <el-form-item label="分类" prop="category" v-if="isRight === 'right' || categoryId === ''">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
               :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
@@ -92,6 +84,8 @@ export default {
     const state = reactive({
       value: ''
     })
+    // 是否显示分类
+    const isRight = ref("")
 
     const formRef = ref(null);
     // 表单
@@ -142,15 +136,25 @@ export default {
         getForumData()
       }
     })
+
     watch(() => route.query, () => {
+      // 监控 分组ID
       if (route.query && route.query.category) {
-        categoryId.value = route.query.category
+        form.category = categoryId.value = route.query.category
       } else {
         categoryId.value = ''
       }
+      // 监控 是否显示分类
+      if (route.query && route.query.isRight) {
+        isRight.value = route.query.isRight
+      } else {
+        isRight.value = ''
+      }
     })
+
     onMounted(() => {
       categoryId.value = route.query.category || ''
+      isRight.value = route.query.isRight || ''
       getNodeList()
       if (route.params.tid) {
         getForumData()
@@ -207,9 +211,6 @@ export default {
 
     // 新增文章
     const addApi = () => {
-      if (route.query && route.query.category) {
-        form.category = categoryId.value
-      }
       form.body = state.value
       form.author = sessionStorage.getItem('username')
       formRef.value.validate((valid) => {
@@ -224,9 +225,6 @@ export default {
 
     // 文章编辑
     const updateApi = () => {
-      if (route.query && route.query.category) {
-        form.category = categoryId.value
-      }
       form.body = state.value
       form.author = sessionStorage.getItem('username')
       formRef.value.validate((valid) => {
@@ -338,7 +336,8 @@ export default {
       categoryId,
       save,
       reload,
-      getSaveApi
+      getSaveApi,
+      isRight
     }
   },
 }
