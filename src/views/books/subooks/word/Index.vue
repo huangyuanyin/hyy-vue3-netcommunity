@@ -1,11 +1,3 @@
-<!--
-  * @Description: 帖子详情
-  * @Author: maxf
-  * @Date: 2021-12-12 22:49:29
-  * @LastEditors: maxf
-  * @LastEditTime: 2022-03-25 18:54:07
-  * @FilePath: \vue3-netforum\src\forum\components\Detail.vue
--->
 <template>
   <div>
     <el-card :style="{ 'min-height': minHeight }">
@@ -137,8 +129,8 @@
 </template>
 
 <script>
-import { getForumInfo, deleteForum } from '@/api/forum.js'
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, inject } from "vue";
+import { getForumInfo, deleteForum, deleteTopics } from '@/api/forum.js'
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import markdown from '@/components/markdown/preview.vue'
@@ -153,6 +145,7 @@ export default {
   setup() {
     const router = useRouter();
     const route = useRoute();
+    const reload = inject('reload')
     // 是否刷新回复列表
     const isRefresh = ref(0)
     // 数据
@@ -252,9 +245,15 @@ export default {
         draggable: true,
       })
         .then(() => {
-          deleteForum(route.params.wid).then(res => {
+          // 删除帖子
+          // deleteForum(route.params.wid).then(res => {
+          //   ElMessage.success("删除成功");
+          //   router.push({ name: 'subbooks', params: { wRefresh: true } })
+          // })
+          // 删除分类
+          deleteTopics(fourumdata.value.category).then(res => {
             ElMessage.success("删除成功");
-            router.push({ name: 'subbooks', params: { wRefresh: true } })
+            router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
           })
         })
         .catch(() => {
@@ -276,7 +275,8 @@ export default {
       getAnswerPostMsg,
       likeHandle,
       collectHandle,
-      handleCommandMore
+      handleCommandMore,
+      reload
     };
   },
 };

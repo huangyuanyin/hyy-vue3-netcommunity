@@ -110,14 +110,15 @@
 </template>
 
 <script>
-import { ref, computed, reactive, nextTick } from 'vue'
+import { ref, computed, reactive, nextTick, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getCategorysInfo, addCategorys, updateCategorys, deleteCategorys } from '@/api/category.js'
 export default {
   setup() {
     const store = useStore()
+    const route = useRoute()
     const router = useRouter()
     const spacename = computed(() => sessionStorage.getItem('spacename'));
     const spaceid = computed(() => sessionStorage.getItem('spaceid'));
@@ -154,7 +155,22 @@ export default {
       })
     }
 
-    getNodeList()
+    onMounted(() => {
+      judgeGetNodeList()
+    })
+
+    watch(() => route.params, () => {
+      judgeGetNodeList()
+    })
+
+    // 根据参数判断是否调用获取节点数据API
+    const judgeGetNodeList = () => {
+      if (route.params && route.params.notGetNodeList) {
+        return
+      } else {
+        getNodeList()
+      }
+    }
 
     // 指令事件
     const handleCommand = (value) => {
@@ -347,7 +363,9 @@ export default {
       handleNewInstruction,
       handleEdit,
       showIcon,
-      leftButton
+      leftButton,
+      route,
+      judgeGetNodeList
     }
   },
 }

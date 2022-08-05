@@ -21,7 +21,6 @@ export default {
       nextTick(() => {
         isRouterAlive.value = true
       })
-      console.log("刷新...", isRouterAlive.value);
     }
     const setServerConfig = () => {
       axios.get('./../netforum/static/config.json').then((res) => {
