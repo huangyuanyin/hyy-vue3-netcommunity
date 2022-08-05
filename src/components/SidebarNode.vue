@@ -152,6 +152,7 @@ export default {
     const getNodeList = () => {
       getCategorysInfo(spaceid.value).then((res) => {
         treeData.value = res.data
+        console.log("获取节点数据...", treeData.value);
       })
     }
 
@@ -159,7 +160,7 @@ export default {
       judgeGetNodeList()
     })
 
-    watch(() => route.params, () => {
+    watch(() => route.params.notGetNodeList, () => {
       judgeGetNodeList()
     })
 
@@ -318,7 +319,7 @@ export default {
         'label': node.label,
         'id': node.id
       }
-      console.log(nodedata)
+      console.log("点击节点....",node)
       store.commit("books/SET_NODE_DATA", node);
       sessionStorage.setItem('node', nodedata)
       // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
