@@ -16,7 +16,7 @@ const service = axios.create({
   // baseURL: 'http://172.16.71.179:8013',
   // baseURL: axios.defaults.baseURL,
   baseURL: "http://10.20.86.27:8013",
-  // baseURL: 'http://10.20.84.55:8013', // url = base url + request url
+  // baseURL: 'http://10.20.84.55:8013', // url = base url + request url 打包线上
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000, // request timeout
 });
