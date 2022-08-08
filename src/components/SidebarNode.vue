@@ -212,7 +212,8 @@ export default {
         router.push({
           path: '/tiny',
           query: {
-            category: tmp[1]
+            category: tmp[1],
+            isAdd: "add"
           }
         })
       }
@@ -220,7 +221,8 @@ export default {
         router.push({
           path: '/excel',
           query: {
-            category: tmp[1]
+            category: tmp[1],
+            isAdd: "add"
           }
         })
       }
@@ -228,7 +230,8 @@ export default {
         router.push({
           path: '/md',
           query: {
-            category: tmp[1]
+            category: tmp[1],
+            isAdd: "add"
           }
         })
       }

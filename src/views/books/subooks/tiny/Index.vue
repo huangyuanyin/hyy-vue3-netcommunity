@@ -150,6 +150,13 @@ export default {
       } else {
         isRight.value = ''
       }
+      if (route.query && route.query.isAdd) {
+        formRef.value.resetFields()
+        state.value = ''
+        form.body = ''
+        form.title = ''
+        form.tags = []
+      }
     })
 
     onMounted(() => {

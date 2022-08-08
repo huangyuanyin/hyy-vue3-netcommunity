@@ -142,7 +142,7 @@ export default {
     })
 
     watch(() => route.query, () => {
-      if (route.query && route.query.category) {
+      if (route.query && form.category) {
         categoryId.value = route.query.category
       } else {
         categoryId.value = ''
@@ -152,6 +152,12 @@ export default {
         isRight.value = route.query.isRight
       } else {
         isRight.value = ''
+      }
+      if (route.query && route.query.isAdd) {
+        md.value = ''
+        form.body = ''
+        formRef.value.resetFields()
+        form.category = route.query.category
       }
     })
 

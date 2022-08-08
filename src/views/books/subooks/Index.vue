@@ -243,13 +243,13 @@ export default {
     // 指令事件
     const handleCommand = (value) => {
       if (value == 'excel') {
-        router.push({ name: 'excel', query: { isRight: "right" } })
+        router.push({ name: 'excel', query: { isRight: "right", isAdd: "add" } })
       }
       if (value == 'article') {
-        router.push({ name: 'tiny', query: { type: "right" } })
+        router.push({ name: 'tiny', query: { type: "right", isAdd: "add" } })
       }
       if (value == 'word') {
-        router.push({ name: 'md', query: { type: "right" } })
+        router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
       }
       if (value == 'mindmap') {
         router.push({ name: 'mindmap', query: { type: "right" } })
