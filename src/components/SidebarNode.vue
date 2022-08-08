@@ -61,7 +61,7 @@
                 </template>
               </el-dropdown>
               <!-- 更多 -->
-              <el-dropdown @command="handleRoot">
+              <el-dropdown @command="handleRoot" trigger="click">
                 <span>
                   <el-icon>
                     <more-filled />
@@ -110,13 +110,15 @@
 </template>
 
 <script>
-import { ref, computed, reactive, nextTick, onMounted, watch } from 'vue'
+import { ref, computed, reactive, nextTick, onMounted, watch, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getCategorysInfo, addCategorys, updateCategorys, deleteCategorys } from '@/api/category.js'
+import { updateForum, getForumInfo } from '@/api/forum.js'
 export default {
   setup() {
+    const reload = inject('reload')
     const store = useStore()
     const route = useRoute()
     const router = useRouter()
@@ -126,9 +128,11 @@ export default {
     const dialogNode = ref(false)
     // 对话框 编辑
     const dialogEdit = ref(false)
-    // 节点数据
+    // 节点数据 - 全部
     const treeData = ref([])
     const treeRef = ref({})
+    // 节点数据 - 单个
+    const nodeData = ref({})
     // 父节点ID
     const parent_id = ref('')
     // 编辑节点
@@ -152,7 +156,6 @@ export default {
     const getNodeList = () => {
       getCategorysInfo(spaceid.value).then((res) => {
         treeData.value = res.data
-        console.log("获取节点数据...", treeData.value);
       })
     }
 
@@ -274,18 +277,52 @@ export default {
       })
     }
 
-    // 节点编辑
+    // 节点编辑 - 保存
     const handleEdit = () => {
       formRef.value.validate((valid) => {
         if (!valid) return
-        updateCategorys(edit_id.value, form.value).then((res) => {
-          ElMessage({
-            message: '编辑成功！',
-            type: 'success',
-          })
-          dialogClose()
-          getNodeList()
+        judegeGetCategory()
+      })
+    }
+
+    // 判断节点类型走 不同编辑流程
+    const judegeGetCategory = () => {
+      if (nodeData.value.type === 'l') {
+        getUpdateCategorysApi(edit_id.value, form.value)
+      } else {
+        getForumInfo(nodeData.value.articleId).then(res => {
+          if (res.code === 1000) {
+            let nodeForm = {}
+            nodeForm.type = nodeData.value.type
+            nodeForm.title = form.value.name
+            nodeForm.category = res.data.category
+            nodeForm.tags = res.data.tags
+            nodeForm.body = res.data.body
+            updateForum(nodeData.value.articleId, nodeForm).then(res => {
+              if (res.code === 1000) {
+                dialogClose()
+                const title = { name: nodeForm.title }
+                getUpdateCategorysApi(edit_id.value, title)
+                getNodeList()
+
+              }
+              reload()
+            })
+          }
+
         })
+      }
+    }
+
+    // 调用 更新节点API
+    const getUpdateCategorysApi = (id, name) => {
+      updateCategorys(id, name).then((res) => {
+        ElMessage({
+          message: '编辑成功！',
+          type: 'success',
+        })
+        dialogClose()
+        getNodeList()
       })
     }
 
@@ -319,26 +356,22 @@ export default {
         'label': node.label,
         'id': node.id
       }
-      console.log("点击节点....",node)
+      nodeData.value = node
       store.commit("books/SET_NODE_DATA", node);
       sessionStorage.setItem('node', nodedata)
       // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
       switch (node.type) {
         case "l":
-          console.log("l")
           router.push({ path: '/subbooks' });
           break;
         case 'w':
           router.push({ name: 'detail', params: { wid: node.articleId } })
-          console.log("w", node.articleId)
           break;
         case 'e':
           router.push({ path: '/excel', query: { eid: node.articleId } })
-          console.log("e", node.articleId)
           break;
         case 'a':
           router.push({ name: 'detail', params: { wid: node.articleId } })
-          console.log("e", node.articleId)
           break;
       }
     }
@@ -366,7 +399,11 @@ export default {
       showIcon,
       leftButton,
       route,
-      judgeGetNodeList
+      judgeGetNodeList,
+      nodeData,
+      judegeGetCategory,
+      getUpdateCategorysApi,
+      reload
     }
   },
 }
