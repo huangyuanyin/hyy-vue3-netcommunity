@@ -62,6 +62,12 @@ watch(
     } else {
       isRight.value = ''
     }
+    if (route.query && route.query.isAdd) {
+      luckysheet.create({
+        container: 'luckysheet',
+        lang: "zh", //中文
+      })
+    }
   },
 )
 // 工作空间标题名
