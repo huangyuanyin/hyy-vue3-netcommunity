@@ -245,16 +245,19 @@ export default {
         draggable: true,
       })
         .then(() => {
-          // 删除帖子
-          // deleteForum(route.params.wid).then(res => {
-          //   ElMessage.success("删除成功");
-          //   router.push({ name: 'subbooks', params: { wRefresh: true } })
-          // })
-          // 删除分类
-          deleteTopics(fourumdata.value.category).then(res => {
-            ElMessage.success("删除成功");
-            router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
-          })
+          if (route.query && route.query.isRight) {
+            // 删除帖子
+            deleteForum(route.params.wid).then(res => {
+              ElMessage.success("删除成功");
+              router.push({ name: 'subbooks', params: { wRefresh: true } })
+            })
+          } else {
+            // 删除分类
+            deleteTopics(fourumdata.value.category).then(res => {
+              ElMessage.success("删除成功");
+              router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
+            })
+          }
         })
         .catch(() => {
           ElMessage({
