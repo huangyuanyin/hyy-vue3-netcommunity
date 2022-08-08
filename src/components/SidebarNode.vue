@@ -179,6 +179,7 @@ export default {
     // 指令事件
     const handleCommand = (value) => {
       if (value == 'root') {
+        form.value.name = ''
         parent_id.value = spaceid.value
         dialogNode.value = true
       }
@@ -205,6 +206,7 @@ export default {
     const handleNewInstruction = (value) => {
       let tmp = value.split(',')
       if (tmp[0] === 'add') {
+        form.value.name = ''
         parent_id.value = tmp[1]
         dialogNode.value = true
       }
