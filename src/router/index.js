@@ -82,6 +82,13 @@ const routes = [
           },
           component: () => import(/* webpackChunkName: "monitor" */ "../views/books/subooks/word/Index.vue")
         }, {
+          path: '/mindmap',
+          name: 'mindmap',
+          meta: {
+            title: '思维导图'
+          },
+          component: () => import(/* webpackChunkName: "monitor" */ "../views/books/subooks/mindmap/Index.vue")
+        }, {
           path: '/search',
           name: 'search',
           meta: {

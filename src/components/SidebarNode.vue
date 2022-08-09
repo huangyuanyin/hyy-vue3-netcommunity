@@ -53,7 +53,7 @@
                     <el-dropdown-item :command="'article' + ',' + data.id">新建文章(富文本)</el-dropdown-item>
                     <el-dropdown-item :command="'excel' + ',' + data.id">新建Excel</el-dropdown-item>
                     <el-dropdown-item :command="'word' + ',' + data.id">新建文档(markdown)</el-dropdown-item>
-                    <el-dropdown-item :command="'mindmap' + ',' + data.id" disabled>新建思维导图</el-dropdown-item>
+                    <el-dropdown-item :command="'mindmap' + ',' + data.id">新建思维导图</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>
                     <el-dropdown-item :command="'ppt' + ',' + data.id" disabled>新建PPT</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建白板</el-dropdown-item>
@@ -241,7 +241,8 @@ export default {
         router.push({
           path: '/mindmap',
           query: {
-            category: tmp[1]
+            category: tmp[1],
+            isAdd: "add"
           }
         })
       }

@@ -20,7 +20,7 @@
                 <el-dropdown-item command="article">新建文章(富文本)</el-dropdown-item>
                 <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
                 <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item>
-                <el-dropdown-item command="mindmap" disabled>新建思维导图</el-dropdown-item>
+                <el-dropdown-item command="mindmap">新建思维导图</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
                 <el-dropdown-item command="ppt" disabled>新建PPT</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item>
@@ -252,7 +252,7 @@ export default {
         router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
       }
       if (value == 'mindmap') {
-        router.push({ name: 'mindmap', query: { type: "right" } })
+        router.push({ name: 'mindmap', query: { type: "right", isAdd: "add" } })
       }
     }
 
