@@ -7,8 +7,6 @@
 </template>
 
 <script>
-import kity from "kity";
-import kityminder from "kityminder-core";
 
 export default {
   data() {

@@ -1,11 +1,3 @@
-/*
- * @Description: 
- * @Author: maxf
- * @Date: 2022-03-05 22:49:29
- * @LastEditors: maxf
- * @LastEditTime: 2022-03-25 18:54:07
- * @FilePath: \vue3-netforum\src\main.js
- */
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -13,6 +5,9 @@ import store from './store'
 import installElementPlus from './plugins/element'
 import elementIcon from "./plugins/svgicon"
 import './assets/css/icon.css'
+
+import kity from "kity";
+import kityminder from "kityminder-core";
 
 // import VMdPreview from '@kangc/v-md-editor/lib/preview';
 // import '@kangc/v-md-editor/lib/style/preview.css';
@@ -30,6 +25,8 @@ const app = createApp(App)
 
 app.use(installElementPlus)
     .use(elementIcon)
+    .use(kity)
+    .use(kityminder)
     .use(store)
     .use(router)
     .mount('#app')
