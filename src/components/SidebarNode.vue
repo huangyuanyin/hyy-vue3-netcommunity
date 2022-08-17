@@ -38,7 +38,15 @@
         @current-change="handleNodeClick" node-key="id" :props="defaultProps">
         <template #default="{ node, data }">
           <span class="custom-tree-node">
-            <span :title="node.label">{{ node.label }}</span>
+            <div class="content">
+              <el-icon class="is-Folder" v-if="data.type === 'l'">
+                <Folder />
+              </el-icon>
+              <el-icon class="is-Folder" v-else>
+                <Document />
+              </el-icon>
+              <span :title="node.label">{{ node.label }}</span>
+            </div>
             <div>
               <!-- +号 -->
               <el-dropdown @command="handleNewInstruction" trigger="hover" @visible-change="showIcon">
@@ -448,6 +456,16 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 18px;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.is-Folder {
+  margin-right: 5px;
 }
 
 .sidebar::-webkit-scrollbar {
