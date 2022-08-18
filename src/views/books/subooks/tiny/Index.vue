@@ -5,7 +5,8 @@
         <el-button @click="goBack">
           <el-icon>
             <Back />
-          </el-icon>返回
+          </el-icon>
+          返回
         </el-button>
       </template>
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
