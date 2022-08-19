@@ -228,6 +228,7 @@ const updateApi = () => {
   form.author = sessionStorage.getItem('username')
   if (route.query && route.query.isRight == 'right') {
     getUpdateForumApi(route.query.eid, form)
+    router.push({ name: 'excel', query: { eid: route.query.eid } })
   } else {
     updateForum(route.query.eid, form).then(res => {
       if (res.code === 1000) {
@@ -235,6 +236,7 @@ const updateApi = () => {
       }
       handleClose()
       reload()
+      router.push({ name: 'excel', query: { eid: route.query.eid } })
     })
   }
 }
@@ -247,6 +249,7 @@ const addApi = () => {
   form.author = sessionStorage.getItem('username')
   if (route.query.isRight == "right") {
     getSaveApi(form)
+    router.push({ name: 'excel', query: { eid: route.query.eid } })
   } else {
     save()
   }
@@ -304,6 +307,7 @@ const save = () => {
         });
         handleClose()
         reload()
+        router.push({ name: 'excel', query: { eid: route.query.eid } })
       })
     }
   })

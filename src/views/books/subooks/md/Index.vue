@@ -144,12 +144,13 @@ export default {
     watch(() => route.query, () => {
       if (route.query && form.category) {
         categoryId.value = route.query.category
+        isRight.value = ''
       } else {
         categoryId.value = ''
       }
       // 监控 是否显示分类
-      if (route.query && route.query.isRight) {
-        isRight.value = route.query.isRight
+      if (route.query && route.query.type) {
+        isRight.value = route.query.type
       } else {
         isRight.value = ''
       }
@@ -247,6 +248,7 @@ export default {
             }
             handleClose()
             reload()
+            toDetail(route.params.mid)
           })
         }
       })
@@ -260,6 +262,7 @@ export default {
           type: "success",
         });
         handleClose()
+        toDetail(route.params.mid)
       })
     }
 
@@ -281,7 +284,10 @@ export default {
           message: "新增成功",
           type: "success",
         });
-        handleClose()
+        if (res.code === 1000) {
+          handleClose()
+          toDetail(res.data)
+        }
       })
     }
 
@@ -302,11 +308,18 @@ export default {
               message: "新增成功",
               type: "success",
             });
-            handleClose()
-            reload()
+            if (res.code === 1000) {
+              handleClose()
+              reload()
+              toDetail(res.data)
+            }
           })
         }
       })
+    }
+    // 跳转到详情页
+    const toDetail = (wid) => {
+      router.replace({ name: 'detail', params: { wid: wid } })
     }
     // 返回
     const goBack = () => {
@@ -330,7 +343,7 @@ export default {
       handleClose,
       saveHandle,
       categoryId,
-      save, reload, getSaveApi, isRight
+      save, reload, getSaveApi, isRight, toDetail
     }
   },
 }
