@@ -253,6 +253,7 @@ export default {
             }
             handleClose()
             reload()
+            toDetail(route.params.tid)
           })
         }
       })
@@ -266,6 +267,7 @@ export default {
           type: "success",
         });
         handleClose()
+        toDetail(route.params.tid)
       })
     }
 
@@ -293,12 +295,15 @@ export default {
           form.category = res.data
           // 新增文章
           addForum(form).then(res => {
-            ElMessage({
-              message: "新增成功",
-              type: "success",
-            });
-            handleClose()
-            reload()
+            if (res.code === 1000) {
+              ElMessage({
+                message: "新增成功",
+                type: "success",
+              });
+              handleClose()
+              reload()
+              toDetail(res.data)
+            }
           })
         }
       })
@@ -314,7 +319,10 @@ export default {
         })
       })
     }
-
+    // 跳转到详情页
+    const toDetail = (wid) => {
+      router.replace({ name: 'detail', params: { wid: wid } })
+    }
     // 预览
     const previewHandle = () => {
       form.body = state.value
@@ -352,7 +360,7 @@ export default {
       save,
       reload,
       getSaveApi,
-      isRight
+      isRight, toDetail
     }
   },
 }
