@@ -62,10 +62,15 @@ watch(
     } else {
       isRight.value = ''
     }
-    if (route.query && route.query.isAdd) {
+    if (route.query && route.query.eid) {
+      loadExcelForServer()
+    } else {
+      form.category = node.value.id
       luckysheet.create({
         container: 'luckysheet',
         lang: "zh", //中文
+        showinfobar: true, //是否显示工具栏
+        showsheetbar: true, //是否显示底部sheet按钮
       })
     }
   },
@@ -167,21 +172,6 @@ onMounted(() => {
   }
 })
 
-watch(() => route.query.eid, () => {
-  if (route.query.eid) {
-    loadExcelForServer()
-  }
-})
-watch(() => route.query.isAdd, () => {
-  if (route.query.isAdd) {
-    form.category = node.value.id
-    luckysheet.create({
-      container: 'luckysheet',
-      lang: "zh", //中文
-    })
-  }
-})
-
 const loadExcelForServer = () => {
   getForumInfo(route.query.eid).then(res => {
     form.category = res.data.category
@@ -244,7 +234,9 @@ const updateApi = () => {
 // 新增
 const addApi = () => {
   var excelData = luckysheet.getAllSheets();
-  form.category = categoryId.value = route.query.category || ''
+  if (route.query && route.query.category) {
+    form.category = categoryId.value = route.query.category || ''
+  }
   form.body = JSON.stringify(excelData);
   form.author = sessionStorage.getItem('username')
   if (route.query.isRight == "right") {
