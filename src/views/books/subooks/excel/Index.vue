@@ -172,6 +172,15 @@ watch(() => route.query.eid, () => {
     loadExcelForServer()
   }
 })
+watch(() => route.query.isAdd, () => {
+  if (route.query.isAdd) {
+    form.category = node.value.id
+    luckysheet.create({
+      container: 'luckysheet',
+      lang: "zh", //中文
+    })
+  }
+})
 
 const loadExcelForServer = () => {
   getForumInfo(route.query.eid).then(res => {
@@ -182,9 +191,9 @@ const loadExcelForServer = () => {
       lang: "zh", //中文
       showinfobar: true, //是否显示工具栏
       showsheetbar: true, //是否显示底部sheet按钮
-      data: JSON.parse(res.data.body),
-      title: res.data.title,
-      userInfo: res.data.author
+      data: JSON.parse(res.data.body) || '',
+      title: res.data.title || '',
+      userInfo: res.data.author || ''
     })
   })
 }
