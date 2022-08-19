@@ -228,7 +228,7 @@ const updateApi = () => {
   form.author = sessionStorage.getItem('username')
   if (route.query && route.query.isRight == 'right') {
     getUpdateForumApi(route.query.eid, form)
-    router.push({ name: 'excel', query: { eid: route.query.eid } })
+    toDetail(route.query.eid)
   } else {
     updateForum(route.query.eid, form).then(res => {
       if (res.code === 1000) {
@@ -236,7 +236,7 @@ const updateApi = () => {
       }
       handleClose()
       reload()
-      router.push({ name: 'excel', query: { eid: route.query.eid } })
+      toDetail(route.query.eid)
     })
   }
 }
@@ -249,7 +249,6 @@ const addApi = () => {
   form.author = sessionStorage.getItem('username')
   if (route.query.isRight == "right") {
     getSaveApi(form)
-    router.push({ name: 'excel', query: { eid: route.query.eid } })
   } else {
     save()
   }
@@ -273,7 +272,10 @@ const getSaveApi = (form) => {
       message: "新增成功",
       type: "success",
     });
-    handleClose()
+    if (res.code === 1000) {
+      handleClose()
+      toDetail(res.data)
+    }
   })
 }
 
@@ -305,12 +307,18 @@ const save = () => {
           message: "新增成功",
           type: "success",
         });
-        handleClose()
-        reload()
-        router.push({ name: 'excel', query: { eid: route.query.eid } })
+        if (res.code === 1000) {
+          handleClose()
+          reload()
+          toDetail(res.data)
+        }
       })
     }
   })
+}
+// 跳转到详情页
+const toDetail = (eid) => {
+  router.replace({ name: 'excel', query: { eid: eid } })
 }
 </script>
 
