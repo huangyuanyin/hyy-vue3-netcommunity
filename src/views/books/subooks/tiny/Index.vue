@@ -274,11 +274,14 @@ export default {
     // 新增文章 API
     const getSaveApi = (form) => {
       addForum(form).then(res => {
-        ElMessage({
-          message: "新增成功",
-          type: "success",
-        });
-        handleClose()
+        if (res.code === 1000) {
+          ElMessage({
+            message: "新增成功",
+            type: "success",
+          });
+          handleClose()
+          toDetail(res.data)
+        }
       })
     }
 
