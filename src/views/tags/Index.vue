@@ -129,7 +129,7 @@ export default {
       handleDelete,
       getDialog,
       handleCurrentChange,
-      router, reload
+      router
     }
   },
 }
