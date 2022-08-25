@@ -23,10 +23,13 @@ export default {
       })
     }
     const setServerConfig = () => {
-      axios.get('./../netforum/static/config.json').then((res) => {
-        // axios.get('./../static/config.json').then((res) => {
-        // console.log(res.data.BASE_URL)
-        axios.defaults.baseURL = res.data.BASE_URL;
+      // /netforum/static/ -- 线上     
+      // /static/ 本地
+      // axios.get('./../netforum/static/config.json').then((res) => {
+      axios.get('./../static/config.json').then((res) => {
+        // axios.defaults.baseURL = res.data.FORM_URL;
+        // console.log("axios.defaults.baseURL", axios.defaults.baseURL);
+        sessionStorage.setItem("COMMUNITY_URL", res.data.FORM_URL)
         sessionStorage.setItem("CONSOLE_URL", res.data.CONSOLE_URL)
       })
     }
