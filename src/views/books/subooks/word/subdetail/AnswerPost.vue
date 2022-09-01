@@ -43,7 +43,7 @@ export default {
         return
       }
       let params = {
-        id: route.params.id,
+        id: route.query.id,
         value: state.value
       }
       addAnswer(params).then(res => {

@@ -166,22 +166,22 @@ export default {
 
     // 获取帖子数据
     const getForumData = () => {
-      getForumInfo(route.params.wid).then(res => {
+      getForumInfo(route.query.wid).then(res => {
         fourumdata.value = res.data
       })
     };
 
     getForumData()
 
-    watch(() => route.params.wid, () => {
-      if (route.params.wid) {
+    watch(() => route.query.wid, () => {
+      if (route.query.wid) {
         getForumData()
       }
     })
 
     onMounted(() => {
       setTimeout(() => {
-        if (route.params.status == 'answer') {
+        if (route.query.status == 'answer') {
           document.querySelector('#answerlist').scrollIntoView({
             behavior: 'smooth',
             block: 'start'
@@ -209,12 +209,10 @@ export default {
     // 编辑按钮
     const handleEdit = () => {
       if (fourumdata.value.type == 'a') {
-        console.log("aa", route.params.wid)
-        router.push({ name: 'tiny', params: { tid: route.params.wid }, query: { category: fourumdata.value.category, type: "edit", isRight: route.query.isRight } })
+        router.push({ name: 'tiny', query: { tid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight } })
       } else {
-        console.log("fourumdata", fourumdata.value,);
-        console.log("md", route.params.wid)
-        router.push({ name: 'md', params: { mid: route.params.wid }, query: { category: fourumdata.value.category, type: "edit", isRight: route.query.isRight } })
+        console.log("md", route.query.wid)
+        router.push({ name: 'md', query: { mid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight } })
       }
     }
 
@@ -247,7 +245,7 @@ export default {
         .then(() => {
           if (route.query && route.query.isRight) {
             // 删除帖子
-            deleteForum(route.params.wid).then(res => {
+            deleteForum(route.query.wid).then(res => {
               ElMessage.success("删除成功");
               router.push({ name: 'subbooks', params: { wRefresh: true } })
             })

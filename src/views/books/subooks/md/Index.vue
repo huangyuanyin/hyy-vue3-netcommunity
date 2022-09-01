@@ -120,7 +120,7 @@ export default {
 
     // 获取帖子数据
     const getForumData = () => {
-      getForumInfo(route.params.mid).then(res => {
+      getForumInfo(route.query.mid).then(res => {
         form.title = res.data.title
         form.category = res.data.category
         form.tags = res.data.tags
@@ -135,8 +135,8 @@ export default {
 
 
     // 监控 文章编辑
-    watch(() => route.params.mid, () => {
-      if (route.params.mid) {
+    watch(() => route.query.mid, () => {
+      if (route.query.mid) {
         getForumData()
       }
     })
@@ -166,7 +166,7 @@ export default {
       form.category = categoryId.value = route.query.category || ''
       isRight.value = route.query.isRight || ''
       md.value = ''
-      if (route.params.mid) {
+      if (route.query.mid) {
         getForumData()
       }
     })
@@ -213,7 +213,7 @@ export default {
 
     // 发布事件
     const saveHandle = () => {
-      if (route.params.mid) {
+      if (route.query.mid) {
         updateApi()
       } else {
         addApi()
@@ -240,15 +240,15 @@ export default {
       formRef.value.validate((valid) => {
         if (!valid) return
         if (route.query && route.query.isRight == 'right') {
-          getUpdateForumApi(route.params.mid, form)
+          getUpdateForumApi(route.query.mid, form)
         } else {
-          updateForum(route.params.mid, form).then(res => {
+          updateForum(route.query.mid, form).then(res => {
             if (res.code === 1000) {
               getUpdateCategorysApi()
             }
             handleClose()
             reload()
-            toDetail(route.params.mid)
+            toDetail(route.query.mid)
           })
         }
       })
@@ -262,7 +262,7 @@ export default {
           type: "success",
         });
         handleClose()
-        toDetail(route.params.mid)
+        toDetail(route.query.mid)
       })
     }
 
@@ -319,7 +319,7 @@ export default {
     }
     // 跳转到详情页
     const toDetail = (wid) => {
-      router.replace({ name: 'detail', params: { wid: wid } })
+      router.replace({ name: 'detail', query: { wid: wid } })
     }
     // 返回
     const goBack = () => {

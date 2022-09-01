@@ -259,7 +259,7 @@ export default {
     // 跳转至数据展示
     const handleOpen = (type, id) => {
       if (type == 'a' || type == 'w') {
-        router.push({ name: 'detail', params: { wid: id }, query: { isRight: "right" } })
+        router.push({ name: 'detail', query: { wid: id, isRight: "right" } })
       }
       if (type == 'e') {
         router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
@@ -269,10 +269,10 @@ export default {
     // 数据编辑
     const handleEdit = (type, id) => {
       if (type == 'a') {
-        router.push({ name: 'tiny', params: { tid: id }, query: { tid: id, type: "edit", isRight: "right" } })
+        router.push({ name: 'tiny', query: { tid: id, type: "edit", isRight: "right" } })
       }
       if (type == 'w') {
-        router.push({ name: 'md', params: { mid: id }, query: { type: "edit", isRight: "right" } })
+        router.push({ name: 'md', query: { mid: id, type: "edit", isRight: "right" } })
       }
       if (type == 'e') {
         router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
@@ -281,7 +281,7 @@ export default {
 
     // 回复响应
     const answerHandle = (id) => {
-      router.push({ name: 'detail', params: { wid: id, status: 'answer' } })
+      router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
     }
 
     // 移除

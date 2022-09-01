@@ -372,13 +372,13 @@ const handleNodeClick = (node) => {
       router.push({ path: '/subbooks' });
       break;
     case 'w':
-      router.push({ name: 'detail', params: { wid: node.articleId } })
+      router.push({ name: 'detail', query: { wid: node.articleId } })
       break;
     case 'e':
       router.push({ path: '/excel', query: { eid: node.articleId } })
       break;
     case 'a':
-      router.push({ name: 'detail', params: { wid: node.articleId } })
+      router.push({ name: 'detail', query: { wid: node.articleId } })
       break;
   }
 }

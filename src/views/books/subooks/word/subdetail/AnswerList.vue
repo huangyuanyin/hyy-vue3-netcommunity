@@ -147,8 +147,8 @@ export default {
     //   }
     // })
 
-    watch(() => route.params.wid, () => {
-      if (route.params.wid) {
+    watch(() => route.query.wid, () => {
+      if (route.query.wid) {
         getAnswerList();
       }
     })
@@ -156,7 +156,7 @@ export default {
     // 获取回复列表
     const getAnswerList = () => {
       let params = {
-        article: route.params.wid
+        article: route.query.wid
       }
       getComments(params).then(res => {
         answers.value = res.data
@@ -214,7 +214,7 @@ export default {
         return
       }
       let params = {
-        article: route.params.wid,
+        article: route.query.wid,
         body: state.value,
         author: sessionStorage.getItem('username')
       }

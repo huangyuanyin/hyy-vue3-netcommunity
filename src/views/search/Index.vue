@@ -209,7 +209,7 @@ export default {
     // 跳转至数据展示
     const handleOpen = (type, id) => {
       if (type == 'a' || type == 'w') {
-        router.push({name: 'detail', params: {wid: id}})
+        router.push({name: 'detail', query: {wid: id}})
       }
       if (type == 'e') {
         router.push({name: 'excel', query: {eid: id}})
@@ -231,7 +231,7 @@ export default {
 
     // 回复响应
     const answerHandle = (id) => {
-      router.push({name: 'detail', params: {wid: id, status: 'answer'}})
+      router.push({name: 'detail', query: {wid: id, status: 'answer'}})
     }
 
     return {

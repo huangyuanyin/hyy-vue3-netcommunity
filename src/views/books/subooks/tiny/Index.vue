@@ -119,7 +119,7 @@ export default {
 
     // 获取帖子数据
     const getForumData = () => {
-      getForumInfo(route.params.tid).then(res => {
+      getForumInfo(route.query.tid).then(res => {
         form.title = res.data.title
         form.category = res.data.category
         form.tags = res.data.tags
@@ -132,8 +132,8 @@ export default {
     form.category = node.value.id
 
     // 监控 文章编辑
-    watch(() => route.params.tid, () => {
-      if (route.params.tid) {
+    watch(() => route.query.tid, () => {
+      if (route.query.tid) {
         getForumData()
       }
     })
@@ -164,7 +164,7 @@ export default {
       form.category = categoryId.value = route.query.category || ''
       isRight.value = route.query.isRight || ''
       getNodeList()
-      if (route.params.tid) {
+      if (route.query.tid) {
         getForumData()
       }
     })
@@ -217,7 +217,7 @@ export default {
         });
         return
       }
-      if (route.params.tid) {
+      if (route.query.tid) {
         updateApi()
       } else {
         addApi()
@@ -245,15 +245,15 @@ export default {
       formRef.value.validate((valid) => {
         if (!valid) return
         if (route.query && route.query.isRight == 'right') {
-          getUpdateForumApi(route.params.tid, form)
+          getUpdateForumApi(route.query.tid, form)
         } else {
-          updateForum(route.params.tid, form).then(res => {
+          updateForum(route.query.tid, form).then(res => {
             if (res.code === 1000) {
               getUpdateCategorysApi()
             }
             handleClose()
             reload()
-            toDetail(route.params.tid)
+            toDetail(route.query.tid)
           })
         }
       })
@@ -267,7 +267,7 @@ export default {
           type: "success",
         });
         handleClose()
-        toDetail(route.params.tid)
+        toDetail(route.query.tid)
       })
     }
 
@@ -324,7 +324,7 @@ export default {
     }
     // 跳转到详情页
     const toDetail = (wid) => {
-      router.replace({ name: 'detail', params: { wid: wid } })
+      router.replace({ name: 'detail', query: { wid: wid } })
     }
     // 预览
     const previewHandle = () => {

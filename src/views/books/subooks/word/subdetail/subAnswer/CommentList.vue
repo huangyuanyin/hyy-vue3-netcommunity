@@ -91,7 +91,7 @@ export default {
     // 获取评论数据列表
     const getCommentList = () => {
       let params = {
-        article: route.params.wid,
+        article: route.query.wid,
         parent: props.id
       }
       getComments(params).then(res => {
@@ -114,7 +114,7 @@ export default {
         return
       }
       let params = {
-        article: route.params.wid,
+        article: route.query.wid,
         parent_comment: props.id,
         body: content.value,
         author: sessionStorage.getItem('username')
