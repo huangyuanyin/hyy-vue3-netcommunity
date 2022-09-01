@@ -2,7 +2,7 @@
   <div class="sidebar">
     <el-row style="margin-top: 10px">
       <el-col :span="18" :offset="1">
-        <span class="title">{{ spacename }}</span>
+        <span class="title">{{  spacename  }}</span>
       </el-col>
       <el-col :span="3">
         <el-dropdown trigger="click" @command="handleCommand">
@@ -39,9 +39,9 @@
               <el-icon class="is-Folder" v-else>
                 <Document />
               </el-icon>
-              <span :title="node.label">{{ node.label }}</span>
+              <span class="labelStyle" :title="node.label">{{  node.label  }}</span>
             </div>
-            <div>
+            <div class="buttonStyle">
               <!-- +号 -->
               <el-dropdown @command="handleNewInstruction" trigger="hover" @visible-change="showIcon">
                 <span class="left-button" ref="leftButton">
@@ -454,10 +454,22 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   padding-right: 18px;
 }
 
+.custom-tree-node:hover .labelStyle {
+  max-width: 146px;
+}
+
 .content {
   display: flex;
   align-items: center;
   overflow: hidden;
+}
+
+.labelStyle {
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
 }
 
 .is-Folder {
