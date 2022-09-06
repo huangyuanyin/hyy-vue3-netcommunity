@@ -161,6 +161,7 @@ export default {
       if (route.query && route.query.type == 'right') {
         getTagList()
         getNodeList()
+        form.category = " "
       }
     })
 
