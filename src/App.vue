@@ -1,11 +1,3 @@
-<!--
-  * @Description: 
-  * @Author: maxf
-  * @Date: 2022-03-05 22:49:29
-  * @LastEditors: maxf
-  * @LastEditTime: 2022-03-25 18:54:07
-  * @FilePath: \vue3-netforum\src\App.vue
--->
 <template>
   <router-view v-if="isRouterAlive" />
 </template>
@@ -23,10 +15,8 @@ export default {
       })
     }
     const setServerConfig = () => {
-      // /netforum/static/ -- 线上     
-      // /static/ 本地
-      // axios.get('./../netforum/static/config.json').then((res) => {
-      axios.get('./../static/config.json').then((res) => {
+      // axios.get('./../netforum/static/config.json').then((res) => { // /netforum/static/ -- 线上   
+      axios.get('./../static/config.json').then((res) => {  // /static/ 本地
         // axios.defaults.baseURL = res.data.FORM_URL;
         // console.log("axios.defaults.baseURL", axios.defaults.baseURL);
         sessionStorage.setItem("COMMUNITY_URL", res.data.FORM_URL)

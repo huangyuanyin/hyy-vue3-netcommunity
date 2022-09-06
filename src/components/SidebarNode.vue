@@ -369,7 +369,7 @@ const handleNodeClick = (node) => {
   // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
   switch (node.type) {
     case "l":
-      router.push({ path: '/subbooks' });
+      router.push({ name: 'subbooks', params: { wRefresh: true } })
       break;
     case 'w':
       router.push({ name: 'detail', query: { wid: node.articleId } })
