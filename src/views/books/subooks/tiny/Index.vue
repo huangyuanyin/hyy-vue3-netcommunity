@@ -158,6 +158,10 @@ export default {
         form.title = ''
         form.tags = []
       }
+      if (route.query && route.query.type == 'right') {
+        getTagList()
+        getNodeList()
+      }
     })
 
     onMounted(() => {
