@@ -26,7 +26,7 @@
           <tinymce-com v-model="value" placeholder="请输入帖子详情内容(不少于10个字)"></tinymce-com>
         </div>
         <el-form-item label="word解析">
-          <input type="file" accept=".docx, .doc" @change="loadWord" />
+          <input type="file" accept=".docx" @change="loadWord" />
         </el-form-item>
         <el-form-item label="附件">
           <span>暂不支持</span>
