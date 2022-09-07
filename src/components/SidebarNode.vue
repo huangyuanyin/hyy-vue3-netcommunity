@@ -28,8 +28,9 @@
       </el-col>
     </el-row>
     <div>
-      <el-tree :data="treeData" ref="treeRef" class="filter-tree" highlight-current draggable
-        @current-change="handleNodeClick" @node-drop="handleDrop" node-key="id" :props="defaultProps">
+      <el-tree :data="treeData" ref="treeRef" class="filter-tree" highlight-current draggable accordion
+        @current-change="handleNodeClick" @node-drop="handleDrop" node-key="id" :props="defaultProps"
+        :default-expanded-keys="defaultExpandIds" :current-node-key="curTreeId">
         <template #default="{ node, data }">
           <span class="custom-tree-node">
             <div class="content">
@@ -112,7 +113,7 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, watch, inject } from 'vue'
+import { ref, computed, reactive, onMounted, watch, inject, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -125,13 +126,15 @@ const route = useRoute()
 const router = useRouter()
 const spacename = computed(() => sessionStorage.getItem('spacename'));
 const spaceid = computed(() => sessionStorage.getItem('spaceid'));
+const defaultExpandIds = ref([]) // 这里存放要默认展开的节点 id
+const curTreeId = ref("")
 // 对话框
 const dialogNode = ref(false)
 // 对话框 编辑
 const dialogEdit = ref(false)
 // 节点数据 - 全部
 const treeData = ref([])
-const treeRef = ref({})
+const treeRef = ref(null)
 // 节点数据 - 单个
 const nodeData = ref({})
 // 父节点ID
@@ -142,6 +145,7 @@ const edit_id = ref('')
 const defaultProps = {
   children: 'children',
   label: 'label',
+  value: 'id'
 }
 const leftButton = ref(null)
 const form = ref({
@@ -158,6 +162,13 @@ const getNodeList = () => {
   getCategorysInfo(spaceid.value).then((res) => {
     treeData.value = res.data
   })
+}
+
+// 树节点展开
+const handleNodeExpand = (data) => {
+  defaultExpandIds.value = []
+  // 保存当前展开的节点
+  defaultExpandIds.value.push(data)
 }
 
 onMounted(() => {
@@ -280,6 +291,7 @@ const handleAdd = () => {
       })
       dialogClose()
       getNodeList()
+      handleNodeExpand(res.data)
     })
   })
 }
@@ -330,6 +342,7 @@ const getUpdateCategorysApi = (id, name) => {
     })
     dialogClose()
     getNodeList()
+    handleNodeExpand(res.data)
   })
 }
 
