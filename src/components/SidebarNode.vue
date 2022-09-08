@@ -126,8 +126,8 @@ const route = useRoute()
 const router = useRouter()
 const spacename = computed(() => sessionStorage.getItem('spacename'));
 const spaceid = computed(() => sessionStorage.getItem('spaceid'));
-const defaultExpandIds = ref([]) // 这里存放要默认展开的节点 id
-const curTreeId = ref("")
+const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
+const curTreeId = ref(null) // 存放 高亮的节点ID
 // 对话框
 const dialogNode = ref(false)
 // 对话框 编辑
@@ -177,6 +177,13 @@ onMounted(() => {
 
 watch(() => route.params.notGetNodeList, () => {
   judgeGetNodeList()
+})
+
+// 监听整个tree数据 来调用节点高亮方法
+watch(() => treeData.value, () => {
+  nextTick(() => {
+    treeRef.value.setCurrentKey(curTreeId.value)
+  })
 })
 
 // 根据参数判断是否调用获取节点数据API
@@ -291,6 +298,7 @@ const handleAdd = () => {
       })
       dialogClose()
       getNodeList()
+      curTreeId.value = res.data
       handleNodeExpand(res.data)
     })
   })
