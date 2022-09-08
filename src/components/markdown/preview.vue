@@ -1,8 +1,8 @@
 <template>
   <div id="editor">
     <!-- box-shadow-style="0 2px 5px 0 rgba(0, 0, 0, 0.1)" -->
-    <mavon-editor class="md" v-model="handbook" :subfield="false" :defaultOpen="'preview'" style="max-height:100vh"
-      :toolbars="toolbars" :boxShadow="false" :ishljs="true" :previewBackground="'#FFFFFF'"></mavon-editor>
+    <mavon-editor class="md" v-model="handbook" :subfield="false" :defaultOpen="'preview'" :toolbars="toolbars"
+      :boxShadow="false" :ishljs="true" :previewBackground="'#FFFFFF'"></mavon-editor>
   </div>
 </template>
 

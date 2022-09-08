@@ -1,17 +1,9 @@
-<!--
-  * @Description: Home页面
-  * @Author: maxf
-  * @Date: 2021-12-12 22:49:29
-  * @LastEditors: maxf
-  * @LastEditTime: 2022-03-25 18:54:07
-  * @FilePath: \vue3-netforum\src\Home.vue
--->
 <template>
     <div class="about">
         <v-header />
         <v-sidebar v-if="!siderbar" />
         <vSidebarNode v-if="siderbar" />
-        <div class="content-box" :class="{'content-collapse': collapse}">
+        <div class="content-box" :class="{ 'content-collapse': collapse }">
             <div class="content">
                 <router-view v-slot="{ Component }">
                     <transition name="move" mode="out-in">
@@ -39,11 +31,11 @@ export default {
     },
     setup() {
         const store = useStore();
-        const collapse = computed(() => 
+        const collapse = computed(() =>
             store.getters.collapse
         );
-        const siderbar = computed(() => 
-          store.getters.siderbar
+        const siderbar = computed(() =>
+            store.getters.siderbar
         );
 
         return {
@@ -53,3 +45,9 @@ export default {
     },
 }
 </script>
+
+<style lang="scss" scoped>
+:deep(.v-note-show) {
+    height: 100vh;
+}
+</style>
