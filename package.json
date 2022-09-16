@@ -27,9 +27,7 @@
     "vue": "^3.2.37",
     "vue-router": "^4.0.16",
     "vuex": "^4.0.2",
-    "webpack": "^4.46.0",
-    "kity": "^2.0.4",
-    "kityminder-core": "^1.4.50"
+    "webpack": "^4.46.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

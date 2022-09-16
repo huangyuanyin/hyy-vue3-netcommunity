@@ -6,9 +6,6 @@ import installElementPlus from './plugins/element'
 import elementIcon from "./plugins/svgicon"
 import './assets/css/icon.css'
 
-import kity from "kity";
-import kityminder from "kityminder-core";
-
 // import VMdPreview from '@kangc/v-md-editor/lib/preview';
 // import '@kangc/v-md-editor/lib/style/preview.css';
 // import githubTheme from '@kangc/v-md-editor/lib/theme/github.js';
@@ -25,8 +22,6 @@ const app = createApp(App)
 
 app.use(installElementPlus)
     .use(elementIcon)
-    .use(kity)
-    .use(kityminder)
     .use(store)
     .use(router)
     .mount('#app')
