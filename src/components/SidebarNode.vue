@@ -2,7 +2,7 @@
   <div class="sidebar">
     <el-row style="margin-top: 10px">
       <el-col :span="18" :offset="1">
-        <span class="title">{{  spacename  }}</span>
+        <span class="title">{{ spacename }}</span>
       </el-col>
       <el-col :span="3">
         <el-dropdown trigger="click" @command="handleCommand">
@@ -40,7 +40,7 @@
               <el-icon class="is-Folder" v-else>
                 <Document />
               </el-icon>
-              <span class="labelStyle" :title="node.label">{{  node.label  }}</span>
+              <span class="labelStyle" :title="node.label">{{ node.label }}</span>
             </div>
             <div class="buttonStyle">
               <!-- +号 -->
@@ -53,9 +53,8 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item :command="'add' + ',' + data.id">新建分组</el-dropdown-item>
-                    <el-dropdown-item :command="'article' + ',' + data.id">新建文章(富文本)</el-dropdown-item>
+                    <el-dropdown-item :command="'article' + ',' + data.id">新建文章</el-dropdown-item>
                     <el-dropdown-item :command="'excel' + ',' + data.id">新建Excel</el-dropdown-item>
-                    <el-dropdown-item :command="'word' + ',' + data.id">新建文档(markdown)</el-dropdown-item>
                     <el-dropdown-item :command="'mindmap' + ',' + data.id" disabled>新建思维导图</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>
                     <el-dropdown-item :command="'ppt' + ',' + data.id" disabled>新建PPT</el-dropdown-item>
@@ -231,7 +230,7 @@ const handleNewInstruction = (value) => {
   }
   if (tmp[0] == 'article') {
     router.push({
-      path: '/tiny',
+      path: '/md',
       query: {
         category: tmp[1],
         isAdd: "add"
@@ -278,7 +277,8 @@ const showIcon = (hidden) => {
 
 // 对话框关闭事件
 const dialogClose = () => {
-  formRef.value.resetFields()
+  // formRef.value.resetFields()
+  form.name = ''
   dialogNode.value = false
   dialogEdit.value = false
 }

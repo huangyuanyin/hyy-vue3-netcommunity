@@ -17,9 +17,9 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="article">新建文章(富文本)</el-dropdown-item>
+                <el-dropdown-item command="article">新建文章</el-dropdown-item>
                 <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
-                <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item>
+                <!-- <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item> -->
                 <el-dropdown-item command="mindmap" disabled>新建思维导图</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
                 <el-dropdown-item command="ppt" disabled>新建PPT</el-dropdown-item>
@@ -77,7 +77,7 @@
                       </el-icon>
                     </el-button>
                     <span>{{ question.s_comments.length }}</span>
-                    <el-button text @click="handleEdit(question.type, question.id)">
+                    <el-button text @click="handleEdit(question.type, question)">
                       <el-icon :size="16">
                         <Edit />
                       </el-icon>
@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, reactive } from 'vue'
+import { ref, computed, watch, reactive, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import { getForum } from '@/api/forum.js'
@@ -190,7 +190,6 @@ export default {
     }
 
     getTagList()
-    // getDataList()
 
     // 监听
     watch(() => node.value.id, () => {
@@ -200,6 +199,13 @@ export default {
 
     // 监听是否刷新
     watch(() => route.params.wRefresh, () => {
+      if (route.params.wRefresh) {
+        getDataList()
+      }
+    })
+
+    // 监听是否刷新
+    watchEffect(() => {
       if (route.params.wRefresh) {
         getDataList()
       }
@@ -246,17 +252,17 @@ export default {
         router.push({ name: 'excel', query: { isRight: "right", isAdd: "add" } })
       }
       if (value == 'article') {
-        router.push({ name: 'tiny', query: { type: "right", isAdd: "add" } })
+        router.push({ name: 'md', query: { isRight: "right", isAdd: "add" } })
       }
-      if (value == 'word') {
-        router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
-      }
+      // if (value == 'word') {
+      //   router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
+      // }
       if (value == 'mindmap') {
-        router.push({ name: 'mindmap', query: { type: "right", isAdd: "add" } })
+        router.push({ name: 'mindmap', query: { isRight: "right", isAdd: "add" } })
       }
     }
 
-    // 跳转至数据展示
+    // 跳转至文章详情页
     const handleOpen = (type, id) => {
       if (type == 'a' || type == 'w') {
         router.push({ name: 'detail', query: { wid: id, isRight: "right" } })
@@ -266,16 +272,16 @@ export default {
       }
     }
 
-    // 数据编辑
-    const handleEdit = (type, id) => {
+    // 文章编辑
+    const handleEdit = (type, qs) => {
       if (type == 'a') {
-        router.push({ name: 'tiny', query: { tid: id, type: "edit", isRight: "right" } })
+        router.push({ name: 'md', query: { tid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
       }
       if (type == 'w') {
-        router.push({ name: 'md', query: { mid: id, type: "edit", isRight: "right" } })
+        router.push({ name: 'md', query: { mid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
       }
       if (type == 'e') {
-        router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
+        router.push({ name: 'excel', query: { eid: qs.id, isRight: "right" } })
       }
     }
 

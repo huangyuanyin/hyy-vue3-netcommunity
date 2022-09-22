@@ -21,8 +21,16 @@
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" show-word-limit maxlength="200" placeholder="请输入标题" type="text"></el-input>
         </el-form-item>
+        <el-form-item label="编辑器风格" prop="editorType">
+          <el-radio-group v-model="editorType" class="ml-4" :disabled="editorDisabled">
+            <el-radio label="Markdown" size="large">Markdown</el-radio>
+            <el-radio label="tiny" size="large">富文本</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item prop="body">
-          <markdown-com :data="md" @input="getMd"></markdown-com>
+          <markdown-com :data="md" @input="getMd" v-show="editorType === 'Markdown'"></markdown-com>
+          <tinymce-com v-model="tinyValue" placeholder="请输入帖子详情内容(不少于10个字)" v-show="editorType === 'tiny'">
+          </tinymce-com>
         </el-form-item>
         <!-- <el-form-item>
           <v-md-editor v-model="md" height="400px"></v-md-editor>
@@ -37,7 +45,7 @@
           <span>暂不支持</span>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="saveHandle" round>发 布</el-button>
+          <el-button type="primary" @click="saveHandle" round>发布文章</el-button>
           <el-button round disabled>保存草稿</el-button>
         </el-form-item>
       </el-form>
@@ -49,6 +57,8 @@
 import { mavonEditor } from 'mavon-editor'
 import markdown from '@/components/markdown/Index.vue'
 import 'mavon-editor/dist/css/index.css';
+
+import Tinymce from '@/components/tinymce'
 
 import { ref, computed, reactive, watch, onMounted, inject } from "vue";
 import { useStore } from 'vuex'
@@ -63,7 +73,8 @@ export default {
   name: 'editor',
   components: {
     mavonEditor,
-    'markdown-com': markdown
+    'markdown-com': markdown,
+    'tinymce-com': Tinymce
   },
   setup() {
     const reload = inject('reload')
@@ -84,8 +95,10 @@ export default {
     const treeData = ref([])
     // 标签列表
     const taglist = ref([])
-    // md编辑器数据
-    const md = ref('')
+    const md = ref('') // markdown编辑器数据
+    const tinyValue = ref('') // 富文本编辑器数据
+    const editorType = ref('Markdown')
+    const editorDisabled = ref(false)
     const formRef = ref(null);
     // 路由传参
     const categoryId = ref("")
@@ -94,7 +107,7 @@ export default {
       category: '',
       title: '',
       tags: [],
-      type: 'w',
+      type: '',
       body: ''
     })
     // 表单校验
@@ -120,37 +133,34 @@ export default {
 
     // 获取帖子数据
     const getForumData = () => {
-      getForumInfo(route.query.mid).then(res => {
+      getForumInfo(route.query.mid || route.query.tid).then(res => {
         form.title = res.data.title
         form.category = res.data.category
         form.tags = res.data.tags
+        tinyValue.value = res.data.body
         md.value = res.data.body
       })
     };
 
     md.value = ''
+    tinyValue.value = ''
     getNodeList()
     getTagList()
     form.category = node.value.id
-
-
-    // 监控 文章编辑
-    watch(() => route.query.mid, () => {
-      if (route.query.mid) {
+    watch(() => route.query, () => {
+      // 监控 文章编辑
+      if (route.query.mid || route.query.tid) {
         getForumData()
       }
-    })
-
-    watch(() => route.query, () => {
-      if (route.query && form.category) {
+      if (route.query && route.query.category) {
         categoryId.value = route.query.category
         isRight.value = ''
       } else {
         categoryId.value = ''
       }
       // 监控 是否显示分类
-      if (route.query && route.query.type) {
-        isRight.value = route.query.type
+      if (route.query && route.query.isRight) {
+        isRight.value = route.query.isRight
       } else {
         isRight.value = ''
       }
@@ -159,14 +169,27 @@ export default {
         form.body = ''
         formRef.value.resetFields()
         form.category = route.query.category
+        editorDisabled.value = false
+        editorType.value = 'Markdown'
+      }
+      // 监控 编辑器种类与禁用
+      if (route.query && route.query.typeof) {
+        route.query.typeof === 'w' ? editorType.value = 'Markdown' : editorType.value = 'tiny'
+        editorDisabled.value = true
       }
     })
 
     onMounted(() => {
       form.category = categoryId.value = route.query.category || ''
       isRight.value = route.query.isRight || ''
+      route.query.typeof === 'w' ? (editorType.value = 'Markdown') && (editorDisabled.value = true) : (editorType.value = 'tiny') && (editorDisabled.value = true)
       md.value = ''
-      if (route.query.mid) {
+      tinyValue.value = ''
+      if (route.query && route.query.isAdd) {
+        editorType.value = 'Markdown'
+        editorDisabled.value = false
+      }
+      if (route.query.mid || route.query.tid) {
         getForumData()
       }
     })
@@ -188,7 +211,7 @@ export default {
     const loadWord = (evt) => {
       const files = evt.target.files
       if (files == null || files.length == 0) {
-        alert('No files wait for import')
+        alert('请至少选择一个文件！')
         return
       }
       let name = files[0].name
@@ -197,10 +220,10 @@ export default {
         "Content-Type": "multipart/form-data"
       };
       formData.append("file", files[0]);
-      formData.append("type", 'md');
+      editorType.value === 'Markdown' ? formData.append("type", 'md') : formData.append("type", 'html');
       upload(header, formData).then(res => {
         form.title = name
-        md.value = res.data
+        editorType.value === 'Markdown' ? md.value = res.data : tinyValue.value = res.data
       })
     }
 
@@ -211,21 +234,22 @@ export default {
       router.push({ name: 'subbooks', params: { wRefresh: true } })
     }
 
-    // 发布事件
+    // 发布文章
     const saveHandle = () => {
-      if (route.query.mid) {
+      if (route.query.mid || route.query.tid) {
         updateApi()
       } else {
         addApi()
       }
     }
 
-    // 新增
+    // 新增文章 流程
     const addApi = () => {
       form.author = sessionStorage.getItem('username')
+      judgeEditor()
       formRef.value.validate((valid) => {
         if (!valid) return
-        if (route.query.type == "right") {
+        if (route.query.isRight == "right") { // 判断新增的文章是否为节点 right - 否
           getSaveApi(form)
         } else {
           save()
@@ -233,23 +257,23 @@ export default {
       })
     }
 
-    // 文章编辑
+    // 编辑文章 流程
     const updateApi = () => {
       form.author = sessionStorage.getItem('username')
-      console.log("编辑...", form);
+      judgeEditor()
       formRef.value.validate((valid) => {
         if (!valid) return
-        if (route.query && route.query.isRight == 'right') {
-          getUpdateForumApi(route.query.mid, form)
+        if (route.query && route.query.isRight == 'right') { // 判断编辑的文章是否为节点 right - 否
+          getUpdateForumApi(route.query.mid || route.query.tid, form)
         } else {
-          updateForum(route.query.mid, form).then(res => {
+          updateForum(route.query.mid || route.query.tid, form).then(res => {
             if (res.code === 1000) {
               getUpdateCategorysApi()
             }
             handleClose()
             reload()
-            toDetail(route.query.mid)
-          })
+            toDetail(res.data)
+          }) 
         }
       })
     }
@@ -261,8 +285,7 @@ export default {
           message: "编辑成功！",
           type: "success",
         });
-        handleClose()
-        toDetail(route.query.mid)
+        toDetail(res.data)
       })
     }
 
@@ -277,7 +300,7 @@ export default {
       })
     }
 
-    // 新增markdown API
+    // 新增文章 API
     const getSaveApi = (form) => {
       addForum(form).then(res => {
         ElMessage({
@@ -286,6 +309,7 @@ export default {
         });
         if (res.code === 1000) {
           handleClose()
+          reload()
           toDetail(res.data)
         }
       })
@@ -319,12 +343,22 @@ export default {
     }
     // 跳转到详情页
     const toDetail = (wid) => {
-      router.replace({ name: 'detail', query: { wid: wid } })
+      if (route.query && route.query.isRight) {
+        router.replace({ name: 'detail', query: { wid: wid, isRight: 'right' } })
+      } else {
+        router.replace({ name: 'detail', query: { wid: wid } })
+      }
     }
     // 返回
     const goBack = () => {
       // router.push({ name: 'subbooks' })
       router.go(-1)
+    }
+
+    // 判断编辑器种类和内容
+    const judgeEditor = () => {
+      editorType.value === 'Markdown' ? '' : form.body = tinyValue.value
+      editorType.value === 'Markdown' ? form.type = 'w' : form.type = 'a'
     }
 
     return {
@@ -343,8 +377,15 @@ export default {
       handleClose,
       saveHandle,
       categoryId,
-      save, reload, getSaveApi, isRight, toDetail
+      save, reload, getSaveApi, isRight, toDetail, editorType, tinyValue, editorDisabled, judgeEditor
     }
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.my-tinymce {
+  margin-bottom: 30px;
+  width: 100%;
+}
+</style>

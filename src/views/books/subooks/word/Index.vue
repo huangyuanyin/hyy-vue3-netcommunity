@@ -209,10 +209,9 @@ export default {
     // 编辑按钮
     const handleEdit = () => {
       if (fourumdata.value.type == 'a') {
-        router.push({ name: 'tiny', query: { tid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight } })
+        router.push({ name: 'md', query: { tid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'a' } })
       } else {
-        console.log("md", route.query.wid)
-        router.push({ name: 'md', query: { mid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight } })
+        router.push({ name: 'md', query: { mid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'w' } })
       }
     }
 

@@ -12,7 +12,7 @@ export default {
     install: (app) => {
         app.use(ElementPlus, {
             locale: zhCn,
-            size: 'medium'
+            size: 'default'
         })
     }
 }
