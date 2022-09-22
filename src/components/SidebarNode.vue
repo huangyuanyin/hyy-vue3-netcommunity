@@ -53,7 +53,7 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item :command="'add' + ',' + data.id">新建分组</el-dropdown-item>
-                    <el-dropdown-item :command="'article' + ',' + data.id">新建文章</el-dropdown-item>
+                    <el-dropdown-item :command="'article' + ',' + data.id">新建文档</el-dropdown-item>
                     <el-dropdown-item :command="'excel' + ',' + data.id">新建Excel</el-dropdown-item>
                     <el-dropdown-item :command="'mindmap' + ',' + data.id" disabled>新建思维导图</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>

@@ -23,8 +23,8 @@
         </el-form-item>
         <el-form-item label="编辑器风格" prop="editorType">
           <el-radio-group v-model="editorType" class="ml-4" :disabled="editorDisabled">
-            <el-radio label="Markdown" size="large">Markdown</el-radio>
             <el-radio label="tiny" size="large">富文本</el-radio>
+            <el-radio label="Markdown" size="large">Markdown</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item prop="body">
@@ -97,7 +97,7 @@ export default {
     const taglist = ref([])
     const md = ref('') // markdown编辑器数据
     const tinyValue = ref('') // 富文本编辑器数据
-    const editorType = ref('Markdown')
+    const editorType = ref('tiny')
     const editorDisabled = ref(false)
     const formRef = ref(null);
     // 路由传参
@@ -170,7 +170,7 @@ export default {
         formRef.value.resetFields()
         form.category = route.query.category
         editorDisabled.value = false
-        editorType.value = 'Markdown'
+        editorType.value = 'tiny'
       }
       // 监控 编辑器种类与禁用
       if (route.query && route.query.typeof) {
@@ -186,7 +186,7 @@ export default {
       md.value = ''
       tinyValue.value = ''
       if (route.query && route.query.isAdd) {
-        editorType.value = 'Markdown'
+        editorType.value = 'tiny'
         editorDisabled.value = false
       }
       if (route.query.mid || route.query.tid) {
@@ -273,7 +273,7 @@ export default {
             handleClose()
             reload()
             toDetail(res.data)
-          }) 
+          })
         }
       })
     }

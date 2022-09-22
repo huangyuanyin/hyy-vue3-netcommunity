@@ -17,7 +17,7 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="article">新建文章</el-dropdown-item>
+                <el-dropdown-item command="article">新建文档</el-dropdown-item>
                 <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
                 <!-- <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item> -->
                 <el-dropdown-item command="mindmap" disabled>新建思维导图</el-dropdown-item>
