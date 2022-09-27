@@ -27,7 +27,10 @@
     "vue": "^3.2.37",
     "vue-router": "^4.0.16",
     "vuex": "^4.0.2",
-    "webpack": "^4.46.0"
+    "webpack": "^4.46.0",
+    "mitt": "^3.0.0",
+    "simple-mind-map": "^0.2.9",
+    "@toast-ui/editor": "^3.1.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -36,6 +39,8 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.2.37",
     "sass": "^1.26.5",
-    "sass-loader": "^8.0.2"
+    "sass-loader": "^8.0.2",
+    "less": "^3.12.2",
+    "less-loader": "^7.1.0"
   }
 }
