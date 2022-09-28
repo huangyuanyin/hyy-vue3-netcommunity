@@ -369,8 +369,9 @@ export default {
 .toolbarContainer {
   .toolbar {
     position: fixed;
-    left: 0;
-    top: 0;
+    // left: 0;
+    // top: 0;
+    top: 50px;
     display: flex;
     padding: 0 20px;
     padding-top: 20px;
