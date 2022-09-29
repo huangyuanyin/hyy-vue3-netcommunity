@@ -401,6 +401,9 @@ const handleNodeClick = (node) => {
     case 'a':
       router.push({ name: 'detail', query: { wid: node.articleId } })
       break;
+    case 'm':
+      router.push({ name: 'mindMap', query: { mid: node.articleId } })
+      break;
   }
 }
 

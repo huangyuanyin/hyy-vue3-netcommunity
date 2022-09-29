@@ -91,7 +91,7 @@
       </div>
       <!-- 导出 -->
       <div class="toolbarBlock">
-        <div class="toolbarBtn" @click="createNewLocalFile">
+        <!-- <div class="toolbarBtn" @click="createNewLocalFile">
           <span class="icon iconfont iconxinjian"></span>
           <span class="text">新建</span>
         </div>
@@ -102,7 +102,7 @@
         <div class="toolbarBtn" @click="saveLocalFile">
           <span class="icon iconfont iconlingcunwei"></span>
           <span class="text">另存为</span>
-        </div>
+        </div> -->
         <div class="toolbarBtn" @click="emit('showImport')">
           <span class="icon iconfont icondaoru"></span>
           <span class="text">导入</span>
@@ -116,6 +116,13 @@
           <span class="text">快捷键</span>
         </div>
       </div>
+      <!--保存-->
+      <div class="toolbarBlock">
+        <div class="toolbarBtn" @click="emit('showSaveDialog')">
+          <span class="icon iconfont iconlingcunwei"></span>
+          <span class="text">保存</span>
+        </div>
+      </div>
     </div>
     <NodeImage></NodeImage>
     <NodeHyperlink></NodeHyperlink>
@@ -124,6 +131,7 @@
     <NodeTag></NodeTag>
     <Export></Export>
     <Import></Import>
+    <SaveDataDialog></SaveDataDialog>
   </div>
 </template>
 
@@ -135,6 +143,7 @@ import NodeNote from "./NodeNote";
 import NodeTag from "./NodeTag";
 import Export from "./Export";
 import Import from './Import';
+import SaveDataDialog from './SaveDataDialog';
 import { mapState } from 'vuex';
 import { ElNotification } from 'element-plus'
 import exampleData from 'simple-mind-map/example/exampleData';
@@ -155,7 +164,8 @@ export default {
     NodeNote,
     NodeTag,
     Export,
-    Import
+    Import,
+    SaveDataDialog
   },
   data() {
     return {
@@ -360,7 +370,8 @@ export default {
         })
       }
     },
-    emit: (...agrs) => bus.emit(...agrs)
+
+    emit: (...agrs) => bus.emit(...agrs),
   }
 };
 </script>
