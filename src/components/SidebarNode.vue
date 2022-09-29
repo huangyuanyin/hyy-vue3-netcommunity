@@ -118,6 +118,8 @@ import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getCategorysInfo, addCategorys, updateCategorys, deleteCategorys } from '@/api/category.js'
 import { updateForum, getForumInfo } from '@/api/forum.js'
+import exampleData from 'simple-mind-map/example/exampleData';
+import bus from "@/utils/bus.js"
 
 const reload = inject('reload')
 const store = useStore()
@@ -256,6 +258,7 @@ const handleNewInstruction = (value) => {
     })
   }
   if (tmp[0] == 'mindmap') {
+    bus.emit('setData', exampleData); // 初始化思维导图数据
     router.push({
       path: '/mindMap',
       query: {
