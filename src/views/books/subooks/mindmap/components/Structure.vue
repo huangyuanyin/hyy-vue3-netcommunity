@@ -53,7 +53,8 @@ export default {
      */
     useLayout(layout) {
       this.layout = layout.value;
-      this.mindMap.setLayout(layout.value);
+      bus.emit('setLayout', layout.value);
+      // this.mindMap.setLayout(layout.value);
       storeConfig({
         layout: layout.value,
       });

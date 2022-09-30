@@ -167,6 +167,7 @@ export default {
      */
     init() {
       let { root, layout, theme, view } = this.getData()
+      /**
       this.mindMap = new MindMap({
         el: this.$refs.mindMapContainer,
         data: root,
@@ -182,6 +183,29 @@ export default {
             bus.emit('hideNoteContent');
           }
         }
+      })
+      */
+      // 解决vue3的mindMap变量被proxy代理了，mindMap变成Proxy里面有些动态的属性就不兼容了
+      // 需要改成局部变量的形式，拿到mindMap的原始引用
+      const mindMap = new MindMap({
+        el: this.$refs.mindMapContainer,
+        data: root,
+        layout: layout,
+        theme: theme.template,
+        themeConfig: theme.config,
+        viewData: view,
+        customNoteContentShow: {
+          show: (content, left, top) => {
+            bus.emit('showNoteContent', [content, left, top]);
+          },
+          hide: () => {
+            bus.emit('hideNoteContent');
+          }
+        }
+      })
+      this.mindMap = mindMap
+      bus.on('setLayout', (layout) => {
+        mindMap.setLayout(layout)
       })
       this.mindMap.keyCommand.addShortcut('Control+s', () => {
         this.manualSave()
