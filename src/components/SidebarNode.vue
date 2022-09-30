@@ -405,9 +405,17 @@ const handleNodeClick = (node) => {
       router.push({ name: 'detail', query: { wid: node.articleId } })
       break;
     case 'm':
+      getMindMapDataApi(node.articleId)
       router.push({ name: 'mindMap', query: { mid: node.articleId } })
       break;
   }
+}
+
+// 获取思维导图数据
+const getMindMapDataApi = (id) => {
+  getForumInfo(id).then(res => {
+    bus.emit('setData', JSON.parse(res.data.body));
+  })
 }
 
 // 节点拖拽

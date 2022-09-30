@@ -28,11 +28,13 @@
 import bus from '@/utils/bus';
 import { ref, reactive, onMounted, nextTick, inject, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import { ElMessage } from "element-plus";
 import { getData } from '@/api';
+import { getTag } from "@/api/tag.js"
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.js'
-import { useStore } from 'vuex';
+import { judgeNodeType } from '@/utils/methods.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -41,6 +43,10 @@ const reload = inject('reload')
 const node = computed(() => store.getters.node);
 const isShowDialog = ref(false)
 const isRight = ref('')
+const treeData = ref([])
+const taglist = ref([])
+// 工作空间标题名
+const spaceid = computed(() => sessionStorage.getItem('spaceid'));
 const saveForm = reactive({
   category: '',
   title: '',
@@ -64,8 +70,10 @@ const closeSaveDialog = () => {
 const handleSave = () => {
   if (route.query.mid) {
     updateMindMap()
+    isShowDialog.value = false
   } else {
     addMindMap()
+    isShowDialog.value = false
   }
 }
 
@@ -75,7 +83,7 @@ const addMindMap = () => {
     if (valid) {
       saveForm.body = JSON.stringify(getData())
       if (route.query.isRight == "right") {
-        getRightSaveApi(form)
+        getRightSaveApi(saveForm)
       } else {
         getSave() // 新增为节点
       }
@@ -86,11 +94,26 @@ const addMindMap = () => {
   console.log("保存...", saveForm);
 }
 
+// 新增mindMap api
+const getRightSaveApi = (saveForm) => {
+  addForum(saveForm).then(res => {
+    ElMessage({
+      message: "新增成功",
+      type: "success",
+    });
+    if (res.code === 1000) {
+      handleClose()
+      reload()
+      toDetail(res.data)
+    }
+  })
+}
+
 // 新增mindMap 为节点
 const getSave = () => {
   let params = {
     name: saveForm.title,
-    parent_category: saveForm.category,
+    parent_category: route.query.category,
     type: saveForm.type
   }
   // 新增节点
@@ -106,7 +129,7 @@ const getSave = () => {
         if (res.code === 1000) {
           handleClose()
           reload()
-          // toDetail(res.data)
+          toDetail(res.data)
         }
       })
     }
@@ -117,8 +140,7 @@ const getSave = () => {
 const updateMindMap = () => {
   saveForm.body = JSON.stringify(getData())
   if (route.query && route.query.isRight == 'right') {
-    getUpdateForumApi(route.query.mid, form)
-    // toDetail(route.query.mid)
+    getUpdateForumApi(route.query.mid, saveForm)
   } else {
     updateForum(route.query.mid, saveForm).then(res => {
       if (res.code === 1000) {
@@ -129,6 +151,17 @@ const updateMindMap = () => {
       toDetail(route.query.mid)
     })
   }
+}
+
+// 编辑mindMap API
+const getUpdateForumApi = (id, form) => {
+  updateForum(id, form).then(res => {
+    ElMessage({
+      message: "编辑成功！",
+      type: "success",
+    });
+    toDetail(res.data)
+  })
 }
 
 // 更新节点 API
@@ -143,10 +176,10 @@ const getUpdateCategorysApi = () => {
 }
 
 const loadMindMap = () => {
-  console.log("是的", route.query.mid);
   getForumInfo(route.query.mid).then(res => {
     saveForm.category = res.data.category
     saveForm.title = res.data.title || ''
+    saveForm.tags = res.data.tags
     saveForm.body = JSON.parse(res.data.body)
   })
 }
@@ -155,9 +188,20 @@ watch(() => route.query, () => {
   if (route.query.mid) {
     loadMindMap()
   }
+  if (route.query.isRight) {
+    isRight.value = route.query.isRight
+    getTagList()
+    getNodeList()
+  } else {
+    isRight.value = ''
+  }
 })
 
 onMounted(() => {
+  if (route.query.isRight) {
+    getNodeList()
+    getTagList()
+  }
   bus.on("showSaveDialog", () => {
     isRight.value = route.query.isRight || ''
     if (route.query.mid) {
@@ -171,6 +215,26 @@ onMounted(() => {
   });
 })
 
+// 获取节点数据
+const getNodeList = () => {
+  getCategorysInfo(spaceid.value).then((res) => {
+    treeData.value = judgeNodeType(res.data)
+  })
+}
+
+// 获取标签列表
+const getTagList = () => {
+  getTag().then(res => {
+    taglist.value = res.data
+  })
+}
+
+// 选择分类ID
+const handleChange = (id) => {
+  var len = id.length
+  saveForm.category = id[len - 1]
+}
+
 const handleClose = () => {
   isShowDialog.value = false
   router.push({ name: 'subbooks', params: { wRefresh: true } })
@@ -178,7 +242,11 @@ const handleClose = () => {
 
 // 跳转到详情页
 const toDetail = (mid) => {
-  router.replace({ name: 'mindMap', query: { mid: mid } })
+  if (route.query && route.query.isRight) {
+    router.replace({ name: 'mindMap', query: { mid: mid, isRight: 'right' } })
+  } else {
+    router.replace({ name: 'mindMap', query: { mid: mid } })
+  }
 }
 
 </script>

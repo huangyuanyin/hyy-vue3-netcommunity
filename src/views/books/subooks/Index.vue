@@ -20,7 +20,7 @@
                 <el-dropdown-item command="article">新建文档</el-dropdown-item>
                 <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
                 <!-- <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item> -->
-                <el-dropdown-item command="mindmap" disabled>新建思维导图</el-dropdown-item>
+                <el-dropdown-item command="mindmap">新建思维导图</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
                 <el-dropdown-item command="ppt" disabled>新建PPT</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item>
@@ -123,9 +123,13 @@
 import { ref, computed, watch, reactive, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
-import { getForum } from '@/api/forum.js'
+import { getForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { Search } from '@element-plus/icons-vue'
 import { getTag } from "@/api/tag.js"
+
+import exampleData from 'simple-mind-map/example/exampleData';
+import bus from "@/utils/bus.js"
+
 export default {
   setup() {
     // vuex
@@ -258,7 +262,8 @@ export default {
       //   router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
       // }
       if (value == 'mindmap') {
-        router.push({ name: 'mindmap', query: { isRight: "right", isAdd: "add" } })
+        bus.emit('setData', exampleData); // 初始化思维导图数据
+        router.push({ name: 'mindMap', query: { isRight: "right", isAdd: "add" } })
       }
     }
 
@@ -269,6 +274,10 @@ export default {
       }
       if (type == 'e') {
         router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
+      }
+      if (type == 'm') {
+        getMindMapDataApi(id)
+        router.push({ name: 'mindMap', query: { mid: id, isRight: "right" } })
       }
     }
 
@@ -283,6 +292,10 @@ export default {
       if (type == 'e') {
         router.push({ name: 'excel', query: { eid: qs.id, isRight: "right" } })
       }
+      if (type == 'm') {
+        getMindMapDataApi(qs.id)
+        router.push({ name: 'mindMap', query: { mid: qs.id, isRight: "right" } })
+      }
     }
 
     // 回复响应
@@ -290,9 +303,11 @@ export default {
       router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
     }
 
-    // 移除
-    const handleDelete = (id) => {
-
+    // 获取思维导图数据
+    const getMindMapDataApi = (id) => {
+      getForumInfo(id).then(res => {
+        bus.emit('setData', JSON.parse(res.data.body));
+      })
     }
 
     return {
@@ -318,7 +333,7 @@ export default {
       handleCommand,
       handleOpen,
       handleEdit,
-      handleDelete
+      getMindMapDataApi
     }
   },
 }
@@ -342,6 +357,11 @@ export default {
 .title {
   color: #2c3e50;
 }
+
+.title:hover {
+  cursor: pointer;
+}
+
 
 .subscript {
   margin-top: 13px;
