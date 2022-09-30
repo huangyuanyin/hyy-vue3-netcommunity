@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { toRaw } from 'vue'
 import Sidebar from "./Sidebar";
 import { layoutList } from "simple-mind-map/src/utils/constant";
 import { storeConfig } from "@/api";
@@ -54,7 +55,8 @@ export default {
     useLayout(layout) {
       this.layout = layout.value;
       bus.emit('setLayout', layout.value);
-      // this.mindMap.setLayout(layout.value);
+      // 通过toRaw拿到mindMap的原始数据
+      toRaw(this.mindMap).setLayout(layout.value);
       storeConfig({
         layout: layout.value,
       });
