@@ -407,6 +407,7 @@ const handleNodeClick = (node) => {
       router.push({ name: 'detail', query: { wid: node.articleId } })
       break;
     case 'm':
+      if (node.articleId == route.query.mid) { return true }
       getMindMapDataApi(node.articleId)
       router.push({ name: 'mindMap', query: { mid: node.articleId } })
       break;
