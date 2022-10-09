@@ -115,7 +115,7 @@
 import { ref, computed, reactive, onMounted, watch, inject, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 import { getCategorysInfo, addCategorys, updateCategorys, deleteCategorys } from '@/api/category.js'
 import { updateForum, getForumInfo } from '@/api/forum.js'
 // import exampleData from 'simple-mind-map/example/exampleData';
@@ -125,6 +125,7 @@ const reload = inject('reload')
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
+const loadingInstance = ref('')
 const spacename = computed(() => sessionStorage.getItem('spacename'));
 const spaceid = computed(() => sessionStorage.getItem('spaceid'));
 const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
@@ -384,7 +385,7 @@ const deleteApi = (id) => {
 }
 
 // 节点点击事件
-const handleNodeClick = (node) => {
+const handleNodeClick = async (node) => {
   let nodedata = {
     'label': node.label,
     'id': node.id
@@ -408,7 +409,13 @@ const handleNodeClick = (node) => {
       break;
     case 'm':
       if (node.articleId == route.query.mid) { return true }
-      getMindMapDataApi(node.articleId)
+      loadingInstance.value = ElLoading.service({
+        lock: true,
+        text: '正在加载文件，请稍后...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      await getMindMapDataApi(node.articleId)
       router.push({ name: 'mindMap', query: { mid: node.articleId } })
       break;
   }
@@ -419,6 +426,11 @@ const getMindMapDataApi = (id) => {
   getForumInfo(id).then(res => {
     bus.emit('setData', JSON.parse(res.data.body));
     bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 1]) // 默认展开到第一层级
+    ElMessage({
+      message: "获取成功",
+      type: "success",
+    });
+    loadingInstance.value.close()
   })
 }
 

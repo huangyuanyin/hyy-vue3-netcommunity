@@ -160,6 +160,8 @@ const getUpdateForumApi = (id, form) => {
       message: "编辑成功！",
       type: "success",
     });
+    handleClose()
+    reload()
     toDetail(res.data)
   })
 }
