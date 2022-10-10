@@ -199,12 +199,17 @@ watch(() => route.query, () => {
   }
 })
 
+watch(() => isShowDialog.value, () => {
+  bus.emit('startTextEdit');
+})
+
 onMounted(() => {
   if (route.query.isRight) {
     getNodeList()
     getTagList()
   }
   bus.on("showSaveDialog", () => {
+    saveForm.title = ''
     isRight.value = route.query.isRight || ''
     if (route.query.mid) {
       loadMindMap() // 获取思维导图

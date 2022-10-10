@@ -164,7 +164,7 @@ export default {
       body: ''
     })
     // 初始化思维导图数据
-    const exampleData = ref({ "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } })
+    const exampleData = { "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } }
 
     // 获取数据列表
     const getDataList = () => {
@@ -266,7 +266,7 @@ export default {
       //   router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
       // }
       if (value == 'mindmap') {
-        bus.emit('setData', exampleData.value); // 初始化思维导图数据
+        bus.emit('setData', exampleData); // 初始化思维导图数据
         router.push({ name: 'mindMap', query: { isRight: "right", isAdd: "add" } })
       }
     }
@@ -325,9 +325,10 @@ export default {
         ElMessage({
           message: "获取成功",
           type: "success",
+          duration: 1000,
         });
         bus.emit('setData', JSON.parse(res.data.body));
-        bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 1]) // 默认展开到第一层级
+        bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
         loadingInstance.close()
       })
     }
