@@ -20,7 +20,7 @@
                 <el-dropdown-item command="article">新建文档</el-dropdown-item>
                 <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
                 <!-- <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item> -->
-                <el-dropdown-item command="mindmap" disabled>新建思维导图</el-dropdown-item>
+                <el-dropdown-item command="mindmap">新建思维导图</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
                 <el-dropdown-item command="ppt" disabled>新建PPT</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item>
@@ -123,9 +123,14 @@
 import { ref, computed, watch, reactive, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
-import { getForum } from '@/api/forum.js'
+import { getForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { Search } from '@element-plus/icons-vue'
 import { getTag } from "@/api/tag.js"
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
+
+// import exampleData from 'simple-mind-map/example/exampleData';
+import bus from "@/utils/bus.js"
+
 export default {
   setup() {
     // vuex
@@ -133,6 +138,7 @@ export default {
     const route = useRoute();
     // 路由
     const router = useRouter()
+    let loadingInstance;
     // 等待
     const loading = ref(false)
     // 数据列表
@@ -157,6 +163,8 @@ export default {
       tags: '',
       body: ''
     })
+    // 初始化思维导图数据
+    const exampleData = { "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } }
 
     // 获取数据列表
     const getDataList = () => {
@@ -258,22 +266,33 @@ export default {
       //   router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
       // }
       if (value == 'mindmap') {
-        router.push({ name: 'mindmap', query: { isRight: "right", isAdd: "add" } })
+        bus.emit('setData', exampleData); // 初始化思维导图数据
+        router.push({ name: 'mindMap', query: { isRight: "right", isAdd: "add" } })
       }
     }
 
     // 跳转至文章详情页
-    const handleOpen = (type, id) => {
+    const handleOpen = async (type, id) => {
       if (type == 'a' || type == 'w') {
         router.push({ name: 'detail', query: { wid: id, isRight: "right" } })
       }
       if (type == 'e') {
         router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
       }
+      if (type == 'm') {
+        loadingInstance = ElLoading.service({
+          lock: true,
+          text: '正在加载文件，请稍后...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        await getMindMapDataApi(id)
+        router.push({ name: 'mindMap', query: { mid: id, isRight: "right" } })
+      }
     }
 
     // 文章编辑
-    const handleEdit = (type, qs) => {
+    const handleEdit = async (type, qs) => {
       if (type == 'a') {
         router.push({ name: 'md', query: { tid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
       }
@@ -283,6 +302,16 @@ export default {
       if (type == 'e') {
         router.push({ name: 'excel', query: { eid: qs.id, isRight: "right" } })
       }
+      if (type == 'm') {
+        loadingInstance = ElLoading.service({
+          lock: true,
+          text: '正在加载文件，请稍后...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        await getMindMapDataApi(qs.id)
+        router.push({ name: 'mindMap', query: { mid: qs.id, isRight: "right" } })
+      }
     }
 
     // 回复响应
@@ -290,9 +319,18 @@ export default {
       router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
     }
 
-    // 移除
-    const handleDelete = (id) => {
-
+    // 获取思维导图数据
+    const getMindMapDataApi = (id) => {
+      getForumInfo(id).then(res => {
+        ElMessage({
+          message: "获取成功",
+          type: "success",
+          duration: 1000,
+        });
+        bus.emit('setData', JSON.parse(res.data.body));
+        bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
+        loadingInstance.close()
+      })
     }
 
     return {
@@ -318,7 +356,9 @@ export default {
       handleCommand,
       handleOpen,
       handleEdit,
-      handleDelete
+      getMindMapDataApi,
+      exampleData,
+      loadingInstance
     }
   },
 }
@@ -342,6 +382,11 @@ export default {
 .title {
   color: #2c3e50;
 }
+
+.title:hover {
+  cursor: pointer;
+}
+
 
 .subscript {
   margin-top: 13px;

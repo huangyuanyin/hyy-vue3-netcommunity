@@ -55,7 +55,7 @@
                     <el-dropdown-item :command="'add' + ',' + data.id">新建分组</el-dropdown-item>
                     <el-dropdown-item :command="'article' + ',' + data.id">新建文档</el-dropdown-item>
                     <el-dropdown-item :command="'excel' + ',' + data.id">新建Excel</el-dropdown-item>
-                    <el-dropdown-item :command="'mindmap' + ',' + data.id" disabled>新建思维导图</el-dropdown-item>
+                    <el-dropdown-item :command="'mindmap' + ',' + data.id">新建思维导图</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>
                     <el-dropdown-item :command="'ppt' + ',' + data.id" disabled>新建PPT</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建白板</el-dropdown-item>
@@ -115,14 +115,17 @@
 import { ref, computed, reactive, onMounted, watch, inject, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 import { getCategorysInfo, addCategorys, updateCategorys, deleteCategorys } from '@/api/category.js'
 import { updateForum, getForumInfo } from '@/api/forum.js'
+// import exampleData from 'simple-mind-map/example/exampleData';
+import bus from "@/utils/bus.js"
 
 const reload = inject('reload')
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
+const loadingInstance = ref('')
 const spacename = computed(() => sessionStorage.getItem('spacename'));
 const spaceid = computed(() => sessionStorage.getItem('spaceid'));
 const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
@@ -155,6 +158,8 @@ const formRef = ref(null);
 const formRules = reactive({
   name: [{ required: true, message: '请输入分组名称', trigger: 'blur' }]
 })
+// 思维导图初始化数据
+const exampleData = ({ "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } })
 
 // 获取节点数据
 const getNodeList = () => {
@@ -256,8 +261,9 @@ const handleNewInstruction = (value) => {
     })
   }
   if (tmp[0] == 'mindmap') {
+    bus.emit('setData', exampleData); // 初始化思维导图数据
     router.push({
-      path: '/mindmap',
+      path: '/mindMap',
       query: {
         category: tmp[1],
         isAdd: "add"
@@ -379,7 +385,7 @@ const deleteApi = (id) => {
 }
 
 // 节点点击事件
-const handleNodeClick = (node) => {
+const handleNodeClick = async (node) => {
   let nodedata = {
     'label': node.label,
     'id': node.id
@@ -401,7 +407,32 @@ const handleNodeClick = (node) => {
     case 'a':
       router.push({ name: 'detail', query: { wid: node.articleId } })
       break;
+    case 'm':
+      if (node.articleId == route.query.mid) { return true }
+      loadingInstance.value = ElLoading.service({
+        lock: true,
+        text: '正在加载文件，请稍后...',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      await getMindMapDataApi(node.articleId)
+      router.push({ name: 'mindMap', query: { mid: node.articleId } })
+      break;
   }
+}
+
+// 获取思维导图数据
+const getMindMapDataApi = (id) => {
+  getForumInfo(id).then(res => {
+    bus.emit('setData', JSON.parse(res.data.body));
+    bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
+    ElMessage({
+      message: "获取成功",
+      type: "success",
+      duration: 1000
+    });
+    loadingInstance.value.close()
+  })
 }
 
 // 节点拖拽

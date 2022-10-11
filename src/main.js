@@ -5,6 +5,7 @@ import store from './store'
 import installElementPlus from './plugins/element'
 import elementIcon from "./plugins/svgicon"
 import './assets/css/icon.css'
+import '@/assets/icon-font/iconfont.css';
 
 // import VMdPreview from '@kangc/v-md-editor/lib/preview';
 // import '@kangc/v-md-editor/lib/style/preview.css';
