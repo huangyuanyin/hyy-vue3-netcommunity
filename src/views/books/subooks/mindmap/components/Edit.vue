@@ -212,7 +212,7 @@ export default {
           'mode_change'
         ].forEach((event) => {
           this.getMindMap().on(event, (...args) => {
-            if (event === 'node_active') {
+            if (['node_contextmenu', 'node_active'].includes(event)) {
               bus.emit(event, args)
             } else {
               bus.emit(event, ...args)
