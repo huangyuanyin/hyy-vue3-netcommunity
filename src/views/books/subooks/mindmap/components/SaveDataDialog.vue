@@ -182,7 +182,7 @@ const loadMindMap = () => {
     saveForm.category = res.data.category
     saveForm.title = res.data.title || ''
     saveForm.tags = res.data.tags
-    saveForm.body = JSON.parse(res.data.body)
+    // saveForm.body = JSON.parse(res.data.body)
   })
 }
 
