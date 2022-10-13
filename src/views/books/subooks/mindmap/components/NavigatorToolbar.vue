@@ -47,6 +47,10 @@ onMounted(() => {
   toggleMiniMap(openMiniMap)
 })
 
+onMounted(() => {
+  toggleMiniMap(openMiniMap.value)
+})
+
 </script>
 
 <script>
