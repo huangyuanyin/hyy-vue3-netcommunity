@@ -33,7 +33,7 @@ const props = defineProps({
 })
 
 const isReadonly = ref(false)
-const openMiniMap = ref(false)
+const openMiniMap = ref(true)
 
 const readonlyChange = (value) => {
   props.mindMap.setMode(value ? 'readonly' : 'edit')
@@ -42,6 +42,7 @@ const readonlyChange = (value) => {
 const toggleMiniMap = (show) => {
   bus.emit('toggle_mini_map', show)
 }
+
 onMounted(() => {
   toggleMiniMap(openMiniMap)
 })
