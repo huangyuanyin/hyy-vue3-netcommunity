@@ -254,6 +254,7 @@ const getUpdateForumApi = (id, form) => {
       type: "success",
     });
     handleClose()
+    toDetail(res.data)
   })
 }
 
@@ -310,7 +311,12 @@ const save = () => {
 }
 // 跳转到详情页
 const toDetail = (eid) => {
-  router.replace({ name: 'excel', query: { eid: eid } })
+  // router.replace({ name: 'excel', query: { eid: eid } })
+  if (route.query && route.query.isRight) {
+    router.replace({ name: 'excel', query: { eid: eid, isRight: 'right' } })
+  } else {
+    router.replace({ name: 'excel', query: { eid: eid } })
+  }
 }
 </script>
 
