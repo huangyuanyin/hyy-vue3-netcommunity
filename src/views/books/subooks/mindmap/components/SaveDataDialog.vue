@@ -200,7 +200,11 @@ watch(() => route.query, () => {
 })
 
 watch(() => isShowDialog.value, () => {
-  bus.emit('startTextEdit');
+  if (isShowDialog.value == true) {
+    bus.emit('startTextEdit');
+  } else {
+    bus.emit('endTextEdit')
+  }
 })
 
 onMounted(() => {

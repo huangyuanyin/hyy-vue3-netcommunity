@@ -16,11 +16,11 @@
       </div>
       <div class="item" @click="exec('UP_NODE')" :class="{ disabled: upNodeBtnDisabled }">
         上移节点
-        <span class="desc">Ctrl + ↑</span>
+        <span class="desc">Ctrl / Alt + ↑</span>
       </div>
       <div class="item" @click="exec('DOWN_NODE')" :class="{ disabled: downNodeBtnDisabled }">
         下移节点
-        <span class="desc">Ctrl + ↓</span>
+        <span class="desc">Ctrl / Alt + ↓</span>
       </div>
       <div class="item danger" @click="exec('REMOVE_NODE')">
         删除节点
@@ -123,6 +123,15 @@ export default {
     this.mindMap.keyCommand.addShortcut('Control+c', this.copy);
     this.mindMap.keyCommand.addShortcut('Control+v', this.paste);
     this.mindMap.keyCommand.addShortcut('Control+x', this.cut);
+    this.mindMap.keyCommand.addShortcut('Alt+Up', () => {
+      this.mindMap.execCommand('UP_NODE')
+    });
+    this.mindMap.keyCommand.addShortcut('Alt+Down', () => {
+      this.mindMap.execCommand('DOWN_NODE')
+    });
+    this.mindMap.keyCommand.addShortcut('Control+Shift+l', () => {
+      this.mindMap.execCommand('RESET_LAYOUT')
+    });
   },
   beforeDestroy() {
     bus.off("node_contextmenu", this.show);

@@ -44,10 +44,6 @@ const toggleMiniMap = (show) => {
 }
 
 onMounted(() => {
-  toggleMiniMap(openMiniMap)
-})
-
-onMounted(() => {
   toggleMiniMap(openMiniMap.value)
 })
 
