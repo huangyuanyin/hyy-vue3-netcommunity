@@ -38,7 +38,8 @@ export default {
   mounted() {
     bus.on("toggle_mini_map", this.toggle_mini_map);
     bus.on("data_change", this.data_change);
-    bus.on("view_data_change", this.view_data_change);
+    bus.on("view_data_change", this.data_change);
+    bus.on("node_tree_render_end", this.data_change);
   },
   // 旧的组件卸载的时候要把事件移除掉
   // 防止在调用保存接口时，同时触发新的和旧的navigator事件，而旧的组件中dom节点以及没有挂载在当前页面下，会报错
@@ -46,7 +47,8 @@ export default {
     console.log('beforeUnmount')
     bus.off("toggle_mini_map", this.toggle_mini_map);
     bus.off("data_change", this.data_change);
-    bus.off("view_data_change", this.view_data_change);
+    bus.off("view_data_change", this.data_change);
+    bus.off("node_tree_render_end", this.data_change);
   },
   methods: {
     toggle_mini_map(show) {
@@ -69,15 +71,15 @@ export default {
         this.drawMiniMap();
       }, 500);
     },
-    view_data_change() {
-      if (!this.showMiniMap) {
-        return;
-      }
-      clearTimeout(this.timer);
-      this.timer = setTimeout(() => {
-        this.drawMiniMap();
-      }, 500);
-    },
+    // view_data_change() {
+    //   if (!this.showMiniMap) {
+    //     return;
+    //   }
+    //   clearTimeout(this.timer);
+    //   this.timer = setTimeout(() => {
+    //     this.drawMiniMap();
+    //   }, 500);
+    // },
     init() {
       let { width, height } = this.$refs.navigatorBox.getBoundingClientRect();
       this.boxWidth = width;
