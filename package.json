@@ -24,7 +24,7 @@
     "luckyexcel": "^1.0.1",
     "mavon-editor": "^3.0.0-beta",
     "mitt": "^3.0.0",
-    "simple-mind-map": "^0.2.14",
+    "simple-mind-map": "^0.2.16",
     "tinymce": "^5.8.0",
     "typescript": "^4.7.3",
     "vue": "^3.2.37",
