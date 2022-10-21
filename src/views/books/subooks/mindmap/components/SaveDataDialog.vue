@@ -182,7 +182,7 @@ const loadMindMap = () => {
     saveForm.category = res.data.category
     saveForm.title = res.data.title || ''
     saveForm.tags = res.data.tags
-    saveForm.body = JSON.parse(res.data.body)
+    // saveForm.body = JSON.parse(res.data.body)
   })
 }
 
@@ -200,7 +200,11 @@ watch(() => route.query, () => {
 })
 
 watch(() => isShowDialog.value, () => {
-  bus.emit('startTextEdit');
+  if (isShowDialog.value == true) {
+    bus.emit('startTextEdit');
+  } else {
+    bus.emit('endTextEdit')
+  }
 })
 
 onMounted(() => {

@@ -17,6 +17,7 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
+                <el-dropdown-item command="documentManage">文档管理</el-dropdown-item>
                 <el-dropdown-item command="article">新建文档</el-dropdown-item>
                 <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
                 <!-- <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item> -->
@@ -117,251 +118,227 @@
       </template>
     </el-drawer>
   </div>
+  <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" />
 </template>
 
-<script>
+<script setup>
 import { ref, computed, watch, reactive, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
+import SaveDialog from "@/components/SaveDialog.vue";
 import { getForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { Search } from '@element-plus/icons-vue'
 import { getTag } from "@/api/tag.js"
 import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
-
 // import exampleData from 'simple-mind-map/example/exampleData';
 import bus from "@/utils/bus.js"
 
-export default {
-  setup() {
-    // vuex
-    const store = useStore()
-    const route = useRoute();
-    // 路由
-    const router = useRouter()
-    let loadingInstance;
-    // 等待
-    const loading = ref(false)
-    // 数据列表
-    const datalist = ref([])
-    // 标签列表
-    const taglist = ref([])
-    // 搜索内容
-    const keywords = ref('')
-    // 条数/页
-    const size = ref(10)
-    // 总条数
-    const total = ref(0)
-    // 当前页码
-    const page = ref(1)
-    // 抽屉
-    const drawer = ref(false)
-    // 节点数据
-    const node = computed(() => store.getters.node);
-    // 筛选表单
-    const form = reactive({
-      title: '',
-      tags: '',
-      body: ''
-    })
-    // 初始化思维导图数据
-    const exampleData = { "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } }
+const store = useStore()
+const route = useRoute();
+const router = useRouter()
+// 等待
+let loadingInstance;
+const loading = ref(false)
+const isShowDialog = ref(false)
+// 数据列表
+const datalist = ref([])
+// 标签列表
+const taglist = ref([])
+// 搜索内容
+const keywords = ref('')
+// 条数/页
+const size = ref(10)
+// 总条数
+const total = ref(0)
+// 当前页码
+const page = ref(1)
+// 抽屉
+const drawer = ref(false)
+// 节点数据
+const node = computed(() => store.getters.node);
+// 筛选表单
+const form = reactive({
+  title: '',
+  tags: '',
+  body: ''
+})
+// 初始化思维导图数据
+const exampleData = { "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } }
 
-    // 获取数据列表
-    const getDataList = () => {
-      loading.value = true
-      let tmpBody = encodeURIComponent(form.body)
-      let tmpTitle = encodeURIComponent(form.title)
-      let nodeid = ''
-      if (node.value.id) {
-        nodeid = node.value.id
-      }
-      let params = {
-        category: nodeid,
-        tags: form.tags,
-        title: tmpTitle,
-        body: tmpBody,
-        page: page.value,
-        pagesize: size.value
-      }
-      getForum(params).then(res => {
-        datalist.value = res.data
-        total.value = res.total
-        loading.value = false
-      })
-    };
+// 获取数据列表
+const getDataList = () => {
+  loading.value = true
+  let tmpBody = encodeURIComponent(form.body)
+  let tmpTitle = encodeURIComponent(form.title)
+  let nodeid = ''
+  if (node.value.id) {
+    nodeid = node.value.id
+  }
+  let params = {
+    category: nodeid,
+    tags: form.tags,
+    title: tmpTitle,
+    body: tmpBody,
+    page: page.value,
+    pagesize: size.value
+  }
+  getForum(params).then(res => {
+    datalist.value = res.data
+    total.value = res.total
+    loading.value = false
+  })
+};
 
-    // 获取标签列表
-    const getTagList = () => {
-      getTag().then(res => {
-        taglist.value = res.data
-      })
-    }
-
-    getTagList()
-
-    // 监听
-    watch(() => node.value.id, () => {
-      // console.log(node.value)
-      getDataList()
-    })
-
-    // 监听是否刷新
-    watch(() => route.params.wRefresh, () => {
-      if (route.params.wRefresh) {
-        getDataList()
-      }
-    })
-
-    // 监听是否刷新
-    watchEffect(() => {
-      if (route.params.wRefresh) {
-        getDataList()
-      }
-    })
-
-    const handleRefresh = () => {
-      getDataList()
-    }
-
-    // 抽屉关闭事件
-    const drawerClose = () => {
-      form.title = ''
-      form.body = ''
-      form.tags = ''
-      drawer.value = false
-
-    }
-
-    // 筛选事件
-    const handleSearch = () => {
-      if (form.tags == null) {
-        form.tags = ''
-      }
-      getDataList()
-      drawerClose()
-    }
-
-    // 
-    const handleSizeChange = (value) => {
-      console.log(value)
-      size.value = value
-      getDataList()
-    }
-
-    // 页码响应
-    const handleCurrentChange = (value) => {
-      page.value = value
-      getDataList()
-    }
-
-    // 指令事件
-    const handleCommand = (value) => {
-      if (value == 'excel') {
-        router.push({ name: 'excel', query: { isRight: "right", isAdd: "add" } })
-      }
-      if (value == 'article') {
-        router.push({ name: 'md', query: { isRight: "right", isAdd: "add" } })
-      }
-      // if (value == 'word') {
-      //   router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
-      // }
-      if (value == 'mindmap') {
-        bus.emit('setData', exampleData); // 初始化思维导图数据
-        router.push({ name: 'mindMap', query: { isRight: "right", isAdd: "add" } })
-      }
-    }
-
-    // 跳转至文章详情页
-    const handleOpen = async (type, id) => {
-      if (type == 'a' || type == 'w') {
-        router.push({ name: 'detail', query: { wid: id, isRight: "right" } })
-      }
-      if (type == 'e') {
-        router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
-      }
-      if (type == 'm') {
-        loadingInstance = ElLoading.service({
-          lock: true,
-          text: '正在加载文件，请稍后...',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        })
-        await getMindMapDataApi(id)
-        router.push({ name: 'mindMap', query: { mid: id, isRight: "right" } })
-      }
-    }
-
-    // 文章编辑
-    const handleEdit = async (type, qs) => {
-      if (type == 'a') {
-        router.push({ name: 'md', query: { tid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
-      }
-      if (type == 'w') {
-        router.push({ name: 'md', query: { mid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
-      }
-      if (type == 'e') {
-        router.push({ name: 'excel', query: { eid: qs.id, isRight: "right" } })
-      }
-      if (type == 'm') {
-        loadingInstance = ElLoading.service({
-          lock: true,
-          text: '正在加载文件，请稍后...',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        })
-        await getMindMapDataApi(qs.id)
-        router.push({ name: 'mindMap', query: { mid: qs.id, isRight: "right" } })
-      }
-    }
-
-    // 回复响应
-    const answerHandle = (id) => {
-      router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
-    }
-
-    // 获取思维导图数据
-    const getMindMapDataApi = (id) => {
-      getForumInfo(id).then(res => {
-        ElMessage({
-          message: "获取成功",
-          type: "success",
-          duration: 1000,
-        });
-        bus.emit('setData', JSON.parse(res.data.body));
-        bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
-        loadingInstance.close()
-      })
-    }
-
-    return {
-      datalist,
-      loading,
-      node,
-      keywords,
-      taglist,
-      size,
-      total,
-      page,
-      drawer,
-      form,
-      Search,
-      handleSizeChange,
-      answerHandle,
-      handleCurrentChange,
-      drawerClose,
-      getDataList,
-      getTagList,
-      handleSearch,
-      handleRefresh,
-      handleCommand,
-      handleOpen,
-      handleEdit,
-      getMindMapDataApi,
-      exampleData,
-      loadingInstance
-    }
-  },
+// 获取标签列表
+const getTagList = () => {
+  getTag().then(res => {
+    taglist.value = res.data
+  })
 }
+
+getTagList()
+
+// 监听
+watch(() => node.value.id, () => {
+  // console.log(node.value)
+  getDataList()
+})
+
+// 监听是否刷新
+watch(() => route.params.wRefresh, () => {
+  if (route.params.wRefresh) {
+    getDataList()
+  }
+})
+
+// 监听是否刷新
+watchEffect(() => {
+  if (route.params.wRefresh) {
+    getDataList()
+  }
+})
+
+const handleRefresh = () => {
+  getDataList()
+}
+
+// 抽屉关闭事件
+const drawerClose = () => {
+  form.title = ''
+  form.body = ''
+  form.tags = ''
+  drawer.value = false
+
+}
+
+// 筛选事件
+const handleSearch = () => {
+  if (form.tags == null) {
+    form.tags = ''
+  }
+  getDataList()
+  drawerClose()
+}
+
+// 
+const handleSizeChange = (value) => {
+  console.log(value)
+  size.value = value
+  getDataList()
+}
+
+// 页码响应
+const handleCurrentChange = (value) => {
+  page.value = value
+  getDataList()
+}
+
+// 指令事件
+const handleCommand = (value) => {
+  if (value == 'excel') {
+    router.push({ name: 'excel', query: { isRight: "right", isAdd: "add" } })
+  }
+  if (value == 'article') {
+    router.push({ name: 'md', query: { isRight: "right", isAdd: "add" } })
+  }
+  // if (value == 'word') {
+  //   router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
+  // }
+  if (value == 'mindmap') {
+    bus.emit('setData', exampleData); // 初始化思维导图数据
+    router.push({ name: 'mindMap', query: { isRight: "right", isAdd: "add" } })
+  }
+  if (value == 'documentManage') {
+    isShowDialog.value = true
+  }
+}
+
+// 跳转至文章详情页
+const handleOpen = async (type, id) => {
+  if (type == 'a' || type == 'w') {
+    router.push({ name: 'detail', query: { wid: id, isRight: "right" } })
+  }
+  if (type == 'e') {
+    router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
+  }
+  if (type == 'm') {
+    loadingInstance = ElLoading.service({
+      lock: true,
+      text: '正在加载文件，请稍后...',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
+    await getMindMapDataApi(id)
+    router.push({ name: 'mindMap', query: { mid: id, isRight: "right" } })
+  }
+}
+
+// 文章编辑
+const handleEdit = async (type, qs) => {
+  if (type == 'a') {
+    router.push({ name: 'md', query: { tid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
+  }
+  if (type == 'w') {
+    router.push({ name: 'md', query: { mid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
+  }
+  if (type == 'e') {
+    router.push({ name: 'excel', query: { eid: qs.id, isRight: "right" } })
+  }
+  if (type == 'm') {
+    loadingInstance = ElLoading.service({
+      lock: true,
+      text: '正在加载文件，请稍后...',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
+    await getMindMapDataApi(qs.id)
+    router.push({ name: 'mindMap', query: { mid: qs.id, isRight: "right" } })
+  }
+}
+
+// 回复响应
+const answerHandle = (id) => {
+  router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
+}
+
+// 获取思维导图数据
+const getMindMapDataApi = (id) => {
+  getForumInfo(id).then(res => {
+    ElMessage({
+      message: "获取成功",
+      type: "success",
+      duration: 1000,
+    });
+    bus.emit('setData', JSON.parse(res.data.body));
+    bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
+    loadingInstance.close()
+  })
+}
+
+const closeSaveDialog = (res) => {
+  isShowDialog.value = res
+}
+
 </script>
 
 <style scoped>

@@ -16,7 +16,7 @@
           <span class="text">前进</span>
         </div>
         <div class="toolbarBtn" :class="{
-          disabled: activeNodes.length <= 0 || hasRoot || hasGeneralization,
+          disabled: activeNodes.length <= 0 || !hasRoot || hasGeneralization,
         }" @click="emit('execCommand', 'INSERT_NODE')">
           <span class="icon iconfont iconjiedian"></span>
           <span class="text">插入同级节点</span>
@@ -64,7 +64,7 @@
           <span class="text">标签</span>
         </div>
         <div class="toolbarBtn" :class="{
-          disabled: activeNodes.length <= 0 || hasRoot || hasGeneralization,
+          disabled: activeNodes.length <= 0 || !hasRoot || hasGeneralization,
         }" @click="emit('execCommand', 'ADD_GENERALIZATION')">
           <span class="icon iconfont icongaikuozonglan"></span>
           <span class="text">概要</span>

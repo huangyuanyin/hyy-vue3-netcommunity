@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import installElementPlus from './plugins/element'
 import elementIcon from "./plugins/svgicon"
+import 'viewerjs/dist/viewer.css'
+import VueViewer from 'v-viewer'
 import './assets/css/icon.css'
 import '@/assets/icon-font/iconfont.css';
 
@@ -23,6 +25,7 @@ const app = createApp(App)
 
 app.use(installElementPlus)
     .use(elementIcon)
+    .use(VueViewer)
     .use(store)
     .use(router)
     .mount('#app')

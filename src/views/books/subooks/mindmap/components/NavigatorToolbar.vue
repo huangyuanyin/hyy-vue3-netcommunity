@@ -21,7 +21,7 @@
 * @Author: 黄原寅
 * @Desc: 导航器工具栏
 */
-import { ref, defineProps } from "vue"
+import { ref, onMounted, defineProps } from "vue"
 import Scale from "./Scale";
 import Fullscreen from "./Fullscreen";
 import bus from "@/utils/bus.js";
@@ -33,7 +33,7 @@ const props = defineProps({
 })
 
 const isReadonly = ref(false)
-const openMiniMap = ref(false)
+const openMiniMap = ref(true)
 
 const readonlyChange = (value) => {
   props.mindMap.setMode(value ? 'readonly' : 'edit')
@@ -42,6 +42,10 @@ const readonlyChange = (value) => {
 const toggleMiniMap = (show) => {
   bus.emit('toggle_mini_map', show)
 }
+
+onMounted(() => {
+  toggleMiniMap(openMiniMap.value)
+})
 
 </script>
 
