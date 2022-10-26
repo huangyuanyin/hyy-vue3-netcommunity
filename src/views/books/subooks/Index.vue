@@ -51,10 +51,10 @@
             <li v-for="(question, index) in datalist" :key="index">
               <el-card shadow="never" :body-style="{ padding: '0px' }">
                 <div style="padding: 14px">
-                  <h3 class="title" @click="handleOpen(question.type, question.id)">{{ question.title }}</h3>
+                  <h3 @click="handleOpen(question.type, question.id, question)">{{ question.title }}</h3>
                 </div>
                 <el-row class="subscript">
-                  <el-col :span="2">
+                  <el-col :span="1">
                     <div class="user-avator">
                       <img src="@/assets/img/img.jpg" />
                     </div>
@@ -65,14 +65,14 @@
                   <el-col :span="5">
                     <time class="time">{{ question.pub_time }}</time>
                   </el-col>
-                  <el-col :span="4" :offset="11" class="statistics">
-                    <el-button text @click="handleOpen(question.type, question.id)">
+                  <el-col :span="5" :offset="11" class="statistics">
+                    <el-button text @click="handleOpen(question.type, question.id, question)">
                       <el-icon :size="16">
                         <View />
                       </el-icon>
                     </el-button>
                     <span>{{ question.views }}</span>
-                    <el-button text @click="answerHandle(question.id)">
+                    <el-button text @click="answerHandle(question.type,question.id)">
                       <el-icon :size="16" color="#000000">
                         <chat-dot-round />
                       </el-icon>
@@ -83,14 +83,26 @@
                         <Edit />
                       </el-icon>
                     </el-button>
+                    <el-button style="margin-left:0px" text v-if="['pdf','ppt','doc'].includes(question.type)"
+                      @click="handleDelete(question.id)">
+                      <el-icon :size="16">
+                        <Delete />
+                      </el-icon>
+                    </el-button>
+                    <el-button style="margin-left:0px" text v-if="['pdf','ppt','doc'].includes(question.type)"
+                      @click="handleDownload(question.id)">
+                      <el-icon :size="16">
+                        <Download />
+                      </el-icon>
+                    </el-button>
                   </el-col>
                 </el-row>
               </el-card>
             </li>
           </ul>
-          <el-pagination style="margin-top: 10px" :total="total" :current-page="page" :page-size="size"
-            :page-sizes="[10, 20, 50, 100]" @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+          <el-pagination style="margin-top: 10px;justify-content: flex-end" :total="total" :current-page="page"
+            :page-size="size" :page-sizes="[10, 20, 50, 100]" @size-change="handleSizeChange"
+            @current-change="handleCurrentChange" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
         </el-main>
       </el-container>
     </el-card>
@@ -100,7 +112,6 @@
           <el-input v-model="form.title" placeholder="请输入标题关键字"></el-input>
         </el-form-item>
         <el-form-item label="知识库">
-          <!-- <el-input v-model="form.body" placeholder="知识库内容"></el-input> -->
           <el-input v-model="form.body" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
             placeholder="请输入要检索的知识库内容" />
         </el-form-item>
@@ -108,7 +119,6 @@
           <el-cascader :options="taglist" v-model="form.tags" clearable :props="{ value: 'id', label: 'name' }">
           </el-cascader>
         </el-form-item>
-        <!-- <el-form-item label=""></el-form-item> -->
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -117,22 +127,24 @@
         </span>
       </template>
     </el-drawer>
+    <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" />
   </div>
-  <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" />
 </template>
 
 <script setup>
-import { ref, computed, watch, reactive, watchEffect } from 'vue'
+import { ref, computed, watch, reactive, watchEffect, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import SaveDialog from "@/components/SaveDialog.vue";
-import { getForum, updateForum, getForumInfo } from '@/api/forum.js'
+import { getForum, updateForum, getForumInfo, deleteForum } from '@/api/forum.js'
 import { Search } from '@element-plus/icons-vue'
 import { getTag } from "@/api/tag.js"
-import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
+import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
 // import exampleData from 'simple-mind-map/example/exampleData';
 import bus from "@/utils/bus.js"
+import { Base64 } from 'js-base64';
 
+const reload = inject('reload')
 const store = useStore()
 const route = useRoute();
 const router = useRouter()
@@ -228,7 +240,6 @@ const drawerClose = () => {
   form.body = ''
   form.tags = ''
   drawer.value = false
-
 }
 
 // 筛选事件
@@ -291,6 +302,9 @@ const handleOpen = async (type, id) => {
     await getMindMapDataApi(id)
     router.push({ name: 'mindMap', query: { mid: id, isRight: "right" } })
   }
+  if (['pdf', 'ppt', 'doc'].includes(type)) {
+    getPreview(id)
+  }
 }
 
 // 文章编辑
@@ -314,11 +328,71 @@ const handleEdit = async (type, qs) => {
     await getMindMapDataApi(qs.id)
     router.push({ name: 'mindMap', query: { mid: qs.id, isRight: "right" } })
   }
+  if (['pdf', 'doc', 'ppt'].includes(type)) {
+    ElMessage.warning("预览文件，不支持编辑！")
+    return false
+  }
 }
 
 // 回复响应
-const answerHandle = (id) => {
+const answerHandle = (type, id) => {
+  if (['pdf', 'doc', 'ppt'].includes(type)) {
+    ElMessage.warning("预览文件，不支持评论！")
+    return false
+  }
+  if (type === 'e') {
+    ElMessage.warning("表格类型文件，不支持评论！")
+    return false
+  }
   router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
+}
+
+// 下载预览文件
+const handleDownload = async (id) => {
+  await getForumInfo(id).then(res => {
+    if (res.code === 1000) {
+      let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
+      var elemIF = document.createElement('iframe')
+      elemIF.src = url
+      elemIF.style.display = 'none'
+      document.body.appendChild(elemIF)
+    }
+  })
+}
+
+// 查看预览文件
+const getPreview = async (id) => {
+  await getForumInfo(id).then(res => {
+    let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
+    window.open('http://10.20.86.27:8020/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)));
+  })
+}
+
+const handleDelete = (id) => {
+  // 二次确认删除
+  ElMessageBox.confirm("确定要删除吗？", "提示", {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: "warning",
+    draggable: true,
+  })
+    .then(() => {
+      deleteForum(id).then(res => {
+        if (res.code === 1000) {
+          ElMessage.success("删除成功");
+          router.push({ name: 'subbooks', params: { wRefresh: true } })
+          reload()
+        } else {
+          ElMessage.error(res.msg || "删除失败");
+        }
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消删除',
+      })
+    })
 }
 
 // 获取思维导图数据
@@ -341,7 +415,7 @@ const closeSaveDialog = (res) => {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .el-container {
   padding: 0px;
 }
@@ -353,7 +427,16 @@ const closeSaveDialog = (res) => {
 .infinite-list {
   padding: 0;
   margin: 0;
-  list-style: none
+  list-style: none;
+
+  li {
+    margin: 10px 0 !important;
+  }
+
+  h3:hover {
+    cursor: pointer;
+  }
+
 }
 
 .title {
