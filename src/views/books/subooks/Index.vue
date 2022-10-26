@@ -63,7 +63,7 @@
                     <span>{{ question.author }}</span>
                   </el-col>
                   <el-col :span="5">
-                    <time class="time">{{ question.pub_time }}</time>
+                    <time class="time">{{utc2beijing(question.pub_time)}}</time>
                   </el-col>
                   <el-col :span="5" :offset="11" class="statistics">
                     <el-button text @click="handleOpen(question.type, question.id, question)">
@@ -143,6 +143,7 @@ import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
 // import exampleData from 'simple-mind-map/example/exampleData';
 import bus from "@/utils/bus.js"
 import { Base64 } from 'js-base64';
+import { utc2beijing } from '@/utils/util.js'
 
 const reload = inject('reload')
 const store = useStore()

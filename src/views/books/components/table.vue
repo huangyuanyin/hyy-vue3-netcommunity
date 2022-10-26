@@ -6,11 +6,13 @@
           <el-button type="primary" plain @click="handleOpen(scope.row)">{{ scope.row.name }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" prop="last_mod_time"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="更新时间" prop="last_mod_time" :formatter="dateFormat" align="center">
+      </el-table-column>
+      <el-table-column label="操作" align="center">
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.row)">Edit</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(scope.row.id)" :disabled="role !== 'admin'">Delete
+          <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button size="small" type="danger" @click="handleDelete(scope.row.id)" :disabled="role !== 'admin'">
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -26,6 +28,7 @@ import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { deleteCategorys, getCategorys } from "@/api/category.js"
 import dialogBook from './dialog.vue'
+import { utc2beijing } from '@/utils/util.js'
 export default {
   props: {
     data: Object
@@ -48,6 +51,11 @@ export default {
       getCategorys().then((res) => {
         datalist.value = res.data
       })
+    }
+
+    const dateFormat = (row, column) => {
+      let date = row[column.property]
+      return utc2beijing(date)
     }
 
     watch(() => props.data, () => {
@@ -106,7 +114,8 @@ export default {
       getDialog,
       handleOpen,
       handleEdit,
-      handleDelete
+      handleDelete,
+      dateFormat
     }
   },
 }
