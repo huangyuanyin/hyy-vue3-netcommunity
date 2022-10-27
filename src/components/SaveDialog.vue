@@ -12,24 +12,24 @@
           </el-space>
         </el-form-item>
         <el-form-item label="文档名称" prop="title">
-          <el-input v-model="saveForm.title" show-word-limit maxlength="30" placeholder="请输入文档名称" type="text">
+          <el-input v-model="saveForm.title" show-word-limit maxlength="100" placeholder="请输入文档名称" type="text">
           </el-input>
         </el-form-item>
         <el-form-item label="选择文件" prop="file">
           <el-upload class="upload-demo" ref="fileUpload" drag action="" :multiple="false" :limit="1"
-            :auto-upload="false" accept=".pdf,.docx,.ppt,.pptx" :on-change="onFileChange" :file-list="saveForm.file"
-            :data="saveForm" :on-exceed="handleExceed">
+            :auto-upload="false" accept="" :on-change="onFileChange" :file-list="saveForm.file" :data="saveForm"
+            :on-exceed="handleExceed">
             <el-icon class="el-icon--upload">
               <upload-filled />
             </el-icon>
             <div class="el-upload__text">
               将文件拖到此处自动上传或<em>点击上传</em>
             </div>
-            <template #tip>
+            <!-- <template #tip>
               <div class="el-upload__tip">
                 仅支持.pdf .ppt(x) .docx类型文件上传
               </div>
-            </template>
+            </template> -->
           </el-upload>
         </el-form-item>
       </el-form>
@@ -44,12 +44,13 @@
 </template>
 
 <script setup>
-import { reactive, ref, toRefs, defineProps, defineEmits, onMounted, computed} from 'vue'
+import { reactive, ref, toRefs, defineProps, defineEmits, onMounted, computed } from 'vue'
 import { getTag } from "@/api/tag.js"
 import { uploadArticleFileApi } from '@/api/upload.js'
 import { getCategorysInfo } from '@/api/category.js'
 import { judgeNodeType } from '@/utils/methods.js'
 import { ElMessage } from 'element-plus';
+import { genFileId } from 'element-plus'
 
 const props = defineProps({
   isShowDialog: {
@@ -59,7 +60,7 @@ const props = defineProps({
 })
 
 const { isShowDialog } = toRefs(props)
-const emits = defineEmits(['closeSaveDialog'])
+const emits = defineEmits(['closeSaveDialog', 'goRefresh'])
 const spaceid = computed(() => sessionStorage.getItem('spaceid')); // 工作空间标题名
 const treeData = ref([]) // 节点数据
 const taglist = ref([]) // 标签列表
@@ -87,13 +88,13 @@ const handleChange = (id) => {
 const handleSave = async () => {
   saveFormRef.value.validate((valid) => {
     if (!valid) return false
-    let pos = fileName.value.lastIndexOf(".");
-    let lastName = fileName.value.substring(pos, fileName.length);
-    if (![".pdf", ".ppt", ".pptx", ".docx"].includes(lastName.toLowerCase())) {
-      console.log("lastName", lastName.toLowerCase());
-      ElMessage.error("上传文件只能是pdf、ppt(x)、docx格式");
-      return false
-    }
+    // let pos = fileName.value.lastIndexOf(".");
+    // let lastName = fileName.value.substring(pos, fileName.length);
+    // if (![".pdf", ".ppt", ".pptx", ".docx"].includes(lastName.toLowerCase())) {
+    //   console.log("lastName", lastName.toLowerCase());
+    //   ElMessage.error("上传文件只能是pdf、ppt(x)、docx格式");
+    //   return false
+    // }
     let formData = new FormData();
     formData.append("author", saveForm.author);
     formData.append("title", saveForm.title);
@@ -111,6 +112,7 @@ const uploadArticleFile = async (params) => {
   if (res.code === 1000) {
     ElMessage.success('上传成功')
     emits('closeSaveDialog', false)
+    emits('goRefresh')
     saveFormRef.value.resetFields()
     fileUpload.value.clearFiles()
   } else {
@@ -122,11 +124,15 @@ const uploadArticleFile = async (params) => {
 }
 
 const handleExceed = (files, fileList) => {
-  ElMessage.error('只能选择1个文件')
+  fileUpload.value.clearFiles()
+  const file = files[0]
+  file.uid = genFileId()
+  fileUpload.value.handleStart(file)
 }
 
 // 文件状态改变时的钩子
 const onFileChange = (file, fileList) => {
+  saveForm.title = file.name
   fileName.value = file.name
   if (fileList.length > 0) {
     saveForm.file = [fileList[fileList.length - 1]]  // 展示最后一次选择的文件
@@ -149,9 +155,9 @@ const getTagList = () => {
 }
 
 const closeSaveDialog = async () => {
-  emits('closeSaveDialog', false)
   fileUpload.value.clearFiles()
   saveFormRef.value.resetFields()
+  emits('closeSaveDialog', false)
 }
 
 onMounted(() => {

@@ -87,7 +87,7 @@
                       </el-icon>
                     </el-button>
                     <el-button style="margin-left:0px" text v-if="question.type==='d'"
-                      @click=" handleDelete(question.id)">
+                      @click="handleDelete(question.title,question.id)">
                       <el-icon :size="16">
                         <Delete />
                       </el-icon>
@@ -103,9 +103,10 @@
               </el-card>
             </li>
           </ul>
-          <el-pagination style="margin-top: 10px;justify-content: flex-end" :total="total" :current-page="page"
-            :page-size="size" :page-sizes="[10, 20, 50, 100]" @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+          <el-pagination v-if="datalist.length != 0" style="margin: 10px 0 50px 0;justify-content: flex-end"
+            :total="total" :current-page="page" :page-size="size" :page-sizes="[10, 20, 50, 100]"
+            @size-change="handleSizeChange" @current-change="handleCurrentChange"
+            layout="total, sizes, prev, pager, next, jumper"></el-pagination>
         </el-main>
       </el-container>
     </el-card>
@@ -130,14 +131,14 @@
         </span>
       </template>
     </el-drawer>
-    <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" />
+    <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" v-on:goRefresh="goRefresh()" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, reactive, watchEffect, inject } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import SaveDialog from "@/components/SaveDialog.vue";
 import { getForum, updateForum, getForumInfo, deleteForum } from '@/api/forum.js'
 import { Search } from '@element-plus/icons-vue'
@@ -204,6 +205,10 @@ const getDataList = () => {
     loading.value = false
   })
 };
+
+const goRefresh = () => {
+  getDataList()
+}
 
 // 获取标签列表
 const getTagList = () => {
@@ -356,12 +361,31 @@ const handleDownload = async (id) => {
   await getForumInfo(id).then(res => {
     if (res.code === 1000) {
       let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
-      var elemIF = document.createElement('iframe')
-      elemIF.src = url
-      elemIF.style.display = 'none'
-      document.body.appendChild(elemIF)
+      // var elemIF = document.createElement('iframe')
+      // elemIF.src = url
+      // elemIF.style.display = 'none'
+      // document.body.appendChild(elemIF)
+      downloadEvt(url)
     }
   })
+}
+
+const downloadEvt = (url, fileName = '未知文件') => {
+  const el = document.createElement('a');
+  el.style.display = 'none';
+  el.setAttribute('target', '_blank');
+  /**
+    * download的属性是HTML5新增的属性
+    * href属性的地址必须是非跨域的地址，如果引用的是第三方的网站或者说是前后端分离的项目(调用后台的接口)，这时download就会不起作用。
+    * 此时，如果是下载浏览器无法解析的文件，例如.exe,.xlsx..那么浏览器会自动下载，但是如果使用浏览器可以解析的文件，比如.txt,.png,.pdf....浏览器就会采取预览模式
+    * 所以，对于.txt,.png,.pdf等的预览功能我们就可以直接不设置download属性(前提是后端响应头的Content-Type: application/octet-stream，如果为application/pdf浏览器则会判断文件为 pdf ，自动执行预览的策略)
+    */
+  fileName && el.setAttribute('download', fileName);
+  el.href = url;
+  console.log(el);
+  document.body.appendChild(el);
+  el.click();
+  document.body.removeChild(el);
 }
 
 // 查看预览文件
@@ -372,9 +396,9 @@ const getPreview = async (id) => {
   })
 }
 
-const handleDelete = (id) => {
+const handleDelete = (title, id) => {
   // 二次确认删除
-  ElMessageBox.confirm("确定要删除吗？", "提示", {
+  ElMessageBox.confirm(`确定要删除【${title}】这个文件吗？`, "提示", {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: "warning",
@@ -385,7 +409,7 @@ const handleDelete = (id) => {
         if (res.code === 1000) {
           ElMessage.success("删除成功");
           router.push({ name: 'subbooks', params: { wRefresh: true } })
-          reload()
+          goRefresh()
         } else {
           ElMessage.error(res.msg || "删除失败");
         }
@@ -417,6 +441,13 @@ const closeSaveDialog = (res) => {
   isShowDialog.value = res
 }
 
+onBeforeRouteLeave((to, from, next) => {
+  if (to.path === '/books') {
+    datalist.value = []
+    node.value.label = ""
+  }
+  next()
+})
 </script>
 
 <style lang="scss" scoped>
