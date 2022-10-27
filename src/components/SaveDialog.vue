@@ -1,7 +1,8 @@
 <template>
   <div>
-    <el-dialog v-model="isShowDialog" custom-class="saveDialog" title="新建文档" @close="closeSaveDialog">
-      <el-form :model="saveForm" ref="saveFormRef" :rules="saveFormRules" label-width="80px">
+    <el-dialog v-model="isShowDialog" custom-class="saveDialog" title="新建文档" @close="closeSaveDialog"
+      :close-on-click-modal="false" :close-on-press-escape="false">
+      <el-form :disabled="disabled" :model="saveForm" ref="saveFormRef" :rules="saveFormRules" label-width="80px">
         <el-form-item label="分类" prop="category">
           <el-space>
             <el-cascader :options="treeData" v-model="saveForm.category" @change="handleChange"
@@ -18,7 +19,7 @@
         <el-form-item label="选择文件" prop="file">
           <el-upload class="upload-demo" ref="fileUpload" drag action="" :multiple="false" :limit="1"
             :auto-upload="false" accept="" :on-change="onFileChange" :file-list="saveForm.file" :data="saveForm"
-            :on-exceed="handleExceed">
+            :on-exceed="handleExceed" :disabled="disabled">
             <el-icon class="el-icon--upload">
               <upload-filled />
             </el-icon>
@@ -36,7 +37,8 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="closeSaveDialog">取 消</el-button>
-          <el-button type="primary" @click="handleSave">确 定</el-button>
+          <el-button v-if="!disabled" type="primary" @click="handleSave">确 定</el-button>
+          <el-button v-else type="primary">上传中...</el-button>
         </span>
       </template>
     </el-dialog>
@@ -81,6 +83,7 @@ const saveFormRules = reactive({
   title: [{ required: true, message: '请输入文档名称', trigger: 'blur' }],
   file: [{ required: true, message: '请选择文件上传', trigger: 'blur' }]
 })
+const disabled = ref(false)
 
 // 选择分类ID
 const handleChange = (id) => {
@@ -111,7 +114,9 @@ const handleSave = async () => {
 
 // 调用上传接口
 const uploadArticleFile = async (params) => {
+  disabled.value = true
   let res = await uploadArticleFileApi(params)
+  disabled.value = false
   if (res.code === 1000) {
     ElMessage.success('上传成功')
     emits('closeSaveDialog', false)
@@ -120,9 +125,6 @@ const uploadArticleFile = async (params) => {
     fileUpload.value.clearFiles()
   } else {
     ElMessage.error(res.msg || '上传失败')
-    emits('closeSaveDialog', false)
-    saveFormRef.value.resetFields()
-    fileUpload.value.clearFiles()
   }
 }
 
