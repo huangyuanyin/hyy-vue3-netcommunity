@@ -56,13 +56,16 @@ const props = defineProps({
   isShowDialog: {
     type: Boolean,
     default: () => false
+  },
+  treeData: {
+    type: Object,
+    default: () => { }
   }
 })
 
-const { isShowDialog } = toRefs(props)
+const { isShowDialog, treeData } = toRefs(props)
 const emits = defineEmits(['closeSaveDialog', 'goRefresh'])
 const spaceid = computed(() => sessionStorage.getItem('spaceid')); // 工作空间标题名
-const treeData = ref([]) // 节点数据
 const taglist = ref([]) // 标签列表
 const fileUpload = ref(null)
 const fileName = ref("")
@@ -162,7 +165,6 @@ const closeSaveDialog = async () => {
 
 onMounted(() => {
   getTagList()
-  getNodeList()
 })
 
 </script>

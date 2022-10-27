@@ -131,7 +131,8 @@
         </span>
       </template>
     </el-drawer>
-    <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" v-on:goRefresh="goRefresh()" />
+    <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" v-on:goRefresh="goRefresh()"
+      :treeData="treeData" />
   </div>
 </template>
 
@@ -148,11 +149,14 @@ import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
 import bus from "@/utils/bus.js"
 import { Base64 } from 'js-base64';
 import { utc2beijing } from '@/utils/util.js'
+import { getCategorysInfo } from '@/api/category.js'
+import { judgeNodeType } from '@/utils/methods.js'
 
-const reload = inject('reload')
 const store = useStore()
 const route = useRoute();
 const router = useRouter()
+const spaceid = computed(() => sessionStorage.getItem('spaceid')); // 工作空间标题名
+const treeData = ref([])
 // 等待
 let loadingInstance;
 const loading = ref(false)
@@ -448,6 +452,20 @@ onBeforeRouteLeave((to, from, next) => {
   }
   next()
 })
+
+watch(() => isShowDialog.value, () => {
+  getNodeList()
+})
+
+// 获取分类列表
+const getNodeList = () => {
+  getCategorysInfo(spaceid.value).then((res) => {
+    treeData.value = judgeNodeType(res.data)
+    console.log('dada', treeData.value);
+  })
+}
+
+
 </script>
 
 <style lang="scss" scoped>
