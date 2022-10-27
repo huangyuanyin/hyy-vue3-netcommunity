@@ -49,7 +49,10 @@
           </el-table> -->
           <ul class="infinite-list" style="overflow: auto">
             <li v-for="(question, index) in datalist" :key="index">
-              <el-card shadow="never" :body-style="{ padding: '0px' }">
+              <el-card shadow="never" :body-style="{ padding: '0px' }" class="itemCard">
+                <div class='ribbon' v-if="question.type==='d'">
+                  <span>仅预览</span>
+                </div>
                 <div style="padding: 14px">
                   <h3 @click="handleOpen(question.type, question.id, question)">{{ question.title }}</h3>
                 </div>
@@ -72,24 +75,24 @@
                       </el-icon>
                     </el-button>
                     <span>{{ question.views }}</span>
-                    <el-button text @click="answerHandle(question.type,question.id)">
+                    <el-button text @click="answerHandle(question.type,question.id)" v-if="question.type !== 'd'">
                       <el-icon :size="16" color="#000000">
                         <chat-dot-round />
                       </el-icon>
                     </el-button>
-                    <span>{{ question.s_comments.length }}</span>
-                    <el-button text @click="handleEdit(question.type, question)">
+                    <span v-if="question.type !== 'd'">{{ question.s_comments.length }}</span>
+                    <el-button text @click="handleEdit(question.type, question)" v-if="question.type !== 'd'">
                       <el-icon :size="16">
                         <Edit />
                       </el-icon>
                     </el-button>
-                    <el-button style="margin-left:0px" text v-if="['pdf','ppt','doc'].includes(question.type)"
-                      @click="handleDelete(question.id)">
+                    <el-button style="margin-left:0px" text v-if="question.type==='d'"
+                      @click=" handleDelete(question.id)">
                       <el-icon :size="16">
                         <Delete />
                       </el-icon>
                     </el-button>
-                    <el-button style="margin-left:0px" text v-if="['pdf','ppt','doc'].includes(question.type)"
+                    <el-button style="margin-left:0px" text v-if="question.type === 'd'"
                       @click="handleDownload(question.id)">
                       <el-icon :size="16">
                         <Download />
@@ -303,7 +306,7 @@ const handleOpen = async (type, id) => {
     await getMindMapDataApi(id)
     router.push({ name: 'mindMap', query: { mid: id, isRight: "right" } })
   }
-  if (['pdf', 'ppt', 'doc'].includes(type)) {
+  if (type == 'd') {
     getPreview(id)
   }
 }
@@ -329,7 +332,7 @@ const handleEdit = async (type, qs) => {
     await getMindMapDataApi(qs.id)
     router.push({ name: 'mindMap', query: { mid: qs.id, isRight: "right" } })
   }
-  if (['pdf', 'doc', 'ppt'].includes(type)) {
+  if (type == 'd') {
     ElMessage.warning("预览文件，不支持编辑！")
     return false
   }
@@ -337,7 +340,7 @@ const handleEdit = async (type, qs) => {
 
 // 回复响应
 const answerHandle = (type, id) => {
-  if (['pdf', 'doc', 'ppt'].includes(type)) {
+  if (type == 'd') {
     ElMessage.warning("预览文件，不支持评论！")
     return false
   }
@@ -432,6 +435,28 @@ const closeSaveDialog = (res) => {
 
   li {
     margin: 10px 0 !important;
+  }
+
+  .itemCard {
+    position: relative;
+
+    .ribbon {
+      background-color: #909399;
+      overflow: hidden;
+      white-space: nowrap;
+      position: absolute;
+      right: -50px; // 根据实际调整即可
+      top: 10px; // 根据实际调整即可
+      transform: rotate(45deg);
+      box-shadow: 0 0 10px #888;
+      opacity: 0.8;
+
+      span {
+        color: #fff;
+        padding: 3px 50px;
+        display: block;
+      }
+    }
   }
 
   h3:hover {
