@@ -82,7 +82,7 @@ service.interceptors.response.use(
           router.push("/login");
         });
       }
-      return Promise.reject(new Error(res.msg || "Error"));
+      // return Promise.reject(new Error(res.msg || "Error"));
     } else {
       return res;
     }
@@ -94,7 +94,7 @@ service.interceptors.response.use(
       type: "error",
       duration: 5 * 1000,
     });
-    return Promise.reject(error);
+    // return Promise.reject(error);
   }
 );
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog v-model="isShowDialog" custom-class="saveDialog" title="新建文档" @close="closeSaveDialog"
-      :close-on-click-modal="false" :close-on-press-escape="false">
+      :close-on-click-modal="false" :close-on-press-escape="false" :before-close="closeSaveDialog">
       <el-form :disabled="disabled" :model="saveForm" ref="saveFormRef" :rules="saveFormRules" label-width="80px">
         <el-form-item label="分类" prop="category">
           <el-space>
@@ -124,7 +124,7 @@ const uploadArticleFile = async (params) => {
     saveFormRef.value.resetFields()
     fileUpload.value.clearFiles()
   } else {
-    ElMessage.error(res.msg || '上传失败')
+    disabled.value = false
   }
 }
 
@@ -160,6 +160,9 @@ const getTagList = () => {
 }
 
 const closeSaveDialog = async () => {
+  if (disabled.value) {
+    return ElMessage.warning("文件上传中，请耐心等待...")
+  }
   fileUpload.value.clearFiles()
   saveFormRef.value.resetFields()
   emits('closeSaveDialog', false)

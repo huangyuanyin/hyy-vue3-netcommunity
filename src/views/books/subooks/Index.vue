@@ -73,27 +73,26 @@
                       <el-icon :size="16">
                         <View />
                       </el-icon>
+                      <span>{{ question.views }}</span>
                     </el-button>
-                    <span>{{ question.views }}</span>
                     <el-button text @click="answerHandle(question.type,question.id)" v-if="question.type !== 'd'">
                       <el-icon :size="16" color="#000000">
                         <chat-dot-round />
                       </el-icon>
+                      <span v-if="question.type !== 'd'">{{ question.s_comments.length }}</span>
                     </el-button>
-                    <span v-if="question.type !== 'd'">{{ question.s_comments.length }}</span>
                     <el-button text @click="handleEdit(question.type, question)" v-if="question.type !== 'd'">
                       <el-icon :size="16">
                         <Edit />
                       </el-icon>
+                      <span></span>
                     </el-button>
-                    <el-button style="margin-left:0px" text v-if="question.type==='d'"
-                      @click="handleDelete(question.title,question.id)">
+                    <el-button text v-if="question.type==='d'" @click="handleDelete(question.title,question.id)">
                       <el-icon :size="16">
                         <Delete />
                       </el-icon>
                     </el-button>
-                    <el-button style="margin-left:0px" text v-if="question.type === 'd'"
-                      @click="handleDownload(question.id)">
+                    <el-button text v-if="question.type === 'd'" @click="handleDownload(question.id)">
                       <el-icon :size="16">
                         <Download />
                       </el-icon>
@@ -529,6 +528,11 @@ const getNodeList = () => {
   line-height: 15px;
   display: flex;
   align-items: center;
+
+  .el-button {
+    width: 50px;
+    margin-left: 0px;
+  }
 }
 
 .user-avator {
@@ -559,7 +563,7 @@ const getNodeList = () => {
 }
 
 .statistics span {
-  margin-right: 5px;
+  // margin-right: 5px;
   font-size: 14px;
   color: #999;
 }
