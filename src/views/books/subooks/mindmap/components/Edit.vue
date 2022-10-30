@@ -15,7 +15,7 @@
     <NodeImgPreview v-if="mindMap" :mindMap="mindMap"></NodeImgPreview>
   </div>
 </template>
-
+  
 <script>
 import { toRaw } from 'vue'
 import MindMap from 'simple-mind-map'
@@ -31,8 +31,9 @@ import Contextmenu from './Contextmenu'
 import NodeNoteContentShow from './NodeNoteContentShow.vue'
 import Navigator from './Navigator.vue'
 import NodeImgPreview from './NodeImgPreview.vue'
-import { getData, storeData, storeConfig } from '@/api'
+import { getData, getExampleData, storeData, storeConfig } from '@/api'
 import bus from "@/utils/bus.js"
+import { getForumInfo } from '@/api/forum.js'
 /**
  * @Author: 黄原寅
  * @Desc: 编辑区域
@@ -136,7 +137,18 @@ export default {
      * @Desc: 获取思维导图数据，实际应该调接口获取
      */
     getData() {
-      const data = getData()
+      const { isAdd, mid } = this.$route.query || {}
+      let data = isAdd ? getExampleData() : getData()
+      const cacheMid = localStorage.getItem("SIMPLE_MIND_MAP_DATA_MID");
+      // 页面参数和缓存数据的id不一致时调接口
+      if (mid && (!data || mid !== cacheMid)) {
+        // 空数据
+        data = { root: { data: { text: "" } }, theme: { template: "classic4", config: {} } };
+        getForumInfo(mid).then(res => {
+          bus.emit('setData', JSON.parse(res.data.body));
+          bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
+        })
+      }
       this.mindMapData = data
       return data
     },
@@ -257,6 +269,10 @@ export default {
      */
     setData(data) {
       // this.mindMap.setData(data)
+      const { mid } = this.$route.query
+      if (mid) {
+        localStorage.setItem("SIMPLE_MIND_MAP_DATA_MID", mid);
+      }
       if (data.root) {
         this.getMindMap().setFullData(data)
       } else {
@@ -295,7 +311,7 @@ export default {
   },
 }
 </script>
-
+  
 <style lang="less" scoped>
 .editContainer {
   // position: fixed;
@@ -313,3 +329,4 @@ export default {
   }
 }
 </style>
+  

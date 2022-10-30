@@ -21,20 +21,20 @@ const copyMindMapTreeData = (tree, root) => {
   return tree;
 }
 
+export const getExampleData = () => {
+  return simpleDeepClone(exampleData)
+}
+
 /** 
  * @Author: 黄原寅
  * @Desc: 获取缓存的思维导图数据 
  */
 export const getData = () => {
   let store = localStorage.getItem(SIMPLE_MIND_MAP_DATA)
-  if (store === null) {
-    return simpleDeepClone(exampleData)
-  } else {
-    try {
-      return JSON.parse(store)
-    } catch (error) {
-      return simpleDeepClone(exampleData)
-    }
+  try {
+    return JSON.parse(store)
+  } catch (error) {
+    return null
   }
 }
 
@@ -44,7 +44,7 @@ export const getData = () => {
  */
 export const storeData = (data) => {
   try {
-    let originData = getData()
+    let originData = getData() || {}
     originData.root = copyMindMapTreeData({}, data)
     bus.emit('write_local_file', originData)
     let dataStr = JSON.stringify(originData)
