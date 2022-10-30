@@ -5,7 +5,7 @@
         <vSidebarNode v-if="siderbar" />
         <div class="content-box" :class="{ 'content-collapse': collapse }">
             <div class="content">
-                <router-view v-slot="{ Component }" :key="route.fullPath">
+                <router-view v-slot="{ Component }">
                     <transition name="move" mode="out-in">
                         <keep-alive>
                             <component :is="Component" />

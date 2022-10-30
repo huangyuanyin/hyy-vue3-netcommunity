@@ -1,5 +1,5 @@
 <template>
-  <div class="editContainer">
+  <div class="editContainer" @mouseover="recoveryCommand()" @mouseout="pauseKeyCommand()">
     <div class="mindMapContainer" ref="mindMapContainer"></div>
     <Count></Count>
     <Navigator :mindMap="mindMap"></Navigator>
@@ -78,6 +78,15 @@ export default {
         this.test()
       }, 5000)
     }
+  },
+  unmounted() {
+    this.pauseKeyCommand();
+  },
+  activated() {
+    this.recoveryCommand();
+  },
+  deactivated() {
+    this.pauseKeyCommand();
   },
   methods: {
     /**
@@ -200,31 +209,46 @@ export default {
       this.mindMap.keyCommand.addShortcut('Control+s', () => {
         this.manualSave()
       })
-        // 转发事件
-        ;[
-          'node_active',
-          'data_change',
-          'view_data_change',
-          'back_forward',
-          'node_contextmenu',
-          'node_click',
-          'draw_click',
-          'expand_btn_click',
-          'svg_mousedown',
-          'mouseup',
-          'mode_change',
-          'node_tree_render_end'
-        ].forEach((event) => {
-          this.getMindMap().on(event, (...args) => {
-            if (['node_contextmenu', 'node_active'].includes(event)) {
-              bus.emit(event, args)
-            } else {
-              bus.emit(event, ...args)
-            }
-          })
+      this.pauseKeyCommand();
+      // 转发事件
+      ;[
+        'node_active',
+        'data_change',
+        'view_data_change',
+        'back_forward',
+        'node_contextmenu',
+        'node_click',
+        'draw_click',
+        'expand_btn_click',
+        'svg_mousedown',
+        'mouseup',
+        'mode_change',
+        'node_tree_render_end'
+      ].forEach((event) => {
+        this.getMindMap().on(event, (...args) => {
+          if (['node_contextmenu', 'node_active'].includes(event)) {
+            bus.emit(event, args)
+          } else {
+            bus.emit(event, ...args)
+          }
         })
+      })
       this.bindSaveEvent()
       window.mindMap = this.mindMap
+    },
+
+    /**
+     * 暂停所有快捷键响应
+     */
+    pauseKeyCommand() {
+      this.mindMap.keyCommand.pause()
+    },
+
+    /**
+     * 恢复快捷键响应
+     */
+    recoveryCommand() {
+      this.mindMap.keyCommand.recovery()
     },
 
     /**
