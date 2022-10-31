@@ -306,6 +306,10 @@ const handleAdd = () => {
       getNodeList()
       curTreeId.value = res.data
       handleNodeExpand(res.data)
+      handleNodeClick({
+        label: form.value.name,
+        id: res.data
+      })
     })
   })
 }
@@ -357,6 +361,10 @@ const getUpdateCategorysApi = (id, name) => {
     dialogClose()
     getNodeList()
     handleNodeExpand(res.data)
+    handleNodeClick({
+      label: name.name,
+      id: Number(id)
+    })
   })
 }
 
