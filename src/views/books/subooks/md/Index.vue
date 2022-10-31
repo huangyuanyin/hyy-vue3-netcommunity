@@ -168,7 +168,7 @@ export default {
         md.value = ''
         form.body = ''
         formRef.value.resetFields()
-        form.category = route.query.category
+        form.category = node.value.id
         editorDisabled.value = false
         editorType.value = 'tiny'
       }
