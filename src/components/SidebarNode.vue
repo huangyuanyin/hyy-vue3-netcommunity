@@ -32,7 +32,7 @@
         @current-change="handleNodeClick" @node-drop="handleDrop" node-key="id" :props="defaultProps"
         :default-expanded-keys="defaultExpandIds" :current-node-key="curTreeId">
         <template #default="{ node, data }">
-          <span class="custom-tree-node">
+          <div class="custom-tree-node">
             <div class="content">
               <el-icon class="is-Folder" v-if="data.type === 'l'">
                 <Folder />
@@ -78,7 +78,7 @@
                 </template>
               </el-dropdown>
             </div>
-          </span>
+          </div>
         </template>
       </el-tree>
     </div>
@@ -504,6 +504,7 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 18px;
+  overflow: hidden;
 }
 
 .custom-tree-node:hover .labelStyle {
@@ -514,6 +515,7 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   display: flex;
   align-items: center;
   overflow: hidden;
+  margin-right: 1px;
 }
 
 .labelStyle {
@@ -541,5 +543,9 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
 
 .custom-tree-node:hover .left-button {
   display: block;
+}
+
+.buttonStyle {
+  display: flex;
 }
 </style>
