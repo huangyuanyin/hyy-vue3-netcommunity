@@ -1,5 +1,5 @@
 <template>
-  <div class="editContainer">
+  <div class="editContainer" @mouseover="recoveryCommand()" @mouseout="pauseKeyCommand()">
     <div class="mindMapContainer" ref="mindMapContainer"></div>
     <Count></Count>
     <Navigator :mindMap="mindMap"></Navigator>
@@ -15,7 +15,7 @@
     <NodeImgPreview v-if="mindMap" :mindMap="mindMap"></NodeImgPreview>
   </div>
 </template>
-
+  
 <script>
 import { toRaw } from 'vue'
 import MindMap from 'simple-mind-map'
@@ -31,8 +31,9 @@ import Contextmenu from './Contextmenu'
 import NodeNoteContentShow from './NodeNoteContentShow.vue'
 import Navigator from './Navigator.vue'
 import NodeImgPreview from './NodeImgPreview.vue'
-import { getData, storeData, storeConfig } from '@/api'
+import { getData, getExampleData, storeData, storeConfig } from '@/api'
 import bus from "@/utils/bus.js"
+import { getForumInfo } from '@/api/forum.js'
 /**
  * @Author: 黄原寅
  * @Desc: 编辑区域
@@ -78,6 +79,15 @@ export default {
         this.test()
       }, 5000)
     }
+  },
+  unmounted() {
+    this.pauseKeyCommand();
+  },
+  activated() {
+    this.recoveryCommand();
+  },
+  deactivated() {
+    this.pauseKeyCommand();
   },
   methods: {
     /**
@@ -127,7 +137,18 @@ export default {
      * @Desc: 获取思维导图数据，实际应该调接口获取
      */
     getData() {
-      const data = getData()
+      const { isAdd, mid } = this.$route.query || {}
+      let data = isAdd ? getExampleData() : getData()
+      const cacheMid = localStorage.getItem("SIMPLE_MIND_MAP_DATA_MID");
+      // 页面参数和缓存数据的id不一致时调接口
+      if (mid && (!data || mid !== cacheMid)) {
+        // 空数据
+        data = { root: { data: { text: "" } }, theme: { template: "classic4", config: {} } };
+        getForumInfo(mid).then(res => {
+          bus.emit('setData', JSON.parse(res.data.body));
+          bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
+        })
+      }
       this.mindMapData = data
       return data
     },
@@ -200,31 +221,46 @@ export default {
       this.mindMap.keyCommand.addShortcut('Control+s', () => {
         this.manualSave()
       })
-        // 转发事件
-        ;[
-          'node_active',
-          'data_change',
-          'view_data_change',
-          'back_forward',
-          'node_contextmenu',
-          'node_click',
-          'draw_click',
-          'expand_btn_click',
-          'svg_mousedown',
-          'mouseup',
-          'mode_change',
-          'node_tree_render_end'
-        ].forEach((event) => {
-          this.getMindMap().on(event, (...args) => {
-            if (['node_contextmenu', 'node_active'].includes(event)) {
-              bus.emit(event, args)
-            } else {
-              bus.emit(event, ...args)
-            }
-          })
+      this.pauseKeyCommand();
+      // 转发事件
+      ;[
+        'node_active',
+        'data_change',
+        'view_data_change',
+        'back_forward',
+        'node_contextmenu',
+        'node_click',
+        'draw_click',
+        'expand_btn_click',
+        'svg_mousedown',
+        'mouseup',
+        'mode_change',
+        'node_tree_render_end'
+      ].forEach((event) => {
+        this.getMindMap().on(event, (...args) => {
+          if (['node_contextmenu', 'node_active'].includes(event)) {
+            bus.emit(event, args)
+          } else {
+            bus.emit(event, ...args)
+          }
         })
+      })
       this.bindSaveEvent()
       window.mindMap = this.mindMap
+    },
+
+    /**
+     * 暂停所有快捷键响应
+     */
+    pauseKeyCommand() {
+      this.mindMap.keyCommand.pause()
+    },
+
+    /**
+     * 恢复快捷键响应
+     */
+    recoveryCommand() {
+      this.mindMap.keyCommand.recovery()
     },
 
     /**
@@ -233,6 +269,10 @@ export default {
      */
     setData(data) {
       // this.mindMap.setData(data)
+      const { mid } = this.$route.query
+      if (mid) {
+        localStorage.setItem("SIMPLE_MIND_MAP_DATA_MID", mid);
+      }
       if (data.root) {
         this.getMindMap().setFullData(data)
       } else {
@@ -271,7 +311,7 @@ export default {
   },
 }
 </script>
-
+  
 <style lang="less" scoped>
 .editContainer {
   // position: fixed;
@@ -289,3 +329,4 @@ export default {
   }
 }
 </style>
+  

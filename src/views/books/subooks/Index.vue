@@ -50,7 +50,7 @@
           <ul class="infinite-list" style="overflow: auto">
             <li v-for="(question, index) in datalist" :key="index">
               <el-card shadow="never" :body-style="{ padding: '0px' }" class="itemCard">
-                <div class='ribbon' v-if="question.type==='d'">
+                <div class='ribbon' v-if="question.type === 'd'">
                   <span>仅预览</span>
                 </div>
                 <div style="padding: 14px">
@@ -66,7 +66,7 @@
                     <span>{{ question.author }}</span>
                   </el-col>
                   <el-col :span="5">
-                    <time class="time">{{utc2beijing(question.pub_time)}}</time>
+                    <time class="time">{{ utc2beijing(question.pub_time) }}</time>
                   </el-col>
                   <el-col :span="5" :offset="11" class="statistics">
                     <el-button text @click="handleOpen(question.type, question.id, question)">
@@ -75,7 +75,8 @@
                       </el-icon>
                       <span>{{ question.views }}</span>
                     </el-button>
-                    <el-button text @click="answerHandle(question.type,question.id)" v-if="question.type !== 'd'">
+                    <span>{{ question.views }}</span>
+                    <el-button text @click="answerHandle(question.type, question.id)" v-if="question.type !== 'd'">
                       <el-icon :size="16" color="#000000">
                         <chat-dot-round />
                       </el-icon>
@@ -87,7 +88,8 @@
                       </el-icon>
                       <span></span>
                     </el-button>
-                    <el-button text v-if="question.type==='d'" @click="handleDelete(question.title,question.id)">
+                    <el-button style="margin-left:0px" text v-if="question.type === 'd'"
+                      @click="handleDelete(question.title, question.id)">
                       <el-icon :size="16">
                         <Delete />
                       </el-icon>
