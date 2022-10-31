@@ -9,7 +9,7 @@
 <template>
   <div class="login-wrap">
     <div class="ms-login">
-      <div class="ms-title">信安社区平台</div>
+      <div class="ms-title">信安知识库</div>
       <el-form
         :model="form"
         :rules="formRules"

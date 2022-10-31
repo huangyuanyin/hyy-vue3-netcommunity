@@ -62,17 +62,20 @@ const props = defineProps({
   treeData: {
     type: Object,
     default: () => { }
+  },
+  categoryId: {
+    type: Number,
+    default: () => null
   }
 })
 
-const { isShowDialog, treeData } = toRefs(props)
+const { isShowDialog, treeData, categoryId } = toRefs(props)
 const emits = defineEmits(['closeSaveDialog', 'goRefresh'])
-const spaceid = computed(() => sessionStorage.getItem('spaceid')); // 工作空间标题名
 const taglist = ref([]) // 标签列表
 const fileUpload = ref(null)
 const fileName = ref("")
 const saveForm = reactive({
-  category: '',
+  category: categoryId,
   title: '',
   tags: [],
   author: sessionStorage.getItem('username'),
@@ -142,14 +145,6 @@ const onFileChange = (file, fileList) => {
   if (fileList.length > 0) {
     saveForm.file = [fileList[fileList.length - 1]]  // 展示最后一次选择的文件
   }
-}
-
-// 获取分类列表
-const getNodeList = () => {
-  getCategorysInfo(spaceid.value).then((res) => {
-    treeData.value = judgeNodeType(res.data)
-    console.log('dada', treeData.value);
-  })
 }
 
 // 获取标签列表

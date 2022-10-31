@@ -392,7 +392,7 @@ const handleNodeClick = async (node) => {
   }
   nodeData.value = node
   store.commit("books/SET_NODE_DATA", node);
-  sessionStorage.setItem('node', nodedata)
+  sessionStorage.setItem('node', JSON.stringify(nodedata))
   // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
   switch (node.type) {
     case "l":

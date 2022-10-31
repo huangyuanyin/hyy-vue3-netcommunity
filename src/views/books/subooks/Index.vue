@@ -75,7 +75,6 @@
                       </el-icon>
                       <span>{{ question.views }}</span>
                     </el-button>
-                    <span>{{ question.views }}</span>
                     <el-button text @click="answerHandle(question.type, question.id)" v-if="question.type !== 'd'">
                       <el-icon :size="16" color="#000000">
                         <chat-dot-round />
@@ -133,7 +132,7 @@
       </template>
     </el-drawer>
     <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" v-on:goRefresh="goRefresh()"
-      :treeData="treeData" />
+      :treeData="treeData" :categoryId="categoryId" />
   </div>
 </template>
 
@@ -156,7 +155,7 @@ import { judgeNodeType } from '@/utils/methods.js'
 const store = useStore()
 const route = useRoute();
 const router = useRouter()
-const spaceid = computed(() => sessionStorage.getItem('spaceid')); // 工作空间标题名
+const spaceid = ref(sessionStorage.getItem('spaceid')) // 工作空间标题名
 const treeData = ref([])
 // 等待
 let loadingInstance;
@@ -451,21 +450,24 @@ onBeforeRouteLeave((to, from, next) => {
     datalist.value = []
     node.value.label = ""
   }
+  if (from.name === 'subbooks' && !to.query.isRight) {
+    sessionStorage.removeItem('node')
+  }
   next()
 })
 
+const categoryId = ref(null)
 watch(() => isShowDialog.value, () => {
   getNodeList()
+  categoryId.value = JSON.parse(sessionStorage.getItem('node')) ? JSON.parse(sessionStorage.getItem('node')).id : null
 })
 
 // 获取分类列表
 const getNodeList = () => {
-  getCategorysInfo(spaceid.value).then((res) => {
+  getCategorysInfo(sessionStorage.getItem('spaceid')).then((res) => {
     treeData.value = judgeNodeType(res.data)
-    console.log('dada', treeData.value);
   })
 }
-
 
 </script>
 
