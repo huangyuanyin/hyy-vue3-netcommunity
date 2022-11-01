@@ -43,10 +43,11 @@ export function updateCategorys(id, data) {
 /*
   获取分类
 */
-export function getCategorys() {
+export function getCategorys(headers) {
   return request({
     url: 'forum/category/',
-    method: 'get'
+    method: 'get',
+    headers
   })
 }
 

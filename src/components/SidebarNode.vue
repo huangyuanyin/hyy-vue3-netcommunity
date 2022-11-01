@@ -295,7 +295,9 @@ const handleAdd = () => {
     if (!valid) return
     let params = {
       name: form.value.name,
-      parent_category: parent_id.value
+      parent_category: parent_id.value,
+      author: sessionStorage.getItem('username'),
+      public: sessionStorage.getItem('spacePublic')
     }
     addCategorys(params).then((res) => {
       ElMessage({
