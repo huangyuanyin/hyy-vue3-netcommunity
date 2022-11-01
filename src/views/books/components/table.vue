@@ -6,6 +6,14 @@
           <el-button type="primary" plain @click="handleOpen(scope.row)">{{ scope.row.name }}</el-button>
         </template>
       </el-table-column>
+      <el-table-column label="简介" prop="description" align="center" width="500px">
+        <template #default="scope">
+          <el-tooltip :content="scope.row.description" placement="top-start" effect="light" popper-class="tooltipStyle"
+            :show-arrow="false">
+            <span class="descriptionStyle">{{scope.row.description}}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column label="更新时间" prop="last_mod_time" :formatter="dateFormat" align="center">
       </el-table-column>
       <el-table-column label="操作" align="center">
@@ -108,3 +116,19 @@ const handleDelete = (data) => {
     });
 }
 </script>
+
+<style lang="scss" scoped>
+.descriptionStyle {
+  width: 500px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+</style>
+
+<style lang="scss">
+.tooltipStyle {
+  max-width: 500px;
+}
+</style>

@@ -320,7 +320,9 @@ export default {
       let params = {
         name: form.title,
         parent_category: form.category,
-        type: form.type
+        type: form.type,
+        author: sessionStorage.getItem('username'),
+        public: sessionStorage.getItem('spacePublic')
       }
       // 新增节点
       addCategorys(params).then((res) => {

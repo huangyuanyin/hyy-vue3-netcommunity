@@ -114,7 +114,9 @@ const getSave = () => {
   let params = {
     name: saveForm.title,
     parent_category: route.query.category,
-    type: saveForm.type
+    type: saveForm.type,
+    author: sessionStorage.getItem('username'),
+    public: sessionStorage.getItem('spacePublic')
   }
   // 新增节点
   addCategorys(params).then((res) => {
