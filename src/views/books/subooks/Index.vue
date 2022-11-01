@@ -395,8 +395,9 @@ const downloadEvt = (url, fileName = '未知文件') => {
 // 查看预览文件
 const getPreview = async (id) => {
   await getForumInfo(id).then(res => {
-    let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
-    window.open('http://10.20.86.27:8020/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)));
+    // let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
+    let url = 'http://10.20.84.55:8013' + '/' + res.data.body
+    window.open('http://10.20.84.55:8020/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)));
   })
 }
 
@@ -493,7 +494,7 @@ const getNodeList = () => {
     position: relative;
 
     .ribbon {
-      background-color: #909399;
+      background-color: #1890FF;
       overflow: hidden;
       white-space: nowrap;
       position: absolute;

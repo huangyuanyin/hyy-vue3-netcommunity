@@ -20,7 +20,7 @@ const service = axios.create({
   // baseURL: 'http://10.20.84.55:8013', // url = base url + request url 打包线上
   // baseURL: 'http://172.16.71.179:8013', // 华耀 打包线上
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 20000, // request timeout
+  timeout: 200000, // request timeout
 });
 console.log("axios", axios.defaults.baseURL);
 // request interceptor
