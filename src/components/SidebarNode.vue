@@ -34,12 +34,13 @@
         <template #default="{ node, data }">
           <div class="custom-tree-node">
             <div class="content">
-              <el-icon class="is-Folder" v-if="data.type === 'l'">
-                <Folder />
-              </el-icon>
-              <el-icon class="is-Folder" v-else>
-                <Document />
-              </el-icon>
+              <svg-icon iconName="icon-a-wenjianjiawenjian" v-if="data.type === 'l' && data.isFolder"
+                className="is-Folder" />
+              <svg-icon iconName="icon-Document" v-if="data.type === 'l' && !data.isFolder" className="is-Folder" />
+              <svg-icon iconName="icon-word" v-if="data.type === 'a'" className="is-Folder"></svg-icon>
+              <svg-icon iconName="icon-file-markdown-fill" v-if="data.type === 'w'" className="is-Folder"></svg-icon>
+              <svg-icon iconName="icon-excel" v-if="data.type === 'e'" className="is-Folder"></svg-icon>
+              <svg-icon iconName="icon-icon__liuchengtu" v-if="data.type === 'm'" className="is-Folder"></svg-icon>
               <span class="labelStyle" :title="node.label">{{ node.label }}</span>
             </div>
             <div class="buttonStyle">
@@ -162,10 +163,14 @@ const formRules = reactive({
 const exampleData = ({ "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } })
 
 // 获取节点数据
-const getNodeList = () => {
-  getCategorysInfo(spaceid.value).then((res) => {
-    treeData.value = res.data
-  })
+const getNodeList = async () => {
+  let res = await getCategorysInfo(spaceid.value)
+  if (res.code === 1000) {
+    res.data.forEach((item) => {
+      item.isFolder = true
+    })
+  }
+  treeData.value = res.data
 }
 
 // 树节点展开
@@ -512,9 +517,10 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: 15px;
   padding-right: 18px;
   overflow: hidden;
+  font-family: "思源宋体 Medium";
 }
 
 .custom-tree-node:hover .labelStyle {
@@ -537,7 +543,7 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
 }
 
 .is-Folder {
-  margin-right: 5px;
+  margin-right: 3px;
 }
 
 .sidebar::-webkit-scrollbar {
