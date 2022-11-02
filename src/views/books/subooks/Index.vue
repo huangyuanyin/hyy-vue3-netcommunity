@@ -85,10 +85,8 @@
                       <el-icon :size="16">
                         <Edit />
                       </el-icon>
-                      <span></span>
                     </el-button>
-                    <el-button style="margin-left:0px" text v-if="question.type === 'd'"
-                      @click="handleDelete(question.title, question.id)">
+                    <el-button text @click="handleDelete(question.title, question.id)">
                       <el-icon :size="16">
                         <Delete />
                       </el-icon>
@@ -536,7 +534,7 @@ const getNodeList = () => {
 
   .el-button {
     width: 50px;
-    margin-left: 0px;
+    margin-right: 40px;
   }
 }
 
@@ -563,7 +561,7 @@ const getNodeList = () => {
 
 .statistics {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-end;
   align-items: center;
 }
 
