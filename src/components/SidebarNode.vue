@@ -85,8 +85,12 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
-                    <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label">编辑</el-dropdown-item>
-                    <el-dropdown-item :command="'remove' + ',' + data.id">删除</el-dropdown-item>
+                    <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label">
+                      <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'remove' + ',' + data.id">
+                      <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -391,8 +395,8 @@ const getUpdateCategorysApi = (id, name) => {
 const deleteApi = (id) => {
   // 二次确认删除
   ElMessageBox.confirm("确定要删除吗？", "提示", {
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     type: "warning",
     draggable: true,
   })
@@ -406,7 +410,7 @@ const deleteApi = (id) => {
     .catch(() => {
       ElMessage({
         type: 'info',
-        message: 'Delete canceled',
+        message: '取消删除',
       })
     });
 }

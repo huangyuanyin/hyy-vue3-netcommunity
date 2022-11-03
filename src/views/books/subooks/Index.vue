@@ -548,7 +548,7 @@ const getNodeList = () => {
 
   .el-button {
     width: 50px;
-    margin-right: 40px;
+    margin-right: 25px;
   }
 }
 
