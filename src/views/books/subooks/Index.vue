@@ -17,11 +17,19 @@
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="documentManage">文档管理</el-dropdown-item>
-                <el-dropdown-item command="article">新建文档</el-dropdown-item>
-                <el-dropdown-item command="excel">新建Excel</el-dropdown-item>
+                <el-dropdown-item command="documentManage">
+                  <svg-icon iconName="icon-shangchuanwenjian" className="is-Folder" />文档管理
+                </el-dropdown-item>
+                <el-dropdown-item command="article">
+                  <svg-icon iconName="icon-word" className="is-Folder" />新建文档
+                </el-dropdown-item>
+                <el-dropdown-item command="excel">
+                  <svg-icon iconName="icon-excel" className="is-Folder" />新建Excel
+                </el-dropdown-item>
                 <!-- <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item> -->
-                <el-dropdown-item command="mindmap">新建思维导图</el-dropdown-item>
+                <el-dropdown-item command="mindmap">
+                  <svg-icon iconName="icon-icon__liuchengtu" className="is-Folder" />新建思维导图
+                </el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
                 <el-dropdown-item command="ppt" disabled>新建PPT</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item>
@@ -75,7 +83,8 @@
                       </el-icon>
                       <span>{{ question.views }}</span>
                     </el-button>
-                    <el-button text @click="answerHandle(question.type, question.id)" v-if="question.type !== 'd'">
+                    <el-button text @click="answerHandle(question.type, question.id)"
+                      v-if="!['d','m','e'].includes(question.type)">
                       <el-icon :size="16" color="#000000">
                         <chat-dot-round />
                       </el-icon>
@@ -86,7 +95,8 @@
                         <Edit />
                       </el-icon>
                     </el-button>
-                    <el-button text @click="handleDelete(question.title, question.id)">
+                    <el-button text @click="handleDelete(question.title, question.id)"
+                      v-if="!['a','w'].includes(question.type)">
                       <el-icon :size="16">
                         <Delete />
                       </el-icon>
@@ -471,6 +481,10 @@ const getNodeList = () => {
 </script>
 
 <style lang="scss" scoped>
+.is-Folder {
+  margin-right: 3px;
+}
+
 .el-container {
   padding: 0px;
 }

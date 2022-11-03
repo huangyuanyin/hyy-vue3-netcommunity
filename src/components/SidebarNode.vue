@@ -13,8 +13,12 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="root">新建分组</el-dropdown-item>
-              <el-dropdown-item command="word" disabled>新建文档</el-dropdown-item>
+              <el-dropdown-item command="root">
+                <svg-icon iconName="icon-a-wenjianjiawenjian" className="is-Folder" />新建分组
+              </el-dropdown-item>
+              <el-dropdown-item command="word" disabled>
+                新建文档
+              </el-dropdown-item>
               <el-dropdown-item command="excel" disabled>新建Excel</el-dropdown-item>
               <el-dropdown-item command="excel" disabled>新建白板</el-dropdown-item>
               <el-dropdown-item command="mind" disabled>新建思维导图</el-dropdown-item>
@@ -53,10 +57,18 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item :command="'add' + ',' + data.id">新建分组</el-dropdown-item>
-                    <el-dropdown-item :command="'article' + ',' + data.id">新建文档</el-dropdown-item>
-                    <el-dropdown-item :command="'excel' + ',' + data.id">新建Excel</el-dropdown-item>
-                    <el-dropdown-item :command="'mindmap' + ',' + data.id">新建思维导图</el-dropdown-item>
+                    <el-dropdown-item :command="'add' + ',' + data.id">
+                      <svg-icon iconName="icon-Document" className="is-Folder" />新建分组
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'article' + ',' + data.id">
+                      <svg-icon iconName="icon-word" className="is-Folder" />新建文档
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'excel' + ',' + data.id">
+                      <svg-icon iconName="icon-excel" className="is-Folder" />新建Excel
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'mindmap' + ',' + data.id">
+                      <svg-icon iconName="icon-icon__liuchengtu" className="is-Folder" />新建思维导图
+                    </el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>
                     <el-dropdown-item :command="'ppt' + ',' + data.id" disabled>新建PPT</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建白板</el-dropdown-item>
