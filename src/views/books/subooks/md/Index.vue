@@ -286,6 +286,8 @@ export default {
           type: "success",
         });
         toDetail(res.data)
+        reload()
+        store.commit("changeCurTreeId", Number(form.category)) // 定位
       })
     }
 
@@ -293,6 +295,7 @@ export default {
     const getUpdateCategorysApi = () => {
       const title = { name: form.title }
       updateCategorys(form.category, title).then((res) => {
+        store.commit("changeCurTreeId", res.data) // 定位
         ElMessage({
           message: '编辑成功！',
           type: 'success',
@@ -307,6 +310,7 @@ export default {
           message: "新增成功",
           type: "success",
         });
+        store.commit("changeCurTreeId", Number(form.category)) // 定位
         if (res.code === 1000) {
           handleClose()
           reload()
@@ -328,6 +332,7 @@ export default {
       addCategorys(params).then((res) => {
         if (res.code == 1000) {
           form.category = res.data
+          store.commit("changeCurTreeId", res.data) // 定位
           // 新增markdown
           addForum(form).then(res => {
             ElMessage({

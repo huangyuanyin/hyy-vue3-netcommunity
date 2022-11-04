@@ -145,8 +145,14 @@ const router = useRouter()
 const loadingInstance = ref('')
 const spacename = computed(() => sessionStorage.getItem('spacename'));
 const spaceid = computed(() => sessionStorage.getItem('spaceid'));
-const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
-const curTreeId = ref(null) // 存放 高亮的节点ID
+// const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
+const defaultExpandIds = computed(() => { // 这里存放 要默认展开的节点 id
+  return store.state.defaultExpandIds
+})
+// const curTreeId = ref(null) // 存放 高亮的节点ID
+const curTreeId = computed(() => { // 存放 高亮的节点ID
+  return store.state.curTreeId
+})
 // 对话框
 const dialogNode = ref(false)
 // 对话框 编辑
@@ -328,7 +334,8 @@ const handleAdd = () => {
       dialogClose()
       getNodeList()
       curTreeId.value = res.data
-      handleNodeExpand(res.data)
+      store.commit("changeCurTreeId", res.data)
+      // handleNodeExpand(res.data)
       handleNodeClick({
         label: form.value.name,
         id: res.data
@@ -364,7 +371,6 @@ const judegeGetCategory = () => {
             const title = { name: nodeForm.title }
             getUpdateCategorysApi(edit_id.value, title)
             getNodeList()
-
           }
           reload()
         })
@@ -383,7 +389,9 @@ const getUpdateCategorysApi = (id, name) => {
     })
     dialogClose()
     getNodeList()
-    handleNodeExpand(res.data)
+    curTreeId.value = res.data
+    store.commit("changeCurTreeId", res.data)
+    // handleNodeExpand(res.data)
     handleNodeClick({
       label: name.name,
       id: Number(id)

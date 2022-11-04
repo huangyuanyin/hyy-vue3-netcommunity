@@ -11,7 +11,9 @@ import exampleData from 'simple-mind-map/example/exampleData';
 export default createStore({
     state: {
         mindMapData: null, // 思维导图数据
-        isHandleLocalFile: false// 是否操作的是本地文件
+        isHandleLocalFile: false,// 是否操作的是本地文件
+        curTreeId: null,  // 存放 高亮的节点ID
+        defaultExpandIds: []
     },
     mutations: {
         /** 
@@ -27,6 +29,12 @@ export default createStore({
         */
         setIsHandleLocalFile(state, data) {
             state.isHandleLocalFile = data
+        },
+        changeCurTreeId(state, data) {
+            state.curTreeId = data
+            state.defaultExpandIds.value = []
+            // 保存当前展开的节点
+            state.defaultExpandIds.value.push(data)
         }
     },
     actions: {
