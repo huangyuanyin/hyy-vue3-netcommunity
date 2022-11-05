@@ -39,7 +39,11 @@ import { judgeNodeType } from '@/utils/methods.js'
 const route = useRoute()
 const router = useRouter()
 const store = useStore()
-const reload = inject('reload')
+const _reload = inject('reload')
+const reload = () => {
+  setTimeout(_reload, 100)
+  store.commit("changeCurTreeId", saveForm.category)
+}
 const node = computed(() => store.getters.node);
 const isShowDialog = ref(false)
 const isRight = ref('')
@@ -68,30 +72,26 @@ const closeSaveDialog = () => {
 
 // 保存流程
 const handleSave = () => {
-  if (route.query.mid) {
-    updateMindMap()
-    isShowDialog.value = false
-  } else {
-    addMindMap()
-    isShowDialog.value = false
-  }
+  saveFormRef.value.validate((valid) => {
+    if (!valid) return false
+    if (route.query.mid) {
+      updateMindMap()
+      isShowDialog.value = false
+    } else {
+      addMindMap()
+      isShowDialog.value = false
+    }
+  })
 }
 
 // 新增mindMap
 const addMindMap = () => {
-  saveFormRef.value.validate((valid) => {
-    if (valid) {
-      saveForm.body = JSON.stringify(getData())
-      if (route.query.isRight == "right") {
-        getRightSaveApi(saveForm)
-      } else {
-        getSave() // 新增为节点
-      }
-    } else {
-      return false;
-    }
-  });
-  console.log("保存...", saveForm);
+  saveForm.body = JSON.stringify(getData())
+  if (route.query.isRight == "right") {
+    getRightSaveApi(saveForm)
+  } else {
+    getSave() // 新增为节点
+  }
 }
 
 // 新增mindMap api
@@ -105,7 +105,6 @@ const getRightSaveApi = (saveForm) => {
       handleClose()
       reload()
       toDetail(res.data)
-      store.commit("changeCurTreeId", saveForm.category)
     }
   })
 }
@@ -246,8 +245,11 @@ const getTagList = () => {
 
 // 选择分类ID
 const handleChange = (id) => {
-  var len = id.length
-  saveForm.category = id[len - 1]
+  console.log("id", id);
+  if (id != null) {
+    var len = id.length
+    saveForm.category = id[len - 1]
+  }
 }
 
 const handleClose = () => {

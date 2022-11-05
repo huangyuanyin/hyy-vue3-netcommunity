@@ -1,5 +1,5 @@
 <template>
-  <div class="editContainer" @mouseover="recoveryCommand()" @mouseout="pauseKeyCommand()">
+  <div class="editContainer">
     <div class="mindMapContainer" ref="mindMapContainer"></div>
     <Count></Count>
     <Navigator :mindMap="mindMap"></Navigator>
@@ -65,6 +65,8 @@ export default {
   },
   mounted() {
     this.init()
+    bus.on('pauseKeyCommand', this.pauseKeyCommand)
+    bus.on('recoveryCommand', this.recoveryCommand)
     bus.on('execCommand', this.execCommand)
     bus.on('export', this.export)
     bus.on('setData', this.setData)
@@ -221,30 +223,29 @@ export default {
       this.mindMap.keyCommand.addShortcut('Control+s', () => {
         this.manualSave()
       })
-      this.pauseKeyCommand();
-      // 转发事件
-      ;[
-        'node_active',
-        'data_change',
-        'view_data_change',
-        'back_forward',
-        'node_contextmenu',
-        'node_click',
-        'draw_click',
-        'expand_btn_click',
-        'svg_mousedown',
-        'mouseup',
-        'mode_change',
-        'node_tree_render_end'
-      ].forEach((event) => {
-        this.getMindMap().on(event, (...args) => {
-          if (['node_contextmenu', 'node_active'].includes(event)) {
-            bus.emit(event, args)
-          } else {
-            bus.emit(event, ...args)
-          }
+        // 转发事件
+        ;[
+          'node_active',
+          'data_change',
+          'view_data_change',
+          'back_forward',
+          'node_contextmenu',
+          'node_click',
+          'draw_click',
+          'expand_btn_click',
+          'svg_mousedown',
+          'mouseup',
+          'mode_change',
+          'node_tree_render_end'
+        ].forEach((event) => {
+          this.getMindMap().on(event, (...args) => {
+            if (['node_contextmenu', 'node_active'].includes(event)) {
+              bus.emit(event, args)
+            } else {
+              bus.emit(event, ...args)
+            }
+          })
         })
-      })
       this.bindSaveEvent()
       window.mindMap = this.mindMap
     },
