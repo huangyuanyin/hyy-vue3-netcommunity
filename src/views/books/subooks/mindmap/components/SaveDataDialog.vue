@@ -105,6 +105,7 @@ const getRightSaveApi = (saveForm) => {
       handleClose()
       reload()
       toDetail(res.data)
+      store.commit("changeCurTreeId", saveForm.category)
     }
   })
 }
@@ -122,6 +123,7 @@ const getSave = () => {
   addCategorys(params).then((res) => {
     if (res.code == 1000) {
       saveForm.category = res.data
+      store.commit("changeCurTreeId", res.data)
       // 调用新增mindMap节点
       addForum(saveForm).then(res => {
         ElMessage({

@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, toRefs, defineProps, defineEmits, onMounted, computed } from 'vue'
+import { reactive, ref, toRefs, defineProps, defineEmits, onMounted, computed, watch } from 'vue'
 import { getTag } from "@/api/tag.js"
 import { uploadArticleFileApi } from '@/api/upload.js'
 import { getCategorysInfo } from '@/api/category.js'
@@ -62,20 +62,17 @@ const props = defineProps({
   treeData: {
     type: Object,
     default: () => { }
-  },
-  categoryId: {
-    type: Number,
-    default: () => null
   }
 })
 
-const { isShowDialog, treeData, categoryId } = toRefs(props)
+const { treeData } = toRefs(props)
 const emits = defineEmits(['closeSaveDialog', 'goRefresh'])
+
 const taglist = ref([]) // 标签列表
 const fileUpload = ref(null)
 const fileName = ref("")
 const saveForm = reactive({
-  category: categoryId,
+  category: '',
   title: '',
   tags: [],
   author: sessionStorage.getItem('username'),
@@ -88,9 +85,15 @@ const saveFormRules = reactive({
 })
 const disabled = ref(false)
 
+watch(() => props.isShowDialog, () => {
+  if (props.isShowDialog) {
+    saveForm.category = JSON.parse(sessionStorage.getItem('node')) ? JSON.parse(sessionStorage.getItem('node')).id : null
+  }
+})
+
 // 选择分类ID
 const handleChange = (id) => {
-  var len = id.length
+  const len = id.length
   saveForm.category = id[len - 1]
 }
 

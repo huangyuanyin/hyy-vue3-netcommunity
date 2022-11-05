@@ -84,7 +84,7 @@
                       <span>{{ question.views }}</span>
                     </el-button>
                     <el-button text @click="answerHandle(question.type, question.id)"
-                      v-if="!['d','m','e'].includes(question.type)">
+                      v-if="!['d', 'm', 'e'].includes(question.type)">
                       <el-icon :size="16" color="#000000">
                         <chat-dot-round />
                       </el-icon>
@@ -96,7 +96,7 @@
                       </el-icon>
                     </el-button>
                     <el-button text @click="handleDelete(question.title, question.id)"
-                      v-if="!['a','w'].includes(question.type)">
+                      v-if="!['a', 'w'].includes(question.type)">
                       <el-icon :size="16">
                         <Delete />
                       </el-icon>
@@ -140,7 +140,7 @@
       </template>
     </el-drawer>
     <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" v-on:goRefresh="goRefresh()"
-      :treeData="treeData" :categoryId="categoryId" />
+      :treeData="treeData" />
   </div>
 </template>
 
@@ -465,10 +465,8 @@ onBeforeRouteLeave((to, from, next) => {
   next()
 })
 
-const categoryId = ref(null)
 watch(() => isShowDialog.value, () => {
   getNodeList()
-  categoryId.value = JSON.parse(sessionStorage.getItem('node')) ? JSON.parse(sessionStorage.getItem('node')).id : null
 })
 
 // 获取分类列表
