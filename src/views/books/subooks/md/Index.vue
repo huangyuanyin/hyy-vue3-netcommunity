@@ -12,7 +12,7 @@
         <el-form-item label="分类" prop="category" v-if="isRight === 'right' || categoryId === ''">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
-              :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
+              :props="{ value: 'id', checkStrictly: true }" :show-all-levels="false" />
             <span style="margin-left: 30px">标签</span>
             <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }">
             </el-cascader>
