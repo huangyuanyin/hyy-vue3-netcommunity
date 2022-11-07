@@ -50,7 +50,7 @@ const isRight = ref('')
 const treeData = ref([])
 const taglist = ref([])
 // 工作空间标题名
-const spaceid = computed(() => sessionStorage.getItem('spaceid'));
+const spaceid = ref(sessionStorage.getItem('spaceid'))
 const saveForm = reactive({
   category: '',
   title: '',
@@ -195,6 +195,7 @@ watch(() => route.query, () => {
   }
   if (route.query.isRight) {
     isRight.value = route.query.isRight
+    spaceid.value = sessionStorage.getItem('spaceid')
     getTagList()
     getNodeList()
   } else {

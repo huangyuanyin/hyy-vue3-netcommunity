@@ -60,7 +60,7 @@ import 'mavon-editor/dist/css/index.css';
 
 import Tinymce from '@/components/tinymce'
 
-import { ref, computed, reactive, watch, onMounted, inject } from "vue";
+import { ref, computed, reactive, watch, onMounted, inject, watchEffect } from "vue";
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from "element-plus";
@@ -88,7 +88,7 @@ export default {
       return window.innerHeight - 55 + "px";
     });
     // 工作空间标题名
-    const spaceid = computed(() => sessionStorage.getItem('spaceid'));
+    const spaceid = ref(sessionStorage.getItem('spaceid'))
     // 节点数据
     const node = computed(() => store.getters.node);
     // 节点数据
@@ -161,6 +161,8 @@ export default {
       // 监控 是否显示分类
       if (route.query && route.query.isRight) {
         isRight.value = route.query.isRight
+        spaceid.value = sessionStorage.getItem('spaceid')
+        getNodeList()
       } else {
         isRight.value = ''
       }
