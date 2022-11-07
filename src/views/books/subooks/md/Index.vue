@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="md-wrap">
     <el-card :style="{ 'min-height': minHeight }">
       <template #header>
         <el-button type="primary" @click="goBack">
@@ -394,5 +394,9 @@ export default {
 .my-tinymce {
   margin-bottom: 30px;
   width: 100%;
+}
+
+.md-wrap {
+  margin-bottom: 40px;
 }
 </style>

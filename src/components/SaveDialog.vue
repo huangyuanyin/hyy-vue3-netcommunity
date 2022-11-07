@@ -2,7 +2,8 @@
   <div>
     <el-dialog v-model="isShowDialog" custom-class="saveDialog" title="新建文档" @close="closeSaveDialog"
       :close-on-click-modal="false" :close-on-press-escape="false" :before-close="closeSaveDialog">
-      <el-form :disabled="disabled" :model="saveForm" ref="saveFormRef" :rules="saveFormRules" label-width="80px">
+      <el-form :disabled="disabled" :model="saveForm" ref="saveFormRef" :rules="saveFormRules" label-width="80px"
+        v-loading="loading" :element-loading-text="`文件上传中...`">
         <el-form-item label="分类" prop="category">
           <el-space>
             <el-cascader :options="treeData" v-model="saveForm.category" @change="handleChange"
@@ -71,6 +72,7 @@ const emits = defineEmits(['closeSaveDialog', 'goRefresh'])
 const taglist = ref([]) // 标签列表
 const fileUpload = ref(null)
 const fileName = ref("")
+const loading = ref(false)
 const saveForm = reactive({
   category: '',
   title: '',
@@ -121,8 +123,10 @@ const handleSave = async () => {
 // 调用上传接口
 const uploadArticleFile = async (params) => {
   disabled.value = true
+  loading.value = true
   let res = await uploadArticleFileApi(params)
   disabled.value = false
+  loading.value = false
   if (res.code === 1000) {
     ElMessage.success('上传成功')
     emits('closeSaveDialog', false)

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="detail-wrap">
     <el-card :style="{ 'min-height': minHeight }">
       <!-- 帖子内容 -->
       <el-row>
@@ -282,7 +282,11 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.detail-wrap {
+  margin-bottom: 40px;
+}
+
 .title {
   font-size: 24px;
   font-style: normal;

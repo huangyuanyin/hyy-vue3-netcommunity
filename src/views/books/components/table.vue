@@ -10,7 +10,7 @@
         <template #default="scope">
           <el-tooltip :content="scope.row.description" placement="top-start" effect="light" popper-class="tooltipStyle"
             :show-arrow="false">
-            <span class="descriptionStyle">{{scope.row.description}}</span>
+            <span class="descriptionStyle">{{ scope.row.description }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -78,6 +78,7 @@ const handleOpen = (book) => {
   sessionStorage.setItem("spacename", book.name) // 知识库名称
   sessionStorage.setItem("spacePublic", Number(book.public))
   // store.commit("app/SET_SPACES", book);
+  store.commit("changeCurTreeId", 0)
   router.push('/subbooks');
 }
 
