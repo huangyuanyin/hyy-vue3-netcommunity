@@ -410,9 +410,12 @@ const deleteApi = (id) => {
   })
     .then(() => {
       deleteCategorys(id).then(res => {
-        ElMessage.success("删除成功");
-        getNodeList()
-        router.push({ name: 'subbooks', params: { wRefresh: true } })
+        if (res.code === 1000) {
+          ElMessage.success("删除成功");
+          getNodeList()
+          store.commit("changeCurTreeId", res.data)
+          router.push({ name: 'subbooks', params: { wRefresh: true } })
+        }
       })
     })
     .catch(() => {
