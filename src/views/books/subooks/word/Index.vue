@@ -101,7 +101,7 @@
             </el-col>
           </el-row>
           <el-row style="margin-top: 30px">
-            <markdown-com :data="fourumdata.body"></markdown-com>
+            <Markdown :data="fourumdata.body" />
           </el-row>
           <!-- v-md-editor -->
           <!-- <el-row style="margin-top: 30px">
@@ -113,7 +113,7 @@
             </el-col>
           </el-row>
           <!-- 回复列表 -->
-          <answer-list-com :refresh="isRefresh" id="answerlist"></answer-list-com>
+          <AnswerList :refresh="isRefresh" id="answerlist" />
           <!-- </el-card> -->
         </el-col>
       </el-row>
@@ -128,158 +128,139 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, watch, onMounted, inject } from "vue";
 import { getForumInfo, deleteForum, deleteTopics } from '@/api/forum.js'
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import markdown from '@/components/markdown/preview.vue'
+import Markdown from '@/components/markdown/preview.vue'
 import answerpost from "./subdetail/AnswerPost.vue";
-import answerlist from "./subdetail/AnswerList.vue";
-export default {
-  components: {
-    'markdown-com': markdown,
-    "answer-post-com": answerpost,
-    "answer-list-com": answerlist
-  },
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const reload = inject('reload')
-    // 是否刷新回复列表
-    const isRefresh = ref(0)
-    // 数据
-    const fourumdata = ref({})
+import AnswerList from "./subdetail/AnswerList.vue";
 
-    // 最小高度
-    const minHeight = computed(() => {
-      return window.innerHeight - 55 + "px";
-    });
+const router = useRouter();
+const route = useRoute();
+const reload = inject('reload')
+// 是否刷新回复列表
+const isRefresh = ref(0)
+// 数据
+const fourumdata = ref({})
 
-    // 回复按钮事件
-    const answerHandle = () => {
+// 最小高度
+const minHeight = computed(() => {
+  return window.innerHeight - 55 + "px";
+});
+
+// 回复按钮事件
+const answerHandle = () => {
+  document.querySelector('#answerlist').scrollIntoView({
+    behavior: 'smooth',
+    block: 'end'
+  })
+}
+
+// 获取帖子数据
+const getForumData = () => {
+  getForumInfo(route.query.wid).then(res => {
+    fourumdata.value = res.data
+  })
+};
+
+getForumData()
+
+watch(() => route.query, () => {
+  if (route.query.wid) {
+    getForumData()
+  }
+  if (route.query.aricleName) {
+    fourumdata.value.title = route.query.aricleName
+    console.log("dada", fourumdata.value.title);
+  }
+})
+
+onMounted(() => {
+  setTimeout(() => {
+    if (route.query.status == 'answer') {
       document.querySelector('#answerlist').scrollIntoView({
         behavior: 'smooth',
-        block: 'end'
+        block: 'start'
       })
     }
+  }, 100)
+})
 
-    // 获取帖子数据
-    const getForumData = () => {
-      getForumInfo(route.query.wid).then(res => {
-        fourumdata.value = res.data
-      })
-    };
-
-    getForumData()
-
-    watch(() => route.query.wid, () => {
-      if (route.query.wid) {
-        getForumData()
-      }
-    })
-
-    onMounted(() => {
-      setTimeout(() => {
-        if (route.query.status == 'answer') {
-          document.querySelector('#answerlist').scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          })
-        }
-      }, 100)
-    })
-
-    // 点赞事件
-    const likeHandle = () => {
-      ElMessage({
-        message: "暂不支持",
-        type: "warning",
-      });
-    };
-
-    // 收藏事件
-    const collectHandle = () => {
-      ElMessage({
-        message: "暂不支持",
-        type: "warning",
-      });
-    };
-
-    // 编辑按钮
-    const handleEdit = () => {
-      if (fourumdata.value.type == 'a') {
-        router.push({ name: 'md', query: { tid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'a' } })
-      } else {
-        router.push({ name: 'md', query: { mid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'w' } })
-      }
-    }
-
-    // 返回
-    const goBack = () => {
-      router.go(-1)
-    }
-
-    // 是否刷新
-    const getAnswerPostMsg = (msg) => {
-      isRefresh.value = msg
-    }
-
-    // 更多操作按钮帖子
-    const handleCommandMore = (command) => {
-      if (command == 'delete') {
-        deleteApi();
-      }
-    };
-
-    // 删除接口
-    const deleteApi = () => {
-      // 二次确认删除
-      ElMessageBox.confirm("确定要删除吗？", "提示", {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        type: "warning",
-        draggable: true,
-      })
-        .then(() => {
-          if (route.query && route.query.isRight) {
-            // 删除帖子
-            deleteForum(route.query.wid).then(res => {
-              ElMessage.success("删除成功");
-              router.push({ name: 'subbooks', params: { wRefresh: true } })
-            })
-          } else {
-            // 删除分类
-            deleteTopics(fourumdata.value.category).then(res => {
-              ElMessage.success("删除成功");
-              router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
-            })
-          }
-        })
-        .catch(() => {
-          ElMessage({
-            type: 'info',
-            message: 'Delete canceled',
-          })
-        });
-    };
-
-    return {
-      fourumdata,
-      minHeight,
-      isRefresh,
-      goBack,
-      getForumData,
-      answerHandle,
-      handleEdit,
-      getAnswerPostMsg,
-      likeHandle,
-      collectHandle,
-      handleCommandMore,
-      reload
-    };
-  },
+// 点赞事件
+const likeHandle = () => {
+  ElMessage({
+    message: "暂不支持",
+    type: "warning",
+  });
 };
+
+// 收藏事件
+const collectHandle = () => {
+  ElMessage({
+    message: "暂不支持",
+    type: "warning",
+  });
+};
+
+// 编辑按钮
+const handleEdit = () => {
+  if (fourumdata.value.type == 'a') {
+    router.push({ name: 'md', query: { tid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'a' } })
+  } else {
+    router.push({ name: 'md', query: { mid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'w' } })
+  }
+}
+
+// 返回
+const goBack = () => {
+  router.go(-1)
+}
+
+// 是否刷新
+const getAnswerPostMsg = (msg) => {
+  isRefresh.value = msg
+}
+
+// 更多操作按钮帖子
+const handleCommandMore = (command) => {
+  if (command == 'delete') {
+    deleteApi();
+  }
+};
+
+// 删除接口
+const deleteApi = () => {
+  // 二次确认删除
+  ElMessageBox.confirm("确定要删除吗？", "提示", {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+    type: "warning",
+    draggable: true,
+  })
+    .then(() => {
+      if (route.query && route.query.isRight) {
+        // 删除帖子
+        deleteForum(route.query.wid).then(res => {
+          ElMessage.success("删除成功");
+          router.push({ name: 'subbooks', params: { wRefresh: true } })
+        })
+      } else {
+        // 删除分类
+        deleteTopics(fourumdata.value.category).then(res => {
+          ElMessage.success("删除成功");
+          router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
+        })
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    });
+}
 </script>
 
 <style lang="scss" scoped>

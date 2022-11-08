@@ -76,24 +76,27 @@
                 </template>
               </el-dropdown>
               <!-- 更多 -->
-              <el-dropdown @command="handleRoot" trigger="click">
-                <span>
-                  <el-icon>
-                    <more-filled />
-                  </el-icon>
-                </span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
-                    <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label">
-                      <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
-                    </el-dropdown-item>
-                    <el-dropdown-item :command="'remove' + ',' + data.id">
-                      <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
+              <div style="display: flex;" @click.stop>
+                <el-dropdown @command="handleRoot" trigger="hover">
+                  <span>
+                    <el-icon>
+                      <more-filled />
+                    </el-icon>
+                  </span>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
+                      <el-dropdown-item
+                        :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
+                        <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
+                      </el-dropdown-item>
+                      <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type">
+                        <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </div>
             </div>
           </div>
         </template>
@@ -153,6 +156,7 @@ const defaultExpandIds = computed(() => { // 这里存放 要默认展开的节�
 const curTreeId = computed(() => { // 存放 高亮的节点ID
   return store.state.curTreeId
 })
+const curTreeData = ref({}) // 存放 已点击的节点ID
 // 对话框
 const dialogNode = ref(false)
 // 对话框 编辑
@@ -197,9 +201,9 @@ const getNodeList = async () => {
 
 // 树节点展开
 const handleNodeExpand = (data) => {
-  defaultExpandIds.value = []
+  store.state.defaultExpandIds = []
   // 保存当前展开的节点
-  defaultExpandIds.value.push(data)
+  store.state.defaultExpandIds.push(data)
 }
 
 onMounted(() => {
@@ -245,9 +249,14 @@ const handleRoot = (command) => {
   if (tmp[0] === 'edit') {
     edit_id.value = tmp[1]
     form.value.name = tmp[2]
+    nodeData.value = {
+      type: tmp[3],
+      articleId: tmp[4]
+    }
     dialogEdit.value = true
   }
   if (tmp[0] === 'remove') {
+    nodeData.value = tmp[2]
     deleteApi(tmp[1])
   }
 }
@@ -370,9 +379,7 @@ const judegeGetCategory = () => {
             dialogClose()
             const title = { name: nodeForm.title }
             getUpdateCategorysApi(edit_id.value, title)
-            getNodeList()
           }
-          reload()
         })
       }
 
@@ -389,13 +396,21 @@ const getUpdateCategorysApi = (id, name) => {
     })
     dialogClose()
     getNodeList()
-    curTreeId.value = res.data
-    store.commit("changeCurTreeId", res.data)
-    // handleNodeExpand(res.data)
-    handleNodeClick({
-      label: name.name,
-      id: Number(id)
-    })
+    curTreeId.value = curTreeData.value.id
+    store.commit("changeCurTreeId", curTreeData.value.id)
+    console.log("dddd", curTreeData.value.id, id);
+    if (curTreeData.value.id == id) {
+      console.log("name", name.name);
+      // reload() 刷新页面用来更新title，此处需优化
+      if (curTreeData.value.type == 'a' || curTreeData.value.type == 'w') {
+        reload()
+      }
+      handleNodeClick({
+        label: name.name,
+        id: id
+      })
+    }
+    handleNodeExpand(curTreeData.value.id) // 依旧展开点击的节点
   })
 }
 
@@ -414,7 +429,14 @@ const deleteApi = (id) => {
           ElMessage.success("删除成功");
           getNodeList()
           store.commit("changeCurTreeId", res.data)
+          store.state.defaultExpandIds = []
+          // 保存当前展开的节点
+          store.state.defaultExpandIds.push(res.data)
           router.push({ name: 'subbooks', params: { wRefresh: true } })
+          handleNodeClick({
+            label: '',
+            id: res.data
+          })
         }
       })
     })
@@ -428,17 +450,18 @@ const deleteApi = (id) => {
 
 // 节点点击事件
 const handleNodeClick = async (node) => {
+  curTreeData.value = node
   let nodedata = {
     'label': node.label,
     'id': node.id
   }
   nodeData.value = node
-  store.commit("books/SET_NODE_DATA", node);
-  sessionStorage.setItem('node', JSON.stringify(nodedata))
+  await sessionStorage.setItem('node', JSON.stringify(nodedata))
+  await store.commit("books/SET_NODE_DATA", node);
   // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
   switch (node.type) {
     case "l":
-      router.push({ name: 'subbooks', params: { wRefresh: true } })
+      router.push({ name: 'subbooks', params: { wRefresh: true, } })
       break;
     case 'w':
       router.push({ name: 'detail', query: { wid: node.articleId } })
