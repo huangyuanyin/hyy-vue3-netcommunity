@@ -484,17 +484,14 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   // 否则，当拖拽类型为inner,说明拖拽节点成为了目标节点的子节点,只需要获取目标节点对象即可
   // 目标节点的ID
   var dropNodeId = dropNode.level == 1 && dropType != "inner" ? Number(spaceid.value) : dropNode.data.id
-
   // 被拖拽节点的ID
   var draggingNodeId = draggingNode.data.id;
   // 被拖拽节点的name
   var draggingNodeName = draggingNode.data.label
-
   paramData = {
     name: draggingNodeName, // 被拖拽节点的name
     parent_category: dropNodeId // 目标节点的ID
   };
-
   updateCategorys(draggingNodeId, paramData).then((res) => {
     console.log(res);
     if (res.code == 1000) {
@@ -506,8 +503,22 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
       ElMessage.error("更新失败");
     }
   })
-
 }
+
+watch(() => dialogNode.value, () => {
+  if (dialogNode.value == true) {
+    bus.emit('startTextEdit');
+  } else {
+    bus.emit('endTextEdit')
+  }
+})
+watch(() => dialogEdit.value, () => {
+  if (dialogEdit.value == true) {
+    bus.emit('startTextEdit');
+  } else {
+    bus.emit('endTextEdit')
+  }
+})
 </script>
 
 <style scoped>
