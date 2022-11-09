@@ -458,6 +458,8 @@ const handleNodeClick = async (node) => {
   nodeData.value = node
   await sessionStorage.setItem('node', JSON.stringify(nodedata))
   await store.commit("books/SET_NODE_DATA", node);
+  await sessionStorage.setItem('curTreeId', node.id)
+  await sessionStorage.setItem('defaultExpandIds', [node.id])
   // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
   switch (node.type) {
     case "l":

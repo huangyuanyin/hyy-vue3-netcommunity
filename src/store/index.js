@@ -12,8 +12,8 @@ export default createStore({
     state: {
         mindMapData: null, // 思维导图数据
         isHandleLocalFile: false,// 是否操作的是本地文件
-        curTreeId: null,  // 存放 高亮的节点ID
-        defaultExpandIds: []
+        curTreeId: sessionStorage.getItem('curTreeId') || null,  // 存放 高亮的节点ID
+        defaultExpandIds: sessionStorage.getItem('defaultExpandIds') || []
     },
     mutations: {
         /** 
@@ -32,9 +32,12 @@ export default createStore({
         },
         changeCurTreeId(state, data) {
             state.curTreeId = data
-            state.defaultExpandIds.value = []
+            sessionStorage.setItem('curTreeId', data)
+            state.defaultExpandIds = []
             // 保存当前展开的节点
-            state.defaultExpandIds.value.push(data)
+            state.defaultExpandIds.push(data)
+            sessionStorage.setItem('defaultExpandIds', state.defaultExpandIds)
+
         }
     },
     actions: {
