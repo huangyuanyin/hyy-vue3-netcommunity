@@ -431,11 +431,11 @@ const deleteApi = (id) => {
           store.commit("changeCurTreeId", res.data)
           store.state.defaultExpandIds = []
           // 保存当前展开的节点
-          store.state.defaultExpandIds.push(res.data)
+          store.state.defaultExpandIds.push(res.data.id)
           router.push({ name: 'subbooks', params: { wRefresh: true } })
           handleNodeClick({
-            label: '',
-            id: res.data
+            label: res.data.label,
+            id: res.data.id
           })
         }
       })
