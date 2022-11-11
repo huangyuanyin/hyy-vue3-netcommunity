@@ -90,7 +90,8 @@
                       </el-icon>
                       <span v-if="question.type !== 'd'">{{ question.s_comments.length }}</span>
                     </el-button>
-                    <el-button text @click="handleEdit(question.type, question)" v-if="question.type !== 'd'">
+                    <el-button text @click="handleEdit(question.type, question)"
+                      v-if="!['d', 'a', 'w'].includes(question.type)">
                       <el-icon :size="16">
                         <Edit />
                       </el-icon>
@@ -101,7 +102,7 @@
                         <Delete />
                       </el-icon>
                     </el-button>
-                    <el-button text v-if="question.type === 'd'" @click="handleDownload(question.id)">
+                    <el-button text v-if="['d', 'a', 'w'].includes(question.type)" @click="handleDownload(question.id)">
                       <el-icon :size="16">
                         <Download />
                       </el-icon>
