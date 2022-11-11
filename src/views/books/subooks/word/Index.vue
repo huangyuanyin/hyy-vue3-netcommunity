@@ -7,7 +7,7 @@
           <div class="suspension">
             <el-row>
               <el-space direction="vertical" :size="12">
-                <el-tooltip content="点赞" placement="top" :show-after="500">
+                <el-tooltip content="点赞" placement="left" :show-after="500">
                   <el-button text @click="likeHandle">
                     <img src="@/assets/img/1.png" />
                   </el-button>
@@ -31,7 +31,7 @@
             </el-row>
             <el-row class="collect">
               <el-space direction="vertical" :size="12">
-                <el-tooltip content="回复" placement="right" :show-after="500">
+                <el-tooltip content="回复" placement="left" :show-after="500">
                   <el-button text>
                     <i>
                       <el-icon :size="24" color="#000000" @click="answerHandle">
@@ -45,7 +45,7 @@
             </el-row>
             <el-row class="collect">
               <el-space direction="vertical" :size="12">
-                <el-tooltip content="返回" placement="right" :show-after="500">
+                <el-tooltip content="返回" placement="left" :show-after="500">
                   <el-button text>
                     <i>
                       <el-icon :size="24" color="#000000" @click="goBack">
@@ -57,7 +57,7 @@
               </el-space>
             </el-row>
             <el-row>
-              <el-tooltip effect="light" content="更多操作" placement="bottom" :show-after="500">
+              <el-tooltip content="更多操作" placement="left" :show-after="500">
                 <el-dropdown @command="handleCommandMore" trigger="click">
                   <div class="more">
                     <img src="@/assets/img/more.png" />
@@ -68,6 +68,11 @@
                         <el-icon>
                           <delete />
                         </el-icon>删除
+                      </el-dropdown-item>
+                      <el-dropdown-item command="download">
+                        <el-icon>
+                          <delete />
+                        </el-icon>下载
                       </el-dropdown-item>
                       <el-dropdown-item command="update" disabled>
                         <el-icon>
@@ -225,10 +230,38 @@ const getAnswerPostMsg = (msg) => {
 
 // 更多操作按钮帖子
 const handleCommandMore = (command) => {
-  if (command == 'delete') {
-    deleteApi();
+  switch (command) {
+    case 'delete':
+      deleteApi();
+      break;
+    case 'download':
+      handleDownload(route.query.wid)
+      break;
+    default:
+      break;
   }
 };
+
+// 下载预览文件
+const handleDownload = async (id) => {
+  await getForumInfo(id).then(res => {
+    if (res.code === 1000) {
+      let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
+      downloadEvt(url)
+    }
+  })
+}
+
+const downloadEvt = (url, fileName = '未知文件') => {
+  const el = document.createElement('a');
+  el.style.display = 'none';
+  el.setAttribute('target', '_blank');
+  fileName && el.setAttribute('download', fileName);
+  el.href = url;
+  document.body.appendChild(el);
+  el.click();
+  document.body.removeChild(el);
+}
 
 // 删除接口
 const deleteApi = () => {
@@ -330,7 +363,7 @@ const deleteApi = () => {
 .more img {
   display: block;
   margin-left: 14px;
-  width: 40px;
+  // width: 40px;
   height: 40px;
   border-radius: 50%;
 }
