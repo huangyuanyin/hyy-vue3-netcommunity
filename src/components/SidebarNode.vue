@@ -206,8 +206,15 @@ const handleNodeExpand = (data) => {
   store.state.defaultExpandIds.push(data)
 }
 
-onMounted(() => {
-  judgeGetNodeList()
+onMounted(async () => {
+  await judgeGetNodeList()
+  console.log('treeData.value', spaceid.value);
+  if (curTreeId.value) {
+    await handleNodeClick({
+      label: store.state.curTreeName || '',
+      id: curTreeId.value
+    })
+  }
 })
 
 watch(() => route.params.notGetNodeList, () => {
@@ -460,6 +467,7 @@ const handleNodeClick = async (node) => {
   await store.commit("books/SET_NODE_DATA", node);
   await sessionStorage.setItem('curTreeId', node.id)
   await sessionStorage.setItem('defaultExpandIds', [node.id])
+  store.commit("saveCurTreeName", node.label)
   // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
   switch (node.type) {
     case "l":
