@@ -71,7 +71,7 @@
                       </el-dropdown-item>
                       <el-dropdown-item command="download">
                         <el-icon>
-                          <delete />
+                          <Download />
                         </el-icon>下载
                       </el-dropdown-item>
                       <el-dropdown-item command="update" disabled>
@@ -136,6 +136,8 @@
 <script setup>
 import { ref, computed, watch, onMounted, inject } from "vue";
 import { getForumInfo, deleteForum, deleteTopics } from '@/api/forum.js'
+import { downloadArticleFileApi } from '@/api/download.js'
+import { downloadEvt } from "@/utils/file.js"
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import Markdown from '@/components/markdown/preview.vue'
@@ -244,23 +246,12 @@ const handleCommandMore = (command) => {
 
 // 下载预览文件
 const handleDownload = async (id) => {
-  await getForumInfo(id).then(res => {
+  await downloadArticleFileApi({ id }).then(res => {
     if (res.code === 1000) {
-      let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
+      let url = res.data
       downloadEvt(url)
     }
   })
-}
-
-const downloadEvt = (url, fileName = '未知文件') => {
-  const el = document.createElement('a');
-  el.style.display = 'none';
-  el.setAttribute('target', '_blank');
-  fileName && el.setAttribute('download', fileName);
-  el.href = url;
-  document.body.appendChild(el);
-  el.click();
-  document.body.removeChild(el);
 }
 
 // 删除接口
