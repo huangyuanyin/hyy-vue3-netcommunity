@@ -153,7 +153,7 @@ import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import SaveDialog from "@/components/SaveDialog.vue";
 import { getForum, updateForum, getForumInfo, deleteForum } from '@/api/forum.js'
 import { downloadArticleFileApi } from '@/api/download.js'
-import { downloadEvt } from "@/utils/file.js"
+import { downloadFile } from "@/utils/file.js"
 import { Search } from '@element-plus/icons-vue'
 import { getTag } from "@/api/tag.js"
 import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
@@ -374,25 +374,7 @@ const answerHandle = (type, id) => {
 
 // 下载文件
 const handleDownload = async (id, type) => {
-  if (type === 'd') {
-    await getForumInfo(id).then(res => {
-      if (res.code === 1000) {
-        let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
-        // var elemIF = document.createElement('iframe')
-        // elemIF.src = url
-        // elemIF.style.display = 'none'
-        // document.body.appendChild(elemIF)
-        downloadEvt(url)
-      }
-    })
-  } else {
-    await downloadArticleFileApi({ id }).then(res => {
-      if (res.code === 1000) {
-        let url = res.data
-        downloadEvt(url)
-      }
-    })
-  }
+  downloadFile.judgeType(id, type)
 }
 
 // 查看预览文件

@@ -137,7 +137,7 @@
 import { ref, computed, watch, onMounted, inject } from "vue";
 import { getForumInfo, deleteForum, deleteTopics } from '@/api/forum.js'
 import { downloadArticleFileApi } from '@/api/download.js'
-import { downloadEvt } from "@/utils/file.js"
+import { downloadFile } from "@/utils/file.js"
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import Markdown from '@/components/markdown/preview.vue'
@@ -246,12 +246,7 @@ const handleCommandMore = (command) => {
 
 // 下载预览文件
 const handleDownload = async (id) => {
-  await downloadArticleFileApi({ id }).then(res => {
-    if (res.code === 1000) {
-      let url = res.data
-      downloadEvt(url)
-    }
-  })
+  downloadFile.judgeType(id)
 }
 
 // 删除接口
