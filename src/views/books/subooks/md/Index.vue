@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="md-wrap">
     <el-card :style="{ 'min-height': minHeight }">
       <template #header>
         <el-button type="primary" @click="goBack">
@@ -12,7 +12,7 @@
         <el-form-item label="分类" prop="category" v-if="isRight === 'right' || categoryId === ''">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
-              :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
+              :props="{ value: 'id', checkStrictly: true }" :show-all-levels="false" />
             <span style="margin-left: 30px">标签</span>
             <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }">
             </el-cascader>
@@ -60,7 +60,7 @@ import 'mavon-editor/dist/css/index.css';
 
 import Tinymce from '@/components/tinymce'
 
-import { ref, computed, reactive, watch, onMounted, inject } from "vue";
+import { ref, computed, reactive, watch, onMounted, inject, watchEffect } from "vue";
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessage } from "element-plus";
@@ -88,7 +88,7 @@ export default {
       return window.innerHeight - 55 + "px";
     });
     // 工作空间标题名
-    const spaceid = computed(() => sessionStorage.getItem('spaceid'));
+    const spaceid = ref(sessionStorage.getItem('spaceid'))
     // 节点数据
     const node = computed(() => store.getters.node);
     // 节点数据
@@ -161,6 +161,8 @@ export default {
       // 监控 是否显示分类
       if (route.query && route.query.isRight) {
         isRight.value = route.query.isRight
+        spaceid.value = sessionStorage.getItem('spaceid')
+        getNodeList()
       } else {
         isRight.value = ''
       }
@@ -168,7 +170,7 @@ export default {
         md.value = ''
         form.body = ''
         formRef.value.resetFields()
-        form.category = route.query.category
+        form.category = node.value.id
         editorDisabled.value = false
         editorType.value = 'tiny'
       }
@@ -286,6 +288,8 @@ export default {
           type: "success",
         });
         toDetail(res.data)
+        reload()
+        store.commit("changeCurTreeId", Number(form.category)) // 定位
       })
     }
 
@@ -293,6 +297,7 @@ export default {
     const getUpdateCategorysApi = () => {
       const title = { name: form.title }
       updateCategorys(form.category, title).then((res) => {
+        store.commit("changeCurTreeId", res.data) // 定位
         ElMessage({
           message: '编辑成功！',
           type: 'success',
@@ -307,6 +312,7 @@ export default {
           message: "新增成功",
           type: "success",
         });
+        store.commit("changeCurTreeId", Number(form.category)) // 定位
         if (res.code === 1000) {
           handleClose()
           reload()
@@ -320,12 +326,15 @@ export default {
       let params = {
         name: form.title,
         parent_category: form.category,
-        type: form.type
+        type: form.type,
+        author: sessionStorage.getItem('username'),
+        public: sessionStorage.getItem('spacePublic')
       }
       // 新增节点
       addCategorys(params).then((res) => {
         if (res.code == 1000) {
           form.category = res.data
+          store.commit("changeCurTreeId", res.data) // 定位
           // 新增markdown
           addForum(form).then(res => {
             ElMessage({
@@ -387,5 +396,9 @@ export default {
 .my-tinymce {
   margin-bottom: 30px;
   width: 100%;
+}
+
+.md-wrap {
+  margin-bottom: 40px;
 }
 </style>

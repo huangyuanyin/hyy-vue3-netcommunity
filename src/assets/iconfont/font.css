@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "思源宋体 Regular";
+  font-weight: 400;
+  src: url("//at.alicdn.com/wf/webfont/xh4nx6fdEXTy/0jXUXbuJbGMJTGE1-Z9ES.woff2") format("woff2"),
+    url("//at.alicdn.com/wf/webfont/xh4nx6fdEXTy/BXimMREEQDbyuQ0kj-J5S.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "思源宋体 Medium";
+  font-weight: 500;
+  src: url("//at.alicdn.com/wf/webfont/xh4nx6fdEXTy/SYySrGV-pN0GFAJ-cof25.woff2") format("woff2"),
+    url("//at.alicdn.com/wf/webfont/xh4nx6fdEXTy/Q9kaOvRthiBt50w-wLg7f.woff") format("woff");
+  font-display: swap;
+}

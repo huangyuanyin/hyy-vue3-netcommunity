@@ -39,14 +39,18 @@ import { judgeNodeType } from '@/utils/methods.js'
 const route = useRoute()
 const router = useRouter()
 const store = useStore()
-const reload = inject('reload')
+const _reload = inject('reload')
+const reload = () => {
+  setTimeout(_reload, 100)
+  store.commit("changeCurTreeId", saveForm.category)
+}
 const node = computed(() => store.getters.node);
 const isShowDialog = ref(false)
 const isRight = ref('')
 const treeData = ref([])
 const taglist = ref([])
 // 工作空间标题名
-const spaceid = computed(() => sessionStorage.getItem('spaceid'));
+const spaceid = ref(sessionStorage.getItem('spaceid'))
 const saveForm = reactive({
   category: '',
   title: '',
@@ -68,30 +72,26 @@ const closeSaveDialog = () => {
 
 // 保存流程
 const handleSave = () => {
-  if (route.query.mid) {
-    updateMindMap()
-    isShowDialog.value = false
-  } else {
-    addMindMap()
-    isShowDialog.value = false
-  }
+  saveFormRef.value.validate((valid) => {
+    if (!valid) return false
+    if (route.query.mid) {
+      updateMindMap()
+      isShowDialog.value = false
+    } else {
+      addMindMap()
+      isShowDialog.value = false
+    }
+  })
 }
 
 // 新增mindMap
 const addMindMap = () => {
-  saveFormRef.value.validate((valid) => {
-    if (valid) {
-      saveForm.body = JSON.stringify(getData())
-      if (route.query.isRight == "right") {
-        getRightSaveApi(saveForm)
-      } else {
-        getSave() // 新增为节点
-      }
-    } else {
-      return false;
-    }
-  });
-  console.log("保存...", saveForm);
+  saveForm.body = JSON.stringify(getData())
+  if (route.query.isRight == "right") {
+    getRightSaveApi(saveForm)
+  } else {
+    getSave() // 新增为节点
+  }
 }
 
 // 新增mindMap api
@@ -114,12 +114,15 @@ const getSave = () => {
   let params = {
     name: saveForm.title,
     parent_category: route.query.category,
-    type: saveForm.type
+    type: saveForm.type,
+    author: sessionStorage.getItem('username'),
+    public: sessionStorage.getItem('spacePublic')
   }
   // 新增节点
   addCategorys(params).then((res) => {
     if (res.code == 1000) {
       saveForm.category = res.data
+      store.commit("changeCurTreeId", res.data)
       // 调用新增mindMap节点
       addForum(saveForm).then(res => {
         ElMessage({
@@ -192,6 +195,7 @@ watch(() => route.query, () => {
   }
   if (route.query.isRight) {
     isRight.value = route.query.isRight
+    spaceid.value = sessionStorage.getItem('spaceid')
     getTagList()
     getNodeList()
   } else {
@@ -242,8 +246,11 @@ const getTagList = () => {
 
 // 选择分类ID
 const handleChange = (id) => {
-  var len = id.length
-  saveForm.category = id[len - 1]
+  console.log("id", id);
+  if (id != null) {
+    var len = id.length
+    saveForm.category = id[len - 1]
+  }
 }
 
 const handleClose = () => {

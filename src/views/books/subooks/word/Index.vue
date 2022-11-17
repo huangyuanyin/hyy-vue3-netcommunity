@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="detail-wrap">
     <el-card :style="{ 'min-height': minHeight }">
       <!-- 帖子内容 -->
       <el-row>
@@ -7,7 +7,7 @@
           <div class="suspension">
             <el-row>
               <el-space direction="vertical" :size="12">
-                <el-tooltip content="点赞" placement="top" :show-after="500">
+                <el-tooltip content="点赞" placement="left" :show-after="500">
                   <el-button text @click="likeHandle">
                     <img src="@/assets/img/1.png" />
                   </el-button>
@@ -31,7 +31,7 @@
             </el-row>
             <el-row class="collect">
               <el-space direction="vertical" :size="12">
-                <el-tooltip content="回复" placement="right" :show-after="500">
+                <el-tooltip content="回复" placement="left" :show-after="500">
                   <el-button text>
                     <i>
                       <el-icon :size="24" color="#000000" @click="answerHandle">
@@ -45,7 +45,7 @@
             </el-row>
             <el-row class="collect">
               <el-space direction="vertical" :size="12">
-                <el-tooltip content="返回" placement="right" :show-after="500">
+                <el-tooltip content="返回" placement="left" :show-after="500">
                   <el-button text>
                     <i>
                       <el-icon :size="24" color="#000000" @click="goBack">
@@ -57,7 +57,7 @@
               </el-space>
             </el-row>
             <el-row>
-              <el-tooltip effect="light" content="更多操作" placement="bottom" :show-after="500">
+              <el-tooltip content="更多操作" placement="left" :show-after="500">
                 <el-dropdown @command="handleCommandMore" trigger="click">
                   <div class="more">
                     <img src="@/assets/img/more.png" />
@@ -68,6 +68,11 @@
                         <el-icon>
                           <delete />
                         </el-icon>删除
+                      </el-dropdown-item>
+                      <el-dropdown-item command="download">
+                        <el-icon>
+                          <Download />
+                        </el-icon>下载
                       </el-dropdown-item>
                       <el-dropdown-item command="update" disabled>
                         <el-icon>
@@ -101,7 +106,7 @@
             </el-col>
           </el-row>
           <el-row style="margin-top: 30px">
-            <markdown-com :data="fourumdata.body"></markdown-com>
+            <Markdown :data="fourumdata.body" />
           </el-row>
           <!-- v-md-editor -->
           <!-- <el-row style="margin-top: 30px">
@@ -113,7 +118,7 @@
             </el-col>
           </el-row>
           <!-- 回复列表 -->
-          <answer-list-com :refresh="isRefresh" id="answerlist"></answer-list-com>
+          <AnswerList :refresh="isRefresh" id="answerlist" />
           <!-- </el-card> -->
         </el-col>
       </el-row>
@@ -128,161 +133,160 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, watch, onMounted, inject } from "vue";
 import { getForumInfo, deleteForum, deleteTopics } from '@/api/forum.js'
-import { useRoute, useRouter } from "vue-router";
+import { downloadArticleFileApi } from '@/api/download.js'
+import { downloadFile } from "@/utils/file.js"
+import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import markdown from '@/components/markdown/preview.vue'
+import Markdown from '@/components/markdown/preview.vue'
 import answerpost from "./subdetail/AnswerPost.vue";
-import answerlist from "./subdetail/AnswerList.vue";
-export default {
-  components: {
-    'markdown-com': markdown,
-    "answer-post-com": answerpost,
-    "answer-list-com": answerlist
-  },
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const reload = inject('reload')
-    // 是否刷新回复列表
-    const isRefresh = ref(0)
-    // 数据
-    const fourumdata = ref({})
+import AnswerList from "./subdetail/AnswerList.vue";
 
-    // 最小高度
-    const minHeight = computed(() => {
-      return window.innerHeight - 55 + "px";
-    });
+const router = useRouter();
+const route = useRoute();
+const reload = inject('reload')
+// 是否刷新回复列表
+const isRefresh = ref(0)
+// 数据
+const fourumdata = ref({})
 
-    // 回复按钮事件
-    const answerHandle = () => {
+// 最小高度
+const minHeight = computed(() => {
+  return window.innerHeight - 55 + "px";
+});
+
+// 回复按钮事件
+const answerHandle = () => {
+  document.querySelector('#answerlist').scrollIntoView({
+    behavior: 'smooth',
+    block: 'end'
+  })
+}
+
+// 获取帖子数据
+const getForumData = () => {
+  getForumInfo(route.query.wid).then(res => {
+    fourumdata.value = res.data
+  })
+};
+
+getForumData()
+
+watch(() => route.query, () => {
+  if (route.query.wid) {
+    getForumData()
+  }
+  if (route.query.aricleName) {
+    fourumdata.value.title = route.query.aricleName
+    console.log("dada", fourumdata.value.title);
+  }
+})
+
+onMounted(() => {
+  setTimeout(() => {
+    if (route.query.status == 'answer') {
       document.querySelector('#answerlist').scrollIntoView({
         behavior: 'smooth',
-        block: 'end'
+        block: 'start'
       })
     }
+  }, 100)
+})
 
-    // 获取帖子数据
-    const getForumData = () => {
-      getForumInfo(route.query.wid).then(res => {
-        fourumdata.value = res.data
-      })
-    };
-
-    getForumData()
-
-    watch(() => route.query.wid, () => {
-      if (route.query.wid) {
-        getForumData()
-      }
-    })
-
-    onMounted(() => {
-      setTimeout(() => {
-        if (route.query.status == 'answer') {
-          document.querySelector('#answerlist').scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          })
-        }
-      }, 100)
-    })
-
-    // 点赞事件
-    const likeHandle = () => {
-      ElMessage({
-        message: "暂不支持",
-        type: "warning",
-      });
-    };
-
-    // 收藏事件
-    const collectHandle = () => {
-      ElMessage({
-        message: "暂不支持",
-        type: "warning",
-      });
-    };
-
-    // 编辑按钮
-    const handleEdit = () => {
-      if (fourumdata.value.type == 'a') {
-        router.push({ name: 'md', query: { tid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'a' } })
-      } else {
-        router.push({ name: 'md', query: { mid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'w' } })
-      }
-    }
-
-    // 返回
-    const goBack = () => {
-      router.go(-1)
-    }
-
-    // 是否刷新
-    const getAnswerPostMsg = (msg) => {
-      isRefresh.value = msg
-    }
-
-    // 更多操作按钮帖子
-    const handleCommandMore = (command) => {
-      if (command == 'delete') {
-        deleteApi();
-      }
-    };
-
-    // 删除接口
-    const deleteApi = () => {
-      // 二次确认删除
-      ElMessageBox.confirm("确定要删除吗？", "提示", {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        type: "warning",
-        draggable: true,
-      })
-        .then(() => {
-          if (route.query && route.query.isRight) {
-            // 删除帖子
-            deleteForum(route.query.wid).then(res => {
-              ElMessage.success("删除成功");
-              router.push({ name: 'subbooks', params: { wRefresh: true } })
-            })
-          } else {
-            // 删除分类
-            deleteTopics(fourumdata.value.category).then(res => {
-              ElMessage.success("删除成功");
-              router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
-            })
-          }
-        })
-        .catch(() => {
-          ElMessage({
-            type: 'info',
-            message: 'Delete canceled',
-          })
-        });
-    };
-
-    return {
-      fourumdata,
-      minHeight,
-      isRefresh,
-      goBack,
-      getForumData,
-      answerHandle,
-      handleEdit,
-      getAnswerPostMsg,
-      likeHandle,
-      collectHandle,
-      handleCommandMore,
-      reload
-    };
-  },
+// 点赞事件
+const likeHandle = () => {
+  ElMessage({
+    message: "暂不支持",
+    type: "warning",
+  });
 };
+
+// 收藏事件
+const collectHandle = () => {
+  ElMessage({
+    message: "暂不支持",
+    type: "warning",
+  });
+};
+
+// 编辑按钮
+const handleEdit = () => {
+  if (fourumdata.value.type == 'a') {
+    router.push({ name: 'md', query: { tid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'a' } })
+  } else {
+    router.push({ name: 'md', query: { mid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'w' } })
+  }
+}
+
+// 返回
+const goBack = () => {
+  router.go(-1)
+}
+
+// 是否刷新
+const getAnswerPostMsg = (msg) => {
+  isRefresh.value = msg
+}
+
+// 更多操作按钮帖子
+const handleCommandMore = (command) => {
+  switch (command) {
+    case 'delete':
+      deleteApi();
+      break;
+    case 'download':
+      handleDownload(route.query.wid)
+      break;
+    default:
+      break;
+  }
+};
+
+// 下载预览文件
+const handleDownload = async (id) => {
+  downloadFile.judgeType(id)
+}
+
+// 删除接口
+const deleteApi = () => {
+  // 二次确认删除
+  ElMessageBox.confirm("确定要删除吗？", "提示", {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+    type: "warning",
+    draggable: true,
+  })
+    .then(() => {
+      if (route.query && route.query.isRight) {
+        // 删除帖子
+        deleteForum(route.query.wid).then(res => {
+          ElMessage.success("删除成功");
+          router.push({ name: 'subbooks', params: { wRefresh: true } })
+        })
+      } else {
+        // 删除分类
+        deleteTopics(fourumdata.value.category).then(res => {
+          ElMessage.success("删除成功");
+          router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
+        })
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    });
+}
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.detail-wrap {
+  margin-bottom: 40px;
+}
+
 .title {
   font-size: 24px;
   font-style: normal;
@@ -345,7 +349,7 @@ export default {
 .more img {
   display: block;
   margin-left: 14px;
-  width: 40px;
+  // width: 40px;
   height: 40px;
   border-radius: 50%;
 }

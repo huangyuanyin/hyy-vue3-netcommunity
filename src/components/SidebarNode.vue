@@ -13,8 +13,12 @@
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="root">新建分组</el-dropdown-item>
-              <el-dropdown-item command="word" disabled>新建文档</el-dropdown-item>
+              <el-dropdown-item command="root">
+                <svg-icon iconName="icon-a-wenjianjiawenjian" className="is-Folder" />新建分组
+              </el-dropdown-item>
+              <el-dropdown-item command="word" disabled>
+                新建文档
+              </el-dropdown-item>
               <el-dropdown-item command="excel" disabled>新建Excel</el-dropdown-item>
               <el-dropdown-item command="excel" disabled>新建白板</el-dropdown-item>
               <el-dropdown-item command="mind" disabled>新建思维导图</el-dropdown-item>
@@ -32,14 +36,15 @@
         @current-change="handleNodeClick" @node-drop="handleDrop" node-key="id" :props="defaultProps"
         :default-expanded-keys="defaultExpandIds" :current-node-key="curTreeId">
         <template #default="{ node, data }">
-          <span class="custom-tree-node">
+          <div class="custom-tree-node">
             <div class="content">
-              <el-icon class="is-Folder" v-if="data.type === 'l'">
-                <Folder />
-              </el-icon>
-              <el-icon class="is-Folder" v-else>
-                <Document />
-              </el-icon>
+              <svg-icon iconName="icon-a-wenjianjiawenjian" v-if="data.type === 'l' && data.isFolder"
+                className="is-Folder" />
+              <svg-icon iconName="icon-Document" v-if="data.type === 'l' && !data.isFolder" className="is-Folder" />
+              <svg-icon iconName="icon-word" v-if="data.type === 'a'" className="is-Folder"></svg-icon>
+              <svg-icon iconName="icon-file-markdown-fill" v-if="data.type === 'w'" className="is-Folder"></svg-icon>
+              <svg-icon iconName="icon-excel" v-if="data.type === 'e'" className="is-Folder"></svg-icon>
+              <svg-icon iconName="icon-icon__liuchengtu" v-if="data.type === 'm'" className="is-Folder"></svg-icon>
               <span class="labelStyle" :title="node.label">{{ node.label }}</span>
             </div>
             <div class="buttonStyle">
@@ -52,10 +57,18 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item :command="'add' + ',' + data.id">新建分组</el-dropdown-item>
-                    <el-dropdown-item :command="'article' + ',' + data.id">新建文档</el-dropdown-item>
-                    <el-dropdown-item :command="'excel' + ',' + data.id">新建Excel</el-dropdown-item>
-                    <el-dropdown-item :command="'mindmap' + ',' + data.id">新建思维导图</el-dropdown-item>
+                    <el-dropdown-item :command="'add' + ',' + data.id">
+                      <svg-icon iconName="icon-Document" className="is-Folder" />新建分组
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'article' + ',' + data.id">
+                      <svg-icon iconName="icon-word" className="is-Folder" />新建文档
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'excel' + ',' + data.id">
+                      <svg-icon iconName="icon-excel" className="is-Folder" />新建Excel
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'mindmap' + ',' + data.id">
+                      <svg-icon iconName="icon-icon__liuchengtu" className="is-Folder" />新建思维导图
+                    </el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>
                     <el-dropdown-item :command="'ppt' + ',' + data.id" disabled>新建PPT</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建白板</el-dropdown-item>
@@ -63,22 +76,29 @@
                 </template>
               </el-dropdown>
               <!-- 更多 -->
-              <el-dropdown @command="handleRoot" trigger="click">
-                <span>
-                  <el-icon>
-                    <more-filled />
-                  </el-icon>
-                </span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
-                    <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label">编辑</el-dropdown-item>
-                    <el-dropdown-item :command="'remove' + ',' + data.id">删除</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
+              <div style="display: flex;" @click.stop>
+                <el-dropdown @command="handleRoot" trigger="hover">
+                  <span>
+                    <el-icon>
+                      <more-filled />
+                    </el-icon>
+                  </span>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
+                      <el-dropdown-item
+                        :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
+                        <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
+                      </el-dropdown-item>
+                      <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type">
+                        <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </div>
             </div>
-          </span>
+          </div>
         </template>
       </el-tree>
     </div>
@@ -128,8 +148,15 @@ const router = useRouter()
 const loadingInstance = ref('')
 const spacename = computed(() => sessionStorage.getItem('spacename'));
 const spaceid = computed(() => sessionStorage.getItem('spaceid'));
-const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
-const curTreeId = ref(null) // 存放 高亮的节点ID
+// const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
+const defaultExpandIds = computed(() => { // 这里存放 要默认展开的节点 id
+  return store.state.defaultExpandIds
+})
+// const curTreeId = ref(null) // 存放 高亮的节点ID
+const curTreeId = computed(() => { // 存放 高亮的节点ID
+  return store.state.curTreeId
+})
+const curTreeData = ref({}) // 存放 已点击的节点ID
 // 对话框
 const dialogNode = ref(false)
 // 对话框 编辑
@@ -162,21 +189,32 @@ const formRules = reactive({
 const exampleData = ({ "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } })
 
 // 获取节点数据
-const getNodeList = () => {
-  getCategorysInfo(spaceid.value).then((res) => {
-    treeData.value = res.data
-  })
+const getNodeList = async () => {
+  let res = await getCategorysInfo(spaceid.value)
+  if (res.code === 1000) {
+    res.data.forEach((item) => {
+      item.isFolder = true
+    })
+  }
+  treeData.value = res.data
 }
 
 // 树节点展开
 const handleNodeExpand = (data) => {
-  defaultExpandIds.value = []
+  store.state.defaultExpandIds = []
   // 保存当前展开的节点
-  defaultExpandIds.value.push(data)
+  store.state.defaultExpandIds.push(data)
 }
 
-onMounted(() => {
-  judgeGetNodeList()
+onMounted(async () => {
+  await judgeGetNodeList()
+  console.log('treeData.value', spaceid.value);
+  if (curTreeId.value) {
+    await handleNodeClick({
+      label: store.state.curTreeName || '',
+      id: curTreeId.value
+    })
+  }
 })
 
 watch(() => route.params.notGetNodeList, () => {
@@ -218,9 +256,14 @@ const handleRoot = (command) => {
   if (tmp[0] === 'edit') {
     edit_id.value = tmp[1]
     form.value.name = tmp[2]
+    nodeData.value = {
+      type: tmp[3],
+      articleId: tmp[4]
+    }
     dialogEdit.value = true
   }
   if (tmp[0] === 'remove') {
+    nodeData.value = tmp[2]
     deleteApi(tmp[1])
   }
 }
@@ -295,7 +338,9 @@ const handleAdd = () => {
     if (!valid) return
     let params = {
       name: form.value.name,
-      parent_category: parent_id.value
+      parent_category: parent_id.value,
+      author: sessionStorage.getItem('username'),
+      public: sessionStorage.getItem('spacePublic')
     }
     addCategorys(params).then((res) => {
       ElMessage({
@@ -305,7 +350,12 @@ const handleAdd = () => {
       dialogClose()
       getNodeList()
       curTreeId.value = res.data
-      handleNodeExpand(res.data)
+      store.commit("changeCurTreeId", res.data)
+      // handleNodeExpand(res.data)
+      handleNodeClick({
+        label: form.value.name,
+        id: res.data
+      })
     })
   })
 }
@@ -336,10 +386,7 @@ const judegeGetCategory = () => {
             dialogClose()
             const title = { name: nodeForm.title }
             getUpdateCategorysApi(edit_id.value, title)
-            getNodeList()
-
           }
-          reload()
         })
       }
 
@@ -356,7 +403,21 @@ const getUpdateCategorysApi = (id, name) => {
     })
     dialogClose()
     getNodeList()
-    handleNodeExpand(res.data)
+    curTreeId.value = curTreeData.value.id
+    store.commit("changeCurTreeId", curTreeData.value.id)
+    console.log("dddd", curTreeData.value.id, id);
+    if (curTreeData.value.id == id) {
+      console.log("name", name.name);
+      // reload() 刷新页面用来更新title，此处需优化
+      if (curTreeData.value.type == 'a' || curTreeData.value.type == 'w') {
+        reload()
+      }
+      handleNodeClick({
+        label: name.name,
+        id: id
+      })
+    }
+    handleNodeExpand(curTreeData.value.id) // 依旧展开点击的节点
   })
 }
 
@@ -364,39 +425,53 @@ const getUpdateCategorysApi = (id, name) => {
 const deleteApi = (id) => {
   // 二次确认删除
   ElMessageBox.confirm("确定要删除吗？", "提示", {
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     type: "warning",
     draggable: true,
   })
     .then(() => {
       deleteCategorys(id).then(res => {
-        ElMessage.success("删除成功");
-        getNodeList()
-        router.push({ name: 'subbooks', params: { wRefresh: true } })
+        if (res.code === 1000) {
+          ElMessage.success("删除成功");
+          getNodeList()
+          store.commit("changeCurTreeId", res.data)
+          store.state.defaultExpandIds = []
+          // 保存当前展开的节点
+          store.state.defaultExpandIds.push(res.data.id)
+          router.push({ name: 'subbooks', params: { wRefresh: true } })
+          handleNodeClick({
+            label: res.data.label,
+            id: res.data.id
+          })
+        }
       })
     })
     .catch(() => {
       ElMessage({
         type: 'info',
-        message: 'Delete canceled',
+        message: '取消删除',
       })
     });
 }
 
 // 节点点击事件
 const handleNodeClick = async (node) => {
+  curTreeData.value = node
   let nodedata = {
     'label': node.label,
     'id': node.id
   }
   nodeData.value = node
-  store.commit("books/SET_NODE_DATA", node);
-  sessionStorage.setItem('node', nodedata)
+  await sessionStorage.setItem('node', JSON.stringify(nodedata))
+  await store.commit("books/SET_NODE_DATA", node);
+  await sessionStorage.setItem('curTreeId', node.id)
+  await sessionStorage.setItem('defaultExpandIds', [node.id])
+  store.commit("saveCurTreeName", node.label)
   // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
   switch (node.type) {
     case "l":
-      router.push({ name: 'subbooks', params: { wRefresh: true } })
+      router.push({ name: 'subbooks', params: { wRefresh: true, } })
       break;
     case 'w':
       router.push({ name: 'detail', query: { wid: node.articleId } })
@@ -445,17 +520,14 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   // 否则，当拖拽类型为inner,说明拖拽节点成为了目标节点的子节点,只需要获取目标节点对象即可
   // 目标节点的ID
   var dropNodeId = dropNode.level == 1 && dropType != "inner" ? Number(spaceid.value) : dropNode.data.id
-
   // 被拖拽节点的ID
   var draggingNodeId = draggingNode.data.id;
   // 被拖拽节点的name
   var draggingNodeName = draggingNode.data.label
-
   paramData = {
     name: draggingNodeName, // 被拖拽节点的name
     parent_category: dropNodeId // 目标节点的ID
   };
-
   updateCategorys(draggingNodeId, paramData).then((res) => {
     console.log(res);
     if (res.code == 1000) {
@@ -467,8 +539,22 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
       ElMessage.error("更新失败");
     }
   })
-
 }
+
+watch(() => dialogNode.value, () => {
+  if (dialogNode.value == true) {
+    bus.emit('startTextEdit');
+  } else {
+    bus.emit('endTextEdit')
+  }
+})
+watch(() => dialogEdit.value, () => {
+  if (dialogEdit.value == true) {
+    bus.emit('startTextEdit');
+  } else {
+    bus.emit('endTextEdit')
+  }
+})
 </script>
 
 <style scoped>
@@ -502,8 +588,10 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: 15px;
   padding-right: 18px;
+  overflow: hidden;
+  font-family: "思源宋体 Medium";
 }
 
 .custom-tree-node:hover .labelStyle {
@@ -514,6 +602,7 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   display: flex;
   align-items: center;
   overflow: hidden;
+  margin-right: 1px;
 }
 
 .labelStyle {
@@ -525,7 +614,7 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
 }
 
 .is-Folder {
-  margin-right: 5px;
+  margin-right: 3px;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -541,5 +630,9 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
 
 .custom-tree-node:hover .left-button {
   display: block;
+}
+
+.buttonStyle {
+  display: flex;
 }
 </style>

@@ -8,7 +8,9 @@
         <el-col :span="4" :offset="15">
           <el-input v-model="search" placeholder="搜索">
             <template #prefix>
-              <el-icon class="el-input__icon"><search /></el-icon>
+              <el-icon class="el-input__icon">
+                <Search />
+              </el-icon>
             </template>
           </el-input>
         </el-col>
@@ -18,84 +20,73 @@
       </el-row>
       <el-tabs>
         <el-tab-pane label="常用">
-            
+          
         </el-tab-pane>
       </el-tabs>
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="个人知识库" name="my">
-          <table-list-com :data="mybooks"></table-list-com>
+      <el-tabs v-model="activeName" @tab-change="changeTab">
+        <el-tab-pane label="共享知识库" name="public">
+          <tablelist :data="pubooks"></tablelist>
         </el-tab-pane>
-        <el-tab-pane label="协作知识库" name="public">
-          <table-list-com :data="pubooks"></table-list-com>
+        <el-tab-pane label="个人知识库" name="my">
+          <tablelist :data="mybooks"></tablelist>
         </el-tab-pane>
       </el-tabs>
     </el-card>
     <!-- 知识库对话框 -->
-    <dialog-com :show="dialogBook" :edit="editForm" @input="getDialog"></dialog-com>
+    <DialogBook :show="dialogBook" :edit="editForm" @input="getDialog"></DialogBook>
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive, onMounted } from 'vue'
 import tablelist from './components/table.vue'
+import DialogBook from './components/dialog.vue'
 import { getCategorys } from "@/api/category.js"
-import dialogBook from './components/dialog.vue'
-export default {
-  components: {
-    'table-list-com': tablelist,
-    'dialog-com':dialogBook
-  },
-  setup() {
-    // 搜索内容
-    const search = ref('')
-    // 便签页
-    const activeName = ref('my')
-    // 个人知识库数据
-    const mybooks = ref([])
-    // 协同知识库数据
-    const pubooks = ref([])
-    // 待编辑表单
-    const editForm = reactive({})
-    // 对话框
-    const dialogBook = ref(false)
+import { Search } from '@element-plus/icons-vue'
 
-    const getMyBooks = () => {
-      getCategorys().then((res) => {
-        mybooks.value = res.data
-        pubooks.value = res.data
-      })
-    }
+const search = ref('') // 搜索内容
+const activeName = ref('public') // 便签页
+const mybooks = ref([]) // 个人知识库数据
+const pubooks = ref([]) // 协同知识库数据
+const editForm = reactive({}) // 待编辑表单
+const dialogBook = ref(false) // 对话框
+const author = sessionStorage.getItem('username') || ''
 
-    getMyBooks()
-
-    onMounted(() => {
-      getMyBooks()
-    })
-
-    const getDialog = (msg) => {
-      dialogBook.value = msg
-      getMyBooks()
-    }
-
-    return {
-      dialogBook,
-      search,
-      activeName,
-      mybooks,
-      pubooks,
-      editForm,
-      getMyBooks,
-      getDialog
-    }
-  },
+const getMyBooks = (id, author) => {
+  const params = {
+    "public": id,
+    "author": author
+  }
+  id === 1 ? delete params.author : ''
+  getCategorys(params).then((res) => {
+    id === 0 ? mybooks.value = res.data : pubooks.value = res.data
+  })
 }
+
+const changeTab = (name) => {
+  let id;
+  name === 'my' ? id = 0 : id = 1
+  getMyBooks(id, author)
+}
+
+const getDialog = (msg) => {
+  dialogBook.value = msg
+  getMyBooks(activeName.value === 'my' ? 0 : 1, author)
+}
+
+onMounted(() => {
+  getMyBooks(1, author)
+})
+
+
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .title {
   font-weight: 600;
   font-size: 17px;
 }
+
 .el-tabs {
   margin-top: 25px;
 }

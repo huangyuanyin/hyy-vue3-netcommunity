@@ -8,11 +8,12 @@
               <el-input v-model="keywords" placeholder="搜索知识库" size="default" @keyup.enter="handleSearch"
                 style="width: 400px">
                 <template #prefix>
-                  <el-icon><search /></el-icon>
+                  <el-icon>
+                    <search />
+                  </el-icon>
                 </template>
                 <template #append>
-                  <el-select v-model="filterTag" placeholder="Select" 
-                    style="width: 90px" @change="handleSearch">
+                  <el-select v-model="filterTag" placeholder="Select" style="width: 90px" @change="handleSearch">
                     <el-option label="内容" value="body" />
                     <el-option label="标题" value="title" />
                   </el-select>
@@ -22,7 +23,9 @@
             <el-col :span="7" :offset="9">
               <el-dropdown @command="handleCommand" style="width: 100px; margin-top: 5px">
                 <span class="el-dropdown-link">
-                  {{ commandData }} <el-icon><caret-bottom /></el-icon>
+                  {{ commandData }} <el-icon>
+                    <caret-bottom />
+                  </el-icon>
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -33,9 +36,8 @@
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-              <el-cascader :options="taglist" v-model="tags" @change="handleTag"
-                clearable placeholder="请选择标签" style="width: 180px"
-                :props="{ value:'id', label: 'name' }">
+              <el-cascader :options="taglist" v-model="tags" @change="handleTag" clearable placeholder="请选择标签"
+                style="width: 180px" :props="{ value: 'id', label: 'name' }">
               </el-cascader>
             </el-col>
           </el-row>
@@ -61,25 +63,29 @@
                   </el-col>
                   <el-col :span="4" :offset="11" class="statistics">
                     <el-button text @click="handleOpen(question.type, question.id)">
-                      <el-icon :size="16"><View /></el-icon></el-button>
+                      <el-icon :size="16">
+                        <View />
+                      </el-icon>
+                    </el-button>
                     <span>{{ question.views }}</span>
                     <el-button text @click="answerHandle(question.id)">
-                      <el-icon :size="16" color="#000000"><chat-dot-round /></el-icon>
+                      <el-icon :size="16" color="#000000">
+                        <chat-dot-round />
+                      </el-icon>
                     </el-button>
                     <span>{{ question.s_comments.length }}</span>
-                    <el-button text @click="handleEdit(question.type, question.id)"><el-icon :size="16"><Edit /></el-icon></el-button>
+                    <el-button text @click="handleEdit(question.type, question.id)">
+                      <el-icon :size="16">
+                        <Edit />
+                      </el-icon>
+                    </el-button>
                   </el-col>
                 </el-row>
               </el-card>
             </li>
           </ul>
-          <el-pagination style="margin-top: 10px"
-            :total="total" 
-            :current-page="page" 
-            :page-size="size"
-            :page-sizes="[10, 20, 50, 100]"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" 
+          <el-pagination style="margin-top: 10px" :total="total" :current-page="page" :page-size="size"
+            :page-sizes="[10, 20, 50, 100]" @size-change="handleSizeChange" @current-change="handleCurrentChange"
             layout="total, sizes, prev, pager, next, jumper"></el-pagination>
         </el-main>
       </el-container>
@@ -159,7 +165,7 @@ export default {
     keywords.value = route.query.content
     getDataList()
     // 监听
-    watch(() => route.query.content, ()=> {
+    watch(() => route.query.content, () => {
       if (route.query.content) {
         keywords.value = route.query.content
         getDataList()
@@ -209,29 +215,29 @@ export default {
     // 跳转至数据展示
     const handleOpen = (type, id) => {
       if (type == 'a' || type == 'w') {
-        router.push({name: 'detail', query: {wid: id}})
+        router.push({ name: 'detail', query: { wid: id } })
       }
       if (type == 'e') {
-        router.push({name: 'excel', query: {eid: id}})
+        router.push({ name: 'excel', query: { eid: id } })
       }
     }
 
     // 数据编辑
     const handleEdit = (type, id) => {
-      if (type == 'a' ) {
-        router.push({name: 'tiny', query: {tid: id}})
-      } 
-      if (type == 'w' ) {
-        router.push({name: 'md', query: {mid: id}})
+      if (type == 'a') {
+        router.push({ name: 'tiny', query: { tid: id } })
       }
-      if (type == 'e' ) {
-        router.push({name: 'excel', query: {eid: id}})
+      if (type == 'w') {
+        router.push({ name: 'md', query: { mid: id } })
+      }
+      if (type == 'e') {
+        router.push({ name: 'excel', query: { eid: id } })
       }
     }
 
     // 回复响应
     const answerHandle = (id) => {
-      router.push({name: 'detail', query: {wid: id, status: 'answer'}})
+      router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
     }
 
     return {
@@ -266,17 +272,21 @@ export default {
 .el-container {
   padding: 0px;
 }
+
 .dialog-footer {
   float: left;
 }
+
 .infinite-list {
   padding: 0;
   margin: 0;
   list-style: none
 }
+
 .title {
   color: #2c3e50;
 }
+
 .subscript {
   margin-top: 13px;
   margin-bottom: 10px;
@@ -284,28 +294,34 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .user-avator {
   margin-left: 14px;
 }
+
 .user-avator img {
   display: block;
   width: 25px;
   height: 25px;
   border-radius: 50%;
 }
+
 .user-name {
   font-size: 14px;
   color: #999;
 }
+
 .time {
   font-size: 12px;
   color: #999;
 }
+
 .statistics {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 }
+
 .statistics span {
   margin-right: 5px;
   font-size: 14px;

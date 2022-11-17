@@ -34,7 +34,7 @@
         <!-- 搜索 -->
         <div class="search">
           <el-input v-model="filterText" size="small" placeholder="搜索知识库" style="width: 250px; color: #409EFF"
-            @keyup.enter="handleSearch">
+            @keyup.enter="handleSearch" @focus="bus.emit('pauseKeyCommand')" @blur="bus.emit('recoveryCommand')">
             <template #prefix>
               <el-icon>
                 <search />
@@ -102,6 +102,8 @@ import { useStore } from 'vuex'
 import { useRouter } from "vue-router";
 import { ElMessage } from 'element-plus'
 import { HomeFilled } from '@element-plus/icons-vue'
+import bus from "@/utils/bus.js"
+
 export default {
   setup() {
     const store = useStore()
@@ -170,7 +172,8 @@ export default {
       toSelfInfo,
       loginOutFun,
       toConsole,
-      toWorkSpace
+      toWorkSpace,
+      bus
     }
   },
 }

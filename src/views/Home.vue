@@ -19,6 +19,7 @@
 
 <script>
 import { computed } from '@vue/reactivity';
+import { useRoute } from 'vue-router';
 import { useStore } from "vuex";
 import vHeader from "../components/Header.vue"
 import vSidebar from "../components/Sidebar.vue"
@@ -31,6 +32,7 @@ export default {
     },
     setup() {
         const store = useStore();
+        const route = useRoute()
         const collapse = computed(() =>
             store.getters.collapse
         );
@@ -40,7 +42,8 @@ export default {
 
         return {
             collapse,
-            siderbar
+            siderbar,
+            route
         }
     },
 }
@@ -49,5 +52,9 @@ export default {
 <style lang="scss" scoped>
 :deep(.v-note-show) {
     height: 100vh;
+}
+
+.content-box {
+    height: 100%;
 }
 </style>

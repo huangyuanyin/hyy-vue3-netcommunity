@@ -11,7 +11,7 @@
         <el-form-item label="分类" prop="category" v-if="isRight == 'right'">
           <el-space>
             <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
-              :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
+              :props="{ value: 'id', checkStrictly: true }" :show-all-levels="false" />
             <span style="margin-left: 30px">标签</span>
             <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }">
             </el-cascader>
@@ -204,11 +204,14 @@ const handleClose = () => {
 }
 
 const handleSave = () => {
-  if (route.query.eid) {
-    updateApi()
-  } else {
-    addApi()
-  }
+  formRef.value.validate((valid) => {
+    if (!valid) return false
+    if (route.query.eid) {
+      updateApi()
+    } else {
+      addApi()
+    }
+  })
 }
 
 // 编辑
@@ -218,7 +221,6 @@ const updateApi = () => {
   form.author = sessionStorage.getItem('username')
   if (route.query && route.query.isRight == 'right') {
     getUpdateForumApi(route.query.eid, form)
-    toDetail(route.query.eid)
   } else {
     updateForum(route.query.eid, form).then(res => {
       if (res.code === 1000) {
@@ -253,8 +255,12 @@ const getUpdateForumApi = (id, form) => {
       message: "编辑成功！",
       type: "success",
     });
-    handleClose()
-    toDetail(res.data)
+    store.commit("changeCurTreeId", form.category)
+    if (res.code === 1000) {
+      handleClose()
+      reload()
+      toDetail(res.data)
+    }
   })
 }
 
@@ -265,8 +271,10 @@ const getSaveApi = (form) => {
       message: "新增成功",
       type: "success",
     });
+    store.commit("changeCurTreeId", Number(form.category))
     if (res.code === 1000) {
       handleClose()
+      reload()
       toDetail(res.data)
     }
   })
@@ -280,20 +288,23 @@ const getUpdateCategorysApi = () => {
       message: '编辑成功！',
       type: 'success',
     })
+    store.commit("changeCurTreeId", res.data)
   })
 }
 
-// getApi
 const save = () => {
   let params = {
     name: form.title,
     parent_category: form.category,
-    type: form.type
+    type: form.type,
+    author: sessionStorage.getItem('username'),
+    public: sessionStorage.getItem('spacePublic')
   }
   // 新增节点
   addCategorys(params).then((res) => {
     if (res.code == 1000) {
       form.category = res.data
+      store.commit("changeCurTreeId", res.data)
       // 新增excel
       addForum(form).then(res => {
         ElMessage({
