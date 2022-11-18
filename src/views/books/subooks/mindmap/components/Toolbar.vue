@@ -225,9 +225,9 @@ export default {
         let [_fileHandle] = await window.showOpenFilePicker({
           types: [
             {
-              description: 'file',
+              description: '',
               accept: {
-                'application/*': ['.json', '.smm']
+                'application/json': ['.smm']
               }
             },
           ],
@@ -245,9 +245,12 @@ export default {
         this.readFile();
       } catch (error) {
         console.log("error", error);
+        if (error.toString().includes('aborted')) {
+          return
+        }
         this.$message({
           type: 'warning',
-          message: '你的浏览器可能不支持哦',
+          message: '你的浏览器可能不支持，建议使用最新版本的Chrome浏览器',
           duration: 1000,
         })
       }
@@ -342,9 +345,10 @@ export default {
       try {
         let _fileHandle = await window.showSaveFilePicker({
           types: [{
-            description: 'file',
-            accept: { 'application/*': ['.json', '.smm'] },
+            description: '',
+            accept: { 'application/json': ['.smm'] },
           }],
+          suggestedName: '思维导图'
         });
         if (!_fileHandle) {
           return;
@@ -363,9 +367,12 @@ export default {
         loading.close();
       } catch (error) {
         console.log(error);
+        if (error.toString().includes('aborted')) {
+          return
+        }
         this.$message({
           type: 'warning',
-          message: '你的浏览器可能不支持哦',
+          message: '你的浏览器可能不支持，建议使用最新版本的Chrome浏览器',
           duration: 1000,
         })
       }
