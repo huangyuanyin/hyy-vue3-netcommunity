@@ -339,7 +339,7 @@ const toDetail = (eid) => {
   width: 100%;
   left: 0px;
   top: 0px;
-  bottom: 0px;
+  bottom: 30px;
   /* width: 100% !important;    */
 }
 
