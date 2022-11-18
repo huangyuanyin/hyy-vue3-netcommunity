@@ -1,7 +1,7 @@
 <template>
   <div class="drawer-wrapper">
-    <el-drawer v-model="isDrawer" :direction="direction" :append-to-body="false" :z-index="1" :with-header="false"
-      size="60%">
+    <el-drawer v-model="isDrawer" :direction="direction" :append-to-body="false" :z-index="10 ** 10000"
+      :with-header="false" size="60%">
       <el-row>
         <el-col :span="4">
           <el-menu default-active="prodandserver" @select="handleSelect">
