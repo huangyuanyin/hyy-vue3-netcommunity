@@ -41,6 +41,7 @@
     "@vue/compiler-sfc": "^3.2.37",
     "less": "^3.12.2",
     "less-loader": "^7.1.0",
+    "prettier": "^1.19.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2"
   }

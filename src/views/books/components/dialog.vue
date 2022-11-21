@@ -6,8 +6,7 @@
           <el-input v-model="form.name" maxlength="10" placeholder="知识库名称" show-word-limit type="text" />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="form.description" :autosize="{ minRows: 4, maxRows: 6 }" type="textarea"
-            placeholder="请输入知识库简介..." maxlength="200" />
+          <el-input v-model="form.description" :autosize="{ minRows: 4, maxRows: 6 }" type="textarea" placeholder="请输入知识库简介..." maxlength="200" />
         </el-form-item>
         <el-form-item label="可见范围" prop="public">
           <el-radio-group v-model="form.public">
@@ -29,7 +28,7 @@
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue'
 import { ElMessage } from 'element-plus'
-import { updateCategorys, addCategorys } from "@/api/category.js"
+import { updateCategorys, addCategorys } from '@/api/category.js'
 
 const prop = defineProps({
   show: Boolean,
@@ -42,9 +41,9 @@ const dialogBook = ref(false)
 // 表单
 const form = ref({
   name: '',
-  description: "",
+  description: '',
   public: null,
-  author: sessionStorage.getItem("username")
+  author: sessionStorage.getItem('username')
 })
 const formRef = ref(null)
 // 表单校验
@@ -54,15 +53,18 @@ const formRules = ref({
 })
 
 // 监听
-watch(() => prop.show, () => {
-  dialogBook.value = prop.show
-  if (prop.show) {
-    if (JSON.stringify(prop.edit.value) != undefined) {
-      form.value = prop.edit.value
-      console.log(prop.edit.value)
+watch(
+  () => prop.show,
+  () => {
+    dialogBook.value = prop.show
+    if (prop.show) {
+      if (JSON.stringify(prop.edit.value) != undefined) {
+        form.value = prop.edit.value
+        console.log(prop.edit.value)
+      }
     }
   }
-})
+)
 
 const handleClose = () => {
   form.value.description = ''
@@ -81,13 +83,13 @@ const handleClick = () => {
 
 // 新增接口
 const addApi = () => {
-  formRef.value.validate((valid) => {
+  formRef.value.validate(valid => {
     if (!valid) return
-    addCategorys(form.value).then((res) => {
+    addCategorys(form.value).then(res => {
       if (res.code === 1000) {
         ElMessage({
           message: '新增成功！',
-          type: 'success',
+          type: 'success'
         })
         handleClose()
       }
@@ -97,19 +99,18 @@ const addApi = () => {
 
 // 更新接口
 const updateApi = () => {
-  formRef.value.validate((valid) => {
+  formRef.value.validate(valid => {
     if (!valid) return
     form.value.author = sessionStorage.getItem('username')
-    updateCategorys(prop.edit.value.id, form.value).then((res) => {
+    updateCategorys(prop.edit.value.id, form.value).then(res => {
       if (res.code === 1000) {
         ElMessage({
           message: '编辑成功！',
-          type: 'success',
+          type: 'success'
         })
         handleClose()
       }
     })
   })
 }
-
 </script>
