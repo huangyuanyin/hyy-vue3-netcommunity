@@ -431,7 +431,6 @@ export default {
     // left: 0;
     // top: 0;
     top: 50px;
-    right: 0;
     display: flex;
     padding: 0 20px;
     padding-top: 20px;
