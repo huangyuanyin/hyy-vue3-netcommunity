@@ -11,6 +11,7 @@ import '@/assets/icon-font/iconfont.css'
 import '@/assets/iconfont/font.css'
 import '@/assets/iconfont/iconfont.js'
 import SvgIcon from '@/components/SvgIcon.vue'
+import i18n from './i18n.js'
 
 // import VMdPreview from '@kangc/v-md-editor/lib/preview';
 // import '@kangc/v-md-editor/lib/style/preview.css';
@@ -32,4 +33,5 @@ app
   .use(VueViewer)
   .use(store)
   .use(router)
+  .use(i18n)
   .mount('#app')
