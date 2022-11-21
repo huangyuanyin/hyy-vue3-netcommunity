@@ -284,8 +284,8 @@ export default {
   data() {
     return {
       lineWidthList,
-      lineStyleList,
-      backgroundRepeatList,
+      // lineStyleList,
+      // backgroundRepeatList,
       activeTab: 'color',
       marginActiveTab: 'second',
       style: {
@@ -305,6 +305,14 @@ export default {
         marginX: 0,
         marginY: 0
       }
+    }
+  },
+  computed: {
+    lineStyleList() {
+      return lineStyleList[this.$i18n.locale] || lineStyleList.zh
+    },
+    backgroundRepeatList() {
+      return backgroundRepeatList[this.$i18n.locale] || backgroundRepeatList.zh
     }
   },
   created() {

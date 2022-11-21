@@ -1,5 +1,5 @@
 <template>
-  <Sidebar ref="sidebar" title="主题">
+  <Sidebar ref="sidebar" :title="$t('style.title')">
     <div class="themeList">
       <div class="themeItem" v-for="item in themeList" :key="item.value" @click="useTheme(item)" :class="{ active: item.value === theme }">
         <div class="imgBox">

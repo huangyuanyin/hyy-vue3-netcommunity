@@ -1,5 +1,5 @@
 <template>
-  <Sidebar ref="sidebar" title="结构">
+  <Sidebar ref="sidebar" :title="$t('strusture.title')">
     <div class="layoutList">
       <div class="layoutItem" v-for="item in layoutList" :key="item.value" @click="useLayout(item)" :class="{ active: item.value === layout }">
         <div class="imgBox">

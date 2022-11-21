@@ -25,12 +25,13 @@
  * @Author: 黄原寅
  * @Desc: 导航器工具栏
  */
-import { ref, onMounted, defineProps, reactive } from 'vue'
+import { ref, onMounted, defineProps, watch, reactive, nextTick } from 'vue'
 import Scale from './Scale'
 import Fullscreen from './Fullscreen'
 import bus from '@/utils/bus.js'
 import { langList } from '@/config'
 import i18n from '@/i18n'
+import { storeLang, getLang } from '@/api'
 
 const props = defineProps({
   mindMap: {
@@ -40,7 +41,7 @@ const props = defineProps({
 
 const isReadonly = ref(false)
 const openMiniMap = ref(true)
-const lang = ref('zh')
+const lang = ref(getLang())
 
 const readonlyChange = value => {
   props.mindMap.setMode(value ? 'readonly' : 'edit')
@@ -51,7 +52,8 @@ const toggleMiniMap = show => {
 }
 
 const onLangChange = lang => {
-  i18n.locale = lang.value
+  i18n.locale = lang
+  storeLang(lang)
 }
 
 onMounted(() => {

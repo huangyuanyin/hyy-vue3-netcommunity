@@ -79,18 +79,13 @@ export default {
       type: '',
       isMousedown: false,
       mosuedownX: 0,
-      mosuedownY: 0,
-      expandList: [
-        this.$t('contextmenu.level1'),
-        this.$t('contextmenu.level2'),
-        this.$t('contextmenu.level3'),
-        this.$t('contextmenu.level4'),
-        this.$t('contextmenu.level5'),
-        this.$t('contextmenu.level6')
-      ]
+      mosuedownY: 0
     }
   },
   computed: {
+    expandList() {
+      return [this.$t('contextmenu.level1'), this.$t('contextmenu.level2'), this.$t('contextmenu.level3'), this.$t('contextmenu.level4'), this.$t('contextmenu.level5'), this.$t('contextmenu.level6')]
+    },
     insertNodeBtnDisabled() {
       return !this.node || this.node.isRoot
     },
