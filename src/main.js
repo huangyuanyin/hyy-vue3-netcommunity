@@ -3,13 +3,13 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import installElementPlus from './plugins/element'
-import elementIcon from "./plugins/svgicon"
+import elementIcon from './plugins/svgicon'
 import 'viewerjs/dist/viewer.css'
 import VueViewer from 'v-viewer'
 import './assets/css/icon.css'
-import '@/assets/icon-font/iconfont.css';
+import '@/assets/icon-font/iconfont.css'
 import '@/assets/iconfont/font.css'
-import '@/assets/iconfont/iconfont.js';
+import '@/assets/iconfont/iconfont.js'
 import SvgIcon from '@/components/SvgIcon.vue'
 
 // import VMdPreview from '@kangc/v-md-editor/lib/preview';
@@ -25,10 +25,11 @@ import SvgIcon from '@/components/SvgIcon.vue'
 // });
 
 const app = createApp(App)
-app.component('SvgIcon', SvgIcon);
-app.use(installElementPlus)
-    .use(elementIcon)
-    .use(VueViewer)
-    .use(store)
-    .use(router)
-    .mount('#app')
+app.component('SvgIcon', SvgIcon)
+app
+  .use(installElementPlus)
+  .use(elementIcon)
+  .use(VueViewer)
+  .use(store)
+  .use(router)
+  .mount('#app')
