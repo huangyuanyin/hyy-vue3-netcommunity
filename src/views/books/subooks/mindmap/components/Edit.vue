@@ -1,11 +1,11 @@
 <template>
   <div class="editContainer">
     <div class="mindMapContainer" ref="mindMapContainer"></div>
-    <Count></Count>
+    <Count v-if="!isZenMode"></Count>
     <!-- <Navigator :mindMap="mindMap"></Navigator> -->
-    <NavigatorToolbar :mindMap="mindMap"></NavigatorToolbar>
+    <NavigatorToolbar :mindMap="mindMap" v-if="!isZenMode"></NavigatorToolbar>
     <Outline></Outline>
-    <Style></Style>
+    <Style v-if="!isZenMode"></Style>
     <BaseStyle :data="mindMapData" :mindMap="mindMap"></BaseStyle>
     <Theme :mindMap="mindMap"></Theme>
     <Structure :mindMap="mindMap"></Structure>
@@ -34,6 +34,7 @@ import NodeImgPreview from './NodeImgPreview.vue'
 import { getData, getExampleData, storeData, storeConfig } from '@/api'
 import bus from '@/utils/bus.js'
 import { getForumInfo } from '@/api/forum.js'
+import { mapState } from 'vuex'
 /**
  * @Author: 黄原寅
  * @Desc: 编辑区域
@@ -61,6 +62,11 @@ export default {
       prevImg: '',
       openTest: false
     }
+  },
+  computed: {
+    ...mapState({
+      isZenMode: state => state.localConfig.isZenMode
+    })
   },
   mounted() {
     this.init()
@@ -120,7 +126,22 @@ export default {
 
             setTimeout(() => {
               let viewData = {
-                transform: { scaleX: 1, scaleY: 1, shear: 0, rotate: 0, translateX: 179, translateY: 0, originX: 0, originY: 0, a: 1, b: 0, c: 0, d: 1, e: 179, f: 0 },
+                transform: {
+                  scaleX: 1,
+                  scaleY: 1,
+                  shear: 0,
+                  rotate: 0,
+                  translateX: 179,
+                  translateY: 0,
+                  originX: 0,
+                  originY: 0,
+                  a: 1,
+                  b: 0,
+                  c: 0,
+                  d: 1,
+                  e: 179,
+                  f: 0
+                },
                 state: { scale: 1, x: 179, y: 0, sx: 0, sy: 0 }
               }
               this.mindMap.view.setTransformData(viewData)
