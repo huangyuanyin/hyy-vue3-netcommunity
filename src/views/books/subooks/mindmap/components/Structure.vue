@@ -1,7 +1,13 @@
 <template>
   <Sidebar ref="sidebar" :title="$t('strusture.title')">
     <div class="layoutList">
-      <div class="layoutItem" v-for="item in layoutList" :key="item.value" @click="useLayout(item)" :class="{ active: item.value === layout }">
+      <div
+        class="layoutItem"
+        v-for="item in layoutList"
+        :key="item.value"
+        @click="useLayout(item)"
+        :class="{ active: item.value === layout }"
+      >
         <div class="imgBox">
           <img :src="item.img" alt="" />
         </div>
@@ -16,6 +22,7 @@ import { toRaw } from 'vue'
 import Sidebar from './Sidebar'
 import { layoutList } from 'simple-mind-map/src/utils/constant'
 import { storeConfig } from '@/api'
+import { mapState } from 'vuex'
 import bus from '@/utils/bus.js'
 /**
  * @Author: 黄原寅
@@ -37,17 +44,20 @@ export default {
       layout: ''
     }
   },
-  created() {
-    bus.on('showStructure', () => {
-      if (this.$refs.sidebar) {
-        this.$refs.sidebar.show = false
-        this.$nextTick(() => {
-          this.layout = this.mindMap.getLayout()
-          this.$refs.sidebar.show = true
-        })
-      }
-    })
+  computed: {
+    ...mapState(['activeSidebar'])
   },
+  watch: {
+    activeSidebar(val) {
+      if (val === 'structure') {
+        this.layout = this.mindMap.getLayout()
+        this.$refs.sidebar.show = true
+      } else {
+        this.$refs.sidebar.show = false
+      }
+    }
+  },
+  created() {},
   methods: {
     /**
      * @Author: 黄原寅

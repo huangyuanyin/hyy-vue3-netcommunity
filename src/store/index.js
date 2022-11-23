@@ -17,6 +17,7 @@ export default createStore({
 			// 本地配置
 			isZenMode: false // 是否是禅模式
 		},
+		activeSidebar: '', // 当前显示的侧边栏
 		curTreeId: sessionStorage.getItem('curTreeId') || null, // 存放 高亮的节点ID
 		defaultExpandIds: sessionStorage.getItem('defaultExpandIds') || [],
 		curTreeName: sessionStorage.getItem('curTreeName')
@@ -46,6 +47,13 @@ export default createStore({
 				...data
 			}
 			storeLocalConfig(state.localConfig)
+		},
+		/**
+		* @Author: 黄原寅
+		* @Desc: 设置当前显示的侧边栏
+		*/
+		setActiveSidebar(state, data) {
+			state.activeSidebar = data
 		},
 		changeCurTreeId(state, data) {
 			state.curTreeId = data

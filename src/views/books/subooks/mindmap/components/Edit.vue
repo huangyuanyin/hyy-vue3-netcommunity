@@ -13,6 +13,7 @@
     <Contextmenu v-if="mindMap" :mindMap="mindMap"></Contextmenu>
     <NodeNoteContentShow v-if="mindMap" :mindMap="mindMap"></NodeNoteContentShow>
     <NodeImgPreview v-if="mindMap" :mindMap="mindMap"></NodeImgPreview>
+    <SidebarTrigger v-if="!isZenMode"></SidebarTrigger>
   </div>
 </template>
 
@@ -31,6 +32,7 @@ import Contextmenu from './Contextmenu'
 import NodeNoteContentShow from './NodeNoteContentShow.vue'
 import Navigator from './Navigator.vue'
 import NodeImgPreview from './NodeImgPreview.vue'
+import SidebarTrigger from './SidebarTrigger.vue'
 import { getData, getExampleData, storeData, storeConfig } from '@/api'
 import bus from '@/utils/bus.js'
 import { getForumInfo } from '@/api/forum.js'
@@ -53,7 +55,8 @@ export default {
     Contextmenu,
     NodeNoteContentShow,
     Navigator,
-    NodeImgPreview
+    NodeImgPreview,
+    SidebarTrigger
   },
   data() {
     return {
