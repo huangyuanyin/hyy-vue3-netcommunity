@@ -1,10 +1,10 @@
 <template>
   <div class="navigatorContainer">
-    <div class="item">
+    <!-- <div class="item">
       <el-select v-model="lang" size="small" style="width: 100px" @change="onLangChange">
         <el-option v-for="item in langList" :key="item.value" :label="item.name" :value="item.value" />
       </el-select>
-    </div>
+    </div> -->
     <!-- <div class="item">
       <el-checkbox v-model="openMiniMap" @change="toggleMiniMap">$t('navigatorToolbar.openMiniMap')</el-checkbox>
     </div> -->
