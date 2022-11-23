@@ -4,12 +4,12 @@
  * @Description: Element icon 组件
  * @FilePath: \vue3-netforum\src\plugins\svgicon.js
  */
-import * as components from "@element-plus/icons"
+import * as components from '@element-plus/icons'
 export default {
-    install: (app) => {
-        for (const key in components) {
-            const componentConfig = components[key];
-            app.component(componentConfig.name, componentConfig);
-        }
+  install: app => {
+    for (const key in components) {
+      const componentConfig = components[key]
+      app.component(componentConfig.name, componentConfig)
     }
+  }
 }

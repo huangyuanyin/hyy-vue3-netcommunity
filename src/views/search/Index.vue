@@ -5,8 +5,7 @@
         <el-header height="60px" style="width: 90%; margin-left: 5%">
           <el-row>
             <el-col :span="8">
-              <el-input v-model="keywords" placeholder="搜索知识库" size="default" @keyup.enter="handleSearch"
-                style="width: 400px">
+              <el-input v-model="keywords" placeholder="搜索知识库" size="default" @keyup.enter="handleSearch" style="width: 400px">
                 <template #prefix>
                   <el-icon>
                     <search />
@@ -23,7 +22,8 @@
             <el-col :span="7" :offset="9">
               <el-dropdown @command="handleCommand" style="width: 100px; margin-top: 5px">
                 <span class="el-dropdown-link">
-                  {{ commandData }} <el-icon>
+                  {{ commandData }}
+                  <el-icon>
                     <caret-bottom />
                   </el-icon>
                 </span>
@@ -36,8 +36,15 @@
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-              <el-cascader :options="taglist" v-model="tags" @change="handleTag" clearable placeholder="请选择标签"
-                style="width: 180px" :props="{ value: 'id', label: 'name' }">
+              <el-cascader
+                :options="taglist"
+                v-model="tags"
+                @change="handleTag"
+                clearable
+                placeholder="请选择标签"
+                style="width: 180px"
+                :props="{ value: 'id', label: 'name' }"
+              >
               </el-cascader>
             </el-col>
           </el-row>
@@ -84,9 +91,16 @@
               </el-card>
             </li>
           </ul>
-          <el-pagination style="margin-top: 10px" :total="total" :current-page="page" :page-size="size"
-            :page-sizes="[10, 20, 50, 100]" @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+          <el-pagination
+            style="margin-top: 10px"
+            :total="total"
+            :current-page="page"
+            :page-size="size"
+            :page-sizes="[10, 20, 50, 100]"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            layout="total, sizes, prev, pager, next, jumper"
+          ></el-pagination>
         </el-main>
       </el-container>
     </el-card>
@@ -95,15 +109,15 @@
 
 <script>
 import { ref, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router'
 import { getForum } from '@/api/forum.js'
 import { Search } from '@element-plus/icons-vue'
-import { getTag } from "@/api/tag.js"
+import { getTag } from '@/api/tag.js'
 export default {
   setup() {
     // 路由
     const router = useRouter()
-    const route = useRoute();
+    const route = useRoute()
     // 等待
     const loading = ref(false)
     // 数据列表
@@ -126,7 +140,6 @@ export default {
     const filterTag = ref('body')
     // 标签
     const tags = ref('')
-
 
     // 获取数据列表
     const getDataList = () => {
@@ -152,7 +165,7 @@ export default {
         total.value = res.total
         loading.value = false
       })
-    };
+    }
 
     // 获取标签列表
     const getTagList = () => {
@@ -165,12 +178,15 @@ export default {
     keywords.value = route.query.content
     getDataList()
     // 监听
-    watch(() => route.query.content, () => {
-      if (route.query.content) {
-        keywords.value = route.query.content
-        getDataList()
+    watch(
+      () => route.query.content,
+      () => {
+        if (route.query.content) {
+          keywords.value = route.query.content
+          getDataList()
+        }
       }
-    })
+    )
 
     // 筛选事件
     const handleSearch = () => {
@@ -178,7 +194,7 @@ export default {
     }
 
     // 标签响应
-    const handleTag = (value) => {
+    const handleTag = value => {
       console.log(value)
       if (value == null) {
         tags.value = ''
@@ -186,14 +202,14 @@ export default {
       getDataList()
     }
 
-    // 
-    const handleSizeChange = (value) => {
+    //
+    const handleSizeChange = value => {
       size.value = value
       getDataList()
     }
 
-    const handleCommand = (value) => {
-      commandData.value = value;
+    const handleCommand = value => {
+      commandData.value = value
       if (value == '文档') {
         wtype.value = 'w'
       }
@@ -207,7 +223,7 @@ export default {
     }
 
     // 页码响应
-    const handleCurrentChange = (value) => {
+    const handleCurrentChange = value => {
       page.value = value
       getDataList()
     }
@@ -236,7 +252,7 @@ export default {
     }
 
     // 回复响应
-    const answerHandle = (id) => {
+    const answerHandle = id => {
       router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
     }
 
@@ -264,7 +280,7 @@ export default {
       handleOpen,
       handleEdit
     }
-  },
+  }
 }
 </script>
 
@@ -280,7 +296,7 @@ export default {
 .infinite-list {
   padding: 0;
   margin: 0;
-  list-style: none
+  list-style: none;
 }
 
 .title {

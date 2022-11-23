@@ -1,7 +1,6 @@
 <template>
   <div class="drawer-wrapper">
-    <el-drawer v-model="isDrawer" :direction="direction" :append-to-body="false" :z-index="10 ** 10000"
-      :with-header="false" size="60%">
+    <el-drawer v-model="isDrawer" :direction="direction" :append-to-body="false" :z-index="10 ** 10000" :with-header="false" size="60%">
       <el-row>
         <el-col :span="4">
           <el-menu default-active="prodandserver" @select="handleSelect">
@@ -9,7 +8,8 @@
               <el-icon>
                 <Grid />
               </el-icon>
-              <template #title>产品与服务
+              <template #title
+                >产品与服务
                 <el-icon style="margin-left: 40px">
                   <ArrowRight />
                 </el-icon>
@@ -103,39 +103,43 @@
 </template>
 
 <script setup>
-import { defineProps, ref, computed, defineEmits } from "vue";
-import { ElMessage } from "element-plus";
-import { Grid, Monitor, ArrowRight, Close, Suitcase, Platform, Notebook, Position } from "@element-plus/icons-vue";
-import { useRouter } from "vue-router";
+import { defineProps, ref, computed, defineEmits } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Grid, Monitor, ArrowRight, Close, Suitcase, Platform, Notebook, Position } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 // import { useAppStore } from "@/store/modules/app";
 
 const props = defineProps({
   drawer: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 const emit = defineEmits(['changeDrawer'])
 
-const router = useRouter();
+const router = useRouter()
 // const store = useAppStore();
 const filter = ref('') // 搜索
-const height = window.innerHeight - 52 + 'px'// 高度
+const height = window.innerHeight - 52 + 'px' // 高度
 // 测试模块
 const testData = ref([
   {
     value: 'netpts',
     label: '性能测试'
-  }, {
+  },
+  {
     value: 'apitest',
     label: '接口测试'
-  }, {
+  },
+  {
     value: 'Agile',
     label: '敏捷测试'
-  }, {
+  },
+  {
     value: 'netapv',
     label: 'APV自动化'
-  }, {
+  },
+  {
     value: 'netpoc',
     label: 'POC自动化'
   }
@@ -145,10 +149,12 @@ const monitorData = ref([
   {
     value: 'netcmt',
     label: '信安云网管'
-  }, {
+  },
+  {
     value: 'netmonitor',
     label: '监控服务'
-  }, {
+  },
+  {
     value: 'netcfg',
     label: '混沌演练平台'
   }
@@ -157,7 +163,8 @@ const dataServices = ref([
   {
     value: 'netforum',
     label: '信安知识库'
-  }, {
+  },
+  {
     value: 'netevaluate',
     label: '度量分析'
   }
@@ -167,10 +174,12 @@ const containerData = ref([
   {
     value: 'container',
     label: '容器镜像服务'
-  }, {
+  },
+  {
     value: 'container',
     label: '容器服务'
-  }, {
+  },
+  {
     value: 'vm',
     label: '虚拟机服务'
   }
@@ -180,10 +189,12 @@ const securityData = ref([
   {
     value: 'netpt',
     label: '渗透测试服务'
-  }, {
+  },
+  {
     value: 'netvs',
     label: '漏洞扫描'
-  }, {
+  },
+  {
     value: 'netdos',
     label: 'DDos高防'
   }
@@ -196,18 +207,18 @@ const toolData = ref([
   }
 ])
 // 跳转
-const goTo = (value) => {
+const goTo = value => {
   ElMessage({
     type: 'warning',
-    message: '暂不支持！！！',
+    message: '暂不支持！！！'
   })
 }
 // 侧边栏响应
-const handleSelect = (value) => {
+const handleSelect = value => {
   let url = ''
-  let console_url = sessionStorage.getItem("CONSOLE_URL")
-  localStorage.setItem('jwtToken', sessionStorage.getItem("token"))
-  console.log("");
+  let console_url = sessionStorage.getItem('CONSOLE_URL')
+  localStorage.setItem('jwtToken', sessionStorage.getItem('token'))
+  console.log('')
   url = console_url + '/' + value
   if (value === 'prodandserver') {
     return
@@ -221,21 +232,20 @@ const handleSelect = (value) => {
   }
   window.location.href = url
 }
-const direction = ref("ltr");
+const direction = ref('ltr')
 const isDrawer = computed({
   get() {
     return props.drawer
   },
   set(value) {
-    emit("changeDrawer", value)
-    return value;
+    emit('changeDrawer', value)
+    return value
   }
 })
 
 const handleClose = () => {
-  isDrawer.value = false;
+  isDrawer.value = false
 }
-
 </script>
 
 <style lang="scss" scoped>

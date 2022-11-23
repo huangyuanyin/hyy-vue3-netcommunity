@@ -12,7 +12,7 @@ const exportExcel = function(luckysheet, value) {
     luckysheet = [luckysheet]
   }
   luckysheet.forEach(function(table) {
-    if (table.data.length === 0) return  true
+    if (table.data.length === 0) return true
     // ws.getCell('B2').fill = fills.
     const worksheet = workbook.addWorksheet(table.name)
     const merge = (table.config && table.config.merge) || {}
@@ -42,12 +42,7 @@ var setMerge = function(luckyMerge = {}, worksheet) {
   mergearr.forEach(function(elem) {
     // elem格式：{r: 0, c: 0, rs: 1, cs: 2}
     // 按开始行，开始列，结束行，结束列合并（相当于 K10:M12）
-    worksheet.mergeCells(
-      elem.r + 1,
-      elem.c + 1,
-      elem.r + elem.rs,
-      elem.c + elem.cs
-    )
+    worksheet.mergeCells(elem.r + 1, elem.c + 1, elem.r + elem.rs, elem.c + elem.cs)
   })
 }
 
@@ -95,15 +90,7 @@ var setStyleAndValue = function(cellArr, worksheet) {
       if (!cell) return true
       let fill = fillConvert(cell.bg)
 
-      let font = fontConvert(
-        cell.ff,
-        cell.fc,
-        cell.bl,
-        cell.it,
-        cell.fs,
-        cell.cl,
-        cell.ul
-      )
+      let font = fontConvert(cell.ff, cell.fc, cell.bl, cell.it, cell.fs, cell.cl, cell.ul)
       let alignment = alignmentConvert(cell.vt, cell.ht, cell.tb, cell.tr)
       let value = ''
 
@@ -148,15 +135,7 @@ var fillConvert = function(bg) {
   return fill
 }
 
-var fontConvert = function(
-  ff = 0,
-  fc = '#000000',
-  bl = 0,
-  it = 0,
-  fs = 10,
-  cl = 0,
-  ul = 0
-) {
+var fontConvert = function(ff = 0, fc = '#000000', bl = 0, it = 0, fs = 10, cl = 0, ul = 0) {
   // luckysheet：ff(样式), fc(颜色), bl(粗体), it(斜体), fs(大小), cl(删除线), ul(下划线)
   const luckyToExcel = {
     0: '微软雅黑',
@@ -192,12 +171,7 @@ var fontConvert = function(
   return font
 }
 
-var alignmentConvert = function(
-  vt = 'default',
-  ht = 'default',
-  tb = 'default',
-  tr = 'default'
-) {
+var alignmentConvert = function(vt = 'default', ht = 'default', tb = 'default', tr = 'default') {
   // luckysheet:vt(垂直), ht(水平), tb(换行), tr(旋转)
   const luckyToExcel = {
     vertical: {
@@ -344,6 +318,4 @@ function createCellPos(n) {
   return s
 }
 
-export {
-  exportExcel
-}
+export { exportExcel }

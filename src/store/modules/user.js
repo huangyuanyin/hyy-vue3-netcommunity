@@ -7,7 +7,7 @@
  * @FilePath: \vue3-netforum\src\store\modules\user.js
  */
 
-import jwtDecode from "jwt-decode";
+import jwtDecode from 'jwt-decode'
 
 export default {
   namespaced: true,
@@ -19,17 +19,17 @@ export default {
     // 用户角色
     role: '',
     // token
-    token: '',
+    token: ''
   },
   // 修改状态，且为同步
   mutations: {
     // 设置Token
     SET_TOKEN(state, data) {
       let decoded = jwtDecode(data)
-      state.token = data;
-      sessionStorage.setItem("token", state.token)
-      sessionStorage.setItem("nickname", decoded.nickname || '')
-      sessionStorage.setItem("username", decoded.username || '')
+      state.token = data
+      sessionStorage.setItem('token', state.token)
+      sessionStorage.setItem('nickname', decoded.nickname || '')
+      sessionStorage.setItem('username', decoded.username || '')
       state.username = decoded.username || ''
       state.nickname = decoded.nickname || ''
       state.role = decoded.role || ''
@@ -38,15 +38,13 @@ export default {
       sessionStorage.setItem('token', '')
       sessionStorage.setItem('nickname', '')
       sessionStorage.setItem('username', '')
-      sessionStorage.setItem('siderbar','2')
+      sessionStorage.setItem('siderbar', '2')
       state.token = ''
       state.username = ''
       state.nickname = ''
       state.role = ''
     }
   },
-  actions: {
-  },
-  modules: {
-  }
+  actions: {},
+  modules: {}
 }

@@ -17,8 +17,15 @@
     <div class="header-right">
       <div class="header-user-con">
         <div class="search">
-          <el-input v-model="filterText" size="small" placeholder="搜索知识库" style="width: 250px; color: #409EFF"
-            @keyup.enter="handleSearch" @focus="bus.emit('pauseKeyCommand')" @blur="bus.emit('recoveryCommand')">
+          <el-input
+            v-model="filterText"
+            size="small"
+            placeholder="搜索知识库"
+            style="width: 250px; color: #409EFF"
+            @keyup.enter="handleSearch"
+            @focus="bus.emit('pauseKeyCommand')"
+            @blur="bus.emit('recoveryCommand')"
+          >
             <template #prefix>
               <el-icon>
                 <search />
@@ -83,43 +90,43 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from "vue-router";
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { HomeFilled, Operation, CloseBold } from '@element-plus/icons-vue'
-import Drawer from "@/components/Drawer.vue"
-import bus from "@/utils/bus.js"
+import Drawer from '@/components/Drawer.vue'
+import bus from '@/utils/bus.js'
 
 const store = useStore()
 const router = useRouter()
-const drawer = ref(false);
+const drawer = ref(false)
 // 未读信息
 const message = 2
 // 全局搜索数据
 const filterText = ref('')
 // 用户昵称
-const username = computed(() => sessionStorage.getItem("nickname"));
+const username = computed(() => sessionStorage.getItem('nickname'))
 // 折叠
-const collapse = computed(() => store.getters.collapse);
+const collapse = computed(() => store.getters.collapse)
 // 侧边栏折叠
 const collapseChage = () => {
-  store.commit("app/handleCollapse", !collapse.value)
-};
+  store.commit('app/handleCollapse', !collapse.value)
+}
 // 到工作台
 const toWorkSpace = () => {
-  store.commit("app/handleSiderbar", false)
-  sessionStorage.setItem("siderbar", '2')
-  router.push('/books');
+  store.commit('app/handleSiderbar', false)
+  sessionStorage.setItem('siderbar', '2')
+  router.push('/books')
 }
 
 onMounted(() => {
   if (document.body.clientWidth < 1500) {
-    collapseChage();
+    collapseChage()
   }
-});
+})
 
 // 控制台跳转
 const toConsole = () => {
-  let url = sessionStorage.getItem("CONSOLE_URL") + '/#/center/mine'
+  let url = sessionStorage.getItem('CONSOLE_URL') + '/#/center/mine'
   window.location.href = url
   // store.commit("app/handleSiderbar", false)
   // sessionStorage.setItem("siderbar", '2')
@@ -140,18 +147,17 @@ const toSelfInfo = () => {
 
 // 用户名下拉菜单选择事件
 const loginOutFun = () => {
-  store.commit("user/clean_Toen");
-  store.commit("app/handleSiderbar", false)
-  router.push("/login");
+  store.commit('user/clean_Toen')
+  store.commit('app/handleSiderbar', false)
+  router.push('/login')
 }
 
-const openDrawer = (val) => {
-  val === "open" ? (drawer.value = true) : (drawer.value = false);
-};
-const changeDrawer = (drawer) => {
+const openDrawer = val => {
+  val === 'open' ? (drawer.value = true) : (drawer.value = false)
+}
+const changeDrawer = drawer => {
   openDrawer(drawer)
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -197,7 +203,7 @@ const changeDrawer = (drawer) => {
 
 .space .topic {
   font-weight: 700;
-  color: #909399
+  color: #909399;
 }
 
 .templates {
@@ -207,7 +213,7 @@ const changeDrawer = (drawer) => {
 
 .templates .el-button {
   font-weight: 700;
-  color: #909399
+  color: #909399;
 }
 
 .header-right {

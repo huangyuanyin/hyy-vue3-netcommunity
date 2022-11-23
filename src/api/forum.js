@@ -50,8 +50,6 @@ export function getTopics() {
   })
 }
 
-
-
 /*
   新增帖子
 */
@@ -137,7 +135,6 @@ export function getAnswer(data) {
     data
   })
 }
-
 
 /*
   新增回复评论

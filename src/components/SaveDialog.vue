@@ -1,32 +1,59 @@
 <template>
   <div>
-    <el-dialog v-model="isShowDialog" custom-class="saveDialog" title="新建文档" @close="closeSaveDialog"
-      :close-on-click-modal="false" :close-on-press-escape="false" :before-close="closeSaveDialog">
-      <el-form :disabled="disabled" :model="saveForm" ref="saveFormRef" :rules="saveFormRules" label-width="80px"
-        v-loading="loading" :element-loading-text="`文件上传中...`">
+    <el-dialog
+      v-model="isShowDialog"
+      custom-class="saveDialog"
+      title="新建文档"
+      @close="closeSaveDialog"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :before-close="closeSaveDialog"
+    >
+      <el-form
+        :disabled="disabled"
+        :model="saveForm"
+        ref="saveFormRef"
+        :rules="saveFormRules"
+        label-width="80px"
+        v-loading="loading"
+        :element-loading-text="`文件上传中...`"
+      >
         <el-form-item label="分类" prop="category">
           <el-space>
-            <el-cascader :options="treeData" v-model="saveForm.category" @change="handleChange"
-              :props="{ value: 'id', checkStrictly: true }" :show-all-levels="false" />
+            <el-cascader
+              :options="treeData"
+              v-model="saveForm.category"
+              @change="handleChange"
+              :props="{ value: 'id', checkStrictly: true }"
+              :show-all-levels="false"
+            />
             <span style="margin-left: 30px">标签</span>
-            <el-cascader :options="taglist" v-model="saveForm.tags" :props="{ value: 'id', label: 'name' }">
-            </el-cascader>
+            <el-cascader :options="taglist" v-model="saveForm.tags" :props="{ value: 'id', label: 'name' }"> </el-cascader>
           </el-space>
         </el-form-item>
         <el-form-item label="文档名称" prop="title">
-          <el-input v-model="saveForm.title" show-word-limit maxlength="100" placeholder="请输入文档名称" type="text">
-          </el-input>
+          <el-input v-model="saveForm.title" show-word-limit maxlength="100" placeholder="请输入文档名称" type="text"> </el-input>
         </el-form-item>
         <el-form-item label="选择文件" prop="file">
-          <el-upload class="upload-demo" ref="fileUpload" drag action="" :multiple="false" :limit="1"
-            :auto-upload="false" accept="" :on-change="onFileChange" :file-list="saveForm.file" :data="saveForm"
-            :on-exceed="handleExceed" :disabled="disabled">
+          <el-upload
+            class="upload-demo"
+            ref="fileUpload"
+            drag
+            action=""
+            :multiple="false"
+            :limit="1"
+            :auto-upload="false"
+            accept=""
+            :on-change="onFileChange"
+            :file-list="saveForm.file"
+            :data="saveForm"
+            :on-exceed="handleExceed"
+            :disabled="disabled"
+          >
             <el-icon class="el-icon--upload">
               <upload-filled />
             </el-icon>
-            <div class="el-upload__text">
-              将文件拖到此处自动上传或<em>点击上传</em>
-            </div>
+            <div class="el-upload__text">将文件拖到此处自动上传或<em>点击上传</em></div>
             <!-- <template #tip>
               <div class="el-upload__tip">
                 仅支持.pdf .ppt(x) .docx类型文件上传
@@ -48,11 +75,11 @@
 
 <script setup>
 import { reactive, ref, toRefs, defineProps, defineEmits, onMounted, computed, watch } from 'vue'
-import { getTag } from "@/api/tag.js"
+import { getTag } from '@/api/tag.js'
 import { uploadArticleFileApi } from '@/api/upload.js'
 import { getCategorysInfo } from '@/api/category.js'
 import { judgeNodeType } from '@/utils/methods.js'
-import { ElMessage } from 'element-plus';
+import { ElMessage } from 'element-plus'
 import { genFileId } from 'element-plus'
 
 const props = defineProps({
@@ -62,7 +89,7 @@ const props = defineProps({
   },
   treeData: {
     type: Object,
-    default: () => { }
+    default: () => {}
   }
 })
 
@@ -71,15 +98,15 @@ const emits = defineEmits(['closeSaveDialog', 'goRefresh'])
 
 const taglist = ref([]) // 标签列表
 const fileUpload = ref(null)
-const fileName = ref("")
+const fileName = ref('')
 const loading = ref(false)
 const saveForm = reactive({
   category: '',
   title: '',
   tags: [],
-  author: sessionStorage.getItem('username'),
+  author: sessionStorage.getItem('username')
 })
-const saveFormRef = ref(null);
+const saveFormRef = ref(null)
 const saveFormRules = reactive({
   category: [{ required: true, message: '请选择所属分类', trigger: 'change' }],
   title: [{ required: true, message: '请输入文档名称', trigger: 'blur' }],
@@ -87,20 +114,23 @@ const saveFormRules = reactive({
 })
 const disabled = ref(false)
 
-watch(() => props.isShowDialog, () => {
-  if (props.isShowDialog) {
-    saveForm.category = JSON.parse(sessionStorage.getItem('node')) ? JSON.parse(sessionStorage.getItem('node')).id : null
+watch(
+  () => props.isShowDialog,
+  () => {
+    if (props.isShowDialog) {
+      saveForm.category = JSON.parse(sessionStorage.getItem('node')) ? JSON.parse(sessionStorage.getItem('node')).id : null
+    }
   }
-})
+)
 
 // 选择分类ID
-const handleChange = (id) => {
+const handleChange = id => {
   const len = id.length
   saveForm.category = id[len - 1]
 }
 
 const handleSave = async () => {
-  saveFormRef.value.validate((valid) => {
+  saveFormRef.value.validate(valid => {
     if (!valid) return false
     // let pos = fileName.value.lastIndexOf(".");
     // let lastName = fileName.value.substring(pos, fileName.length);
@@ -109,19 +139,19 @@ const handleSave = async () => {
     //   ElMessage.error("上传文件只能是pdf、ppt(x)、docx格式");
     //   return false
     // }
-    let formData = new FormData();
-    formData.append("author", saveForm.author);
-    formData.append("title", saveForm.title);
-    formData.append("category", saveForm.category);
-    formData.append("tags", JSON.stringify(saveForm.tags));
-    formData.append("file", saveForm.file[0].raw);
+    let formData = new FormData()
+    formData.append('author', saveForm.author)
+    formData.append('title', saveForm.title)
+    formData.append('category', saveForm.category)
+    formData.append('tags', JSON.stringify(saveForm.tags))
+    formData.append('file', saveForm.file[0].raw)
     fileUpload.value.submit()
     uploadArticleFile(formData)
   })
 }
 
 // 调用上传接口
-const uploadArticleFile = async (params) => {
+const uploadArticleFile = async params => {
   disabled.value = true
   loading.value = true
   let res = await uploadArticleFileApi(params)
@@ -150,7 +180,7 @@ const onFileChange = (file, fileList) => {
   saveForm.title = file.name
   fileName.value = file.name
   if (fileList.length > 0) {
-    saveForm.file = [fileList[fileList.length - 1]]  // 展示最后一次选择的文件
+    saveForm.file = [fileList[fileList.length - 1]] // 展示最后一次选择的文件
   }
 }
 
@@ -163,7 +193,7 @@ const getTagList = () => {
 
 const closeSaveDialog = async () => {
   if (disabled.value) {
-    return ElMessage.warning("文件上传中，请耐心等待...")
+    return ElMessage.warning('文件上传中，请耐心等待...')
   }
   fileUpload.value.clearFiles()
   saveFormRef.value.resetFields()
@@ -173,7 +203,6 @@ const closeSaveDialog = async () => {
 onMounted(() => {
   getTagList()
 })
-
 </script>
 
 <style lang="scss" scoped>

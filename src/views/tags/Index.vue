@@ -32,20 +32,20 @@
 
 <script>
 import { ref, reactive } from 'vue'
-import { useRoute, useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { getTag, deleteTag } from "@/api/tag.js"
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { getTag, deleteTag } from '@/api/tag.js'
 import dialog from './components/Dialog.vue'
 export default {
   components: {
-    "dialog-com": dialog
+    'dialog-com': dialog
   },
   setup() {
-    const router = useRouter();
+    const router = useRouter()
     // 页码
-    const page = ref(1);
+    const page = ref(1)
     // 条数
-    const allTotal = ref(0);
+    const allTotal = ref(0)
     // 数据列表
     const dataList = ref([])
     // 对话框状态
@@ -57,12 +57,12 @@ export default {
 
     // 获取数据列表
     const getTableList = () => {
-      getTag().then((res) => {
+      getTag().then(res => {
         dataList.value = res.data
       })
     }
 
-    getTableList();
+    getTableList()
 
     // 新增事件
     const addHandle = () => {
@@ -71,7 +71,7 @@ export default {
     }
 
     // 编辑事件
-    const handleUpdate = (row) => {
+    const handleUpdate = row => {
       let index = dataList.value.indexOf(row)
       editForm.value = dataList.value[index]
       status.value = 'edit'
@@ -79,31 +79,31 @@ export default {
     }
 
     // 获取对话框反馈
-    const getDialog = (msg) => {
+    const getDialog = msg => {
       showDialog.value = msg
       editForm.value = {}
       getTableList()
-    };
+    }
 
     // 页码响应事件
-    const handleCurrentChange = (newpage) => {
+    const handleCurrentChange = newpage => {
       page.value = newpage
       getTableList()
-    };
+    }
 
     // 项目移除
-    const handleDelete = (id) => {
+    const handleDelete = id => {
       // 二次确认删除
-      ElMessageBox.confirm("确定要删除吗？", "提示", {
+      ElMessageBox.confirm('确定要删除吗？', '提示', {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
-        type: "warning",
-        draggable: true,
+        type: 'warning',
+        draggable: true
       })
         .then(() => {
           deleteTag(id).then(res => {
-            ElMessage.success("删除成功");
-            console.log("sdada");
+            ElMessage.success('删除成功')
+            console.log('sdada')
             getTableList()
             router.push({ name: 'subbooks', params: { wRefresh: true } })
           })
@@ -111,10 +111,10 @@ export default {
         .catch(() => {
           ElMessage({
             type: 'info',
-            message: 'Delete canceled',
+            message: 'Delete canceled'
           })
-        });
-    };
+        })
+    }
 
     return {
       page,
@@ -131,7 +131,7 @@ export default {
       handleCurrentChange,
       router
     }
-  },
+  }
 }
 </script>
 

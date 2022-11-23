@@ -12,17 +12,15 @@ export default {
   state: {
     // 存储状态
     // 标签页名称
-    tag: '',
+    tag: ''
   },
   // 修改状态，且为同步
   mutations: {
     // 设置标签页名称
     SET_TAG(state, data) {
-      state.tag = data;
+      state.tag = data
     }
   },
-  actions: {
-  },
-  modules: {
-  }
+  actions: {},
+  modules: {}
 }

@@ -1,15 +1,23 @@
 <template>
   <div id="editor">
     <!-- box-shadow-style="0 2px 5px 0 rgba(0, 0, 0, 0.1)" -->
-    <mavon-editor class="md" v-model="handbook" :subfield="false" :defaultOpen="'preview'" :toolbars="toolbars"
-      :boxShadow="false" :ishljs="true" :previewBackground="'#FFFFFF'"></mavon-editor>
+    <mavon-editor
+      class="md"
+      v-model="handbook"
+      :subfield="false"
+      :defaultOpen="'preview'"
+      :toolbars="toolbars"
+      :boxShadow="false"
+      :ishljs="true"
+      :previewBackground="'#FFFFFF'"
+    ></mavon-editor>
   </div>
 </template>
 
 <script>
 import { reactive, ref, watch } from 'vue'
 import { mavonEditor } from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css';
+import 'mavon-editor/dist/css/index.css'
 export default {
   name: 'editor',
   components: {
@@ -53,19 +61,22 @@ export default {
       alignright: false, // 右对齐
       /* 2.2.1 */
       subfield: false, // 单双栏模式
-      preview: true, // 预览
+      preview: true // 预览
     })
 
-    watch(() => props.data, () => {
-      // console.log(props.data)
-      handbook.value = props.data
-    })
+    watch(
+      () => props.data,
+      () => {
+        // console.log(props.data)
+        handbook.value = props.data
+      }
+    )
 
     return {
       handbook,
       toolbars
     }
-  },
+  }
 }
 </script>
 
