@@ -244,12 +244,12 @@ export const shortcutKeyList = [
       {
         icon: 'iconshangyi',
         name: '上移节点',
-        value: 'Ctrl / Alt + ↑'
+        value: 'Ctrl + ↑'
       },
       {
         icon: 'iconxiayi',
         name: '下移节点',
-        value: 'Ctrl / Alt + ↓'
+        value: 'Ctrl + ↓'
       },
       {
         icon: 'icongaikuozonglan',

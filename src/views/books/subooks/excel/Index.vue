@@ -10,11 +10,9 @@
       <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
         <el-form-item label="分类" prop="category" v-if="isRight == 'right'">
           <el-space>
-            <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
-              :props="{ value: 'id', checkStrictly: true }" :show-all-levels="false" />
+            <el-cascader :options="treeData" v-model="form.category" @change="handleChange" :props="{ value: 'id', checkStrictly: true }" :show-all-levels="false" />
             <span style="margin-left: 30px">标签</span>
-            <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }">
-            </el-cascader>
+            <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }"> </el-cascader>
           </el-space>
         </el-form-item>
         <el-form-item label="文档名称" prop="title">
@@ -34,20 +32,20 @@
 <script setup>
 import { ref, reactive, onMounted, watch, computed, inject } from 'vue'
 import { exportExcel } from '@/utils/export'
-import { ElMessage } from "element-plus";
+import { ElMessage } from 'element-plus'
 import { useStore } from 'vuex'
-import { useRoute, useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router';
+import { useRoute, useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.js'
-import { getTag } from "@/api/tag.js"
+import { getTag } from '@/api/tag.js'
 import LuckyExcel from 'luckyexcel'
 import { judgeNodeType } from '@/utils/methods.js'
 
 const reload = inject('reload')
 const store = useStore()
-const route = useRoute();
-const router = useRouter();
-const node = computed(() => store.getters.node);
+const route = useRoute()
+const router = useRouter()
+const node = computed(() => store.getters.node)
 watch(
   () => route.query,
   (newVal, oldVal) => {
@@ -68,18 +66,18 @@ watch(
       form.category = node.value.id
       luckysheet.create({
         container: 'luckysheet',
-        lang: "zh", //中文
+        lang: 'zh', //中文
         showinfobar: true, //是否显示工具栏
-        showsheetbar: true, //是否显示底部sheet按钮
+        showsheetbar: true //是否显示底部sheet按钮
       })
     }
-  },
+  }
 )
 // 工作空间标题名
-const spaceid = computed(() => sessionStorage.getItem('spaceid'));
+const spaceid = computed(() => sessionStorage.getItem('spaceid'))
 // const jsonData = ref({})
 // 路由传参
-const categoryId = ref("")
+const categoryId = ref('')
 const dialog = ref(false)
 const editCategory = ref('')
 // 节点数据
@@ -87,7 +85,7 @@ const treeData = ref([])
 // 标签列表
 const taglist = ref([])
 // 是否显示分类
-const isRight = ref("")
+const isRight = ref('')
 // 表单
 const form = reactive({
   category: '',
@@ -96,7 +94,7 @@ const form = reactive({
   type: 'e',
   body: ''
 })
-const formRef = ref(null);
+const formRef = ref(null)
 // 表单校验
 const formRules = reactive({
   category: [{ required: true, message: '请选择所属分类', trigger: 'change' }],
@@ -105,7 +103,7 @@ const formRules = reactive({
 
 // 获取节点数据
 const getNodeList = () => {
-  getCategorysInfo(spaceid.value).then((res) => {
+  getCategorysInfo(spaceid.value).then(res => {
     treeData.value = judgeNodeType(res.data)
   })
 }
@@ -119,7 +117,7 @@ const getTagList = () => {
 getNodeList()
 getTagList()
 
-const loadExcel = (evt) => {
+const loadExcel = evt => {
   const files = evt.target.files
   if (files == null || files.length == 0) {
     alert('No files wait for import')
@@ -133,7 +131,7 @@ const loadExcel = (evt) => {
     alert('Currently only supports the import of xlsx files')
     return
   }
-  LuckyExcel.transformExcelToLucky(files[0], function (exportJson, luckysheetfile) {
+  LuckyExcel.transformExcelToLucky(files[0], function(exportJson, luckysheetfile) {
     if (exportJson.sheets == null || exportJson.sheets.length == 0) {
       alert('Failed to read the content of the excel file, currently does not support xls files!')
       return
@@ -147,7 +145,7 @@ const loadExcel = (evt) => {
       container: 'luckysheet', //luckysheet is the container id
       showinfobar: true, //是否显示工具栏
       showsheetbar: true, //是否显示底部sheet按钮
-      lang: "zh", //中文
+      lang: 'zh', //中文
       data: exportJson.sheets,
       title: exportJson.info.name,
       userInfo: exportJson.info.name.creator
@@ -167,7 +165,7 @@ onMounted(() => {
     form.category = node.value.id
     luckysheet.create({
       container: 'luckysheet',
-      lang: "zh", //中文
+      lang: 'zh' //中文
     })
   }
 })
@@ -178,7 +176,7 @@ const loadExcelForServer = () => {
     // editCategory.value = res.data.category
     luckysheet.create({
       container: 'luckysheet',
-      lang: "zh", //中文
+      lang: 'zh', //中文
       showinfobar: true, //是否显示工具栏
       showsheetbar: true, //是否显示底部sheet按钮
       data: JSON.parse(res.data.body) || '',
@@ -188,7 +186,7 @@ const loadExcelForServer = () => {
   })
 }
 
-const handleChange = (id) => {
+const handleChange = id => {
   var len = id.length
   form.category = id[len - 1]
 }
@@ -204,7 +202,7 @@ const handleClose = () => {
 }
 
 const handleSave = () => {
-  formRef.value.validate((valid) => {
+  formRef.value.validate(valid => {
     if (!valid) return false
     if (route.query.eid) {
       updateApi()
@@ -216,8 +214,8 @@ const handleSave = () => {
 
 // 编辑
 const updateApi = () => {
-  var excelData = luckysheet.getAllSheets();
-  form.body = JSON.stringify(excelData);
+  var excelData = luckysheet.getAllSheets()
+  form.body = JSON.stringify(excelData)
   form.author = sessionStorage.getItem('username')
   if (route.query && route.query.isRight == 'right') {
     getUpdateForumApi(route.query.eid, form)
@@ -235,13 +233,13 @@ const updateApi = () => {
 
 // 新增
 const addApi = () => {
-  var excelData = luckysheet.getAllSheets();
+  var excelData = luckysheet.getAllSheets()
   if (route.query && route.query.category) {
     form.category = categoryId.value = route.query.category || ''
   }
-  form.body = JSON.stringify(excelData);
+  form.body = JSON.stringify(excelData)
   form.author = sessionStorage.getItem('username')
-  if (route.query.isRight == "right") {
+  if (route.query.isRight == 'right') {
     getSaveApi(form)
   } else {
     save()
@@ -252,10 +250,10 @@ const addApi = () => {
 const getUpdateForumApi = (id, form) => {
   updateForum(id, form).then(res => {
     ElMessage({
-      message: "编辑成功！",
-      type: "success",
-    });
-    store.commit("changeCurTreeId", form.category)
+      message: '编辑成功！',
+      type: 'success'
+    })
+    store.commit('changeCurTreeId', form.category)
     if (res.code === 1000) {
       handleClose()
       reload()
@@ -265,13 +263,13 @@ const getUpdateForumApi = (id, form) => {
 }
 
 // 新增excel API
-const getSaveApi = (form) => {
+const getSaveApi = form => {
   addForum(form).then(res => {
     ElMessage({
-      message: "新增成功",
-      type: "success",
-    });
-    store.commit("changeCurTreeId", Number(form.category))
+      message: '新增成功',
+      type: 'success'
+    })
+    store.commit('changeCurTreeId', Number(form.category))
     if (res.code === 1000) {
       handleClose()
       reload()
@@ -283,12 +281,12 @@ const getSaveApi = (form) => {
 // 更新节点 API
 const getUpdateCategorysApi = () => {
   const title = { name: form.title }
-  updateCategorys(form.category, title).then((res) => {
+  updateCategorys(form.category, title).then(res => {
     ElMessage({
       message: '编辑成功！',
-      type: 'success',
+      type: 'success'
     })
-    store.commit("changeCurTreeId", res.data)
+    store.commit('changeCurTreeId', res.data)
   })
 }
 
@@ -301,16 +299,16 @@ const save = () => {
     public: sessionStorage.getItem('spacePublic')
   }
   // 新增节点
-  addCategorys(params).then((res) => {
+  addCategorys(params).then(res => {
     if (res.code == 1000) {
       form.category = res.data
-      store.commit("changeCurTreeId", res.data)
+      store.commit('changeCurTreeId', res.data)
       // 新增excel
       addForum(form).then(res => {
         ElMessage({
-          message: "新增成功",
-          type: "success",
-        });
+          message: '新增成功',
+          type: 'success'
+        })
         if (res.code === 1000) {
           handleClose()
           reload()
@@ -321,7 +319,7 @@ const save = () => {
   })
 }
 // 跳转到详情页
-const toDetail = (eid) => {
+const toDetail = eid => {
   // router.replace({ name: 'excel', query: { eid: eid } })
   if (route.query && route.query.isRight) {
     router.replace({ name: 'excel', query: { eid: eid, isRight: 'right' } })
@@ -331,7 +329,7 @@ const toDetail = (eid) => {
 }
 </script>
 
-<style  scoped>
+<style scoped>
 #luckysheet {
   margin: 0px;
   padding: 0px;
@@ -339,7 +337,7 @@ const toDetail = (eid) => {
   width: 100%;
   left: 0px;
   top: 0px;
-  bottom: 0px;
+  bottom: 30px;
   /* width: 100% !important;    */
 }
 

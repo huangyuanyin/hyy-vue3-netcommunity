@@ -1,37 +1,21 @@
-<!--
- * @Author: maxf
- * @Date: 2022-01-08 22:49:29
- * @Description: Home组件Header页面
- * @FilePath: \vue3-netforum\src\components\Header.vue
--->
 <template>
   <div class="header">
-    <div class="collapse-btn" @click="collapseChage">
-      <i v-if="!collapse">
-        <el-icon>
-          <fold />
-        </el-icon>
-      </i>
-      <i v-else>
-        <el-icon>
-          <expand />
-        </el-icon>
-      </i>
-    </div>
-    <div class="logo">
-      <!-- <span >信安知识库</span> -->
-      <el-button text @click="toWorkSpace">
-        <span>信安知识库</span>
-      </el-button>
-      <el-divider direction="vertical"></el-divider>
-      <el-button text @click="toConsole" :icon="HomeFilled">控制台</el-button>
+    <div class="header-left">
+      <div class="collapse-btn">
+        <el-button v-if="!drawer" :icon="Operation" class="open" @click="openDrawer('open')" />
+        <el-button v-else :icon="CloseBold" class="open" @click="openDrawer('close')" />
+        <Drawer :drawer="drawer" @changeDrawer="changeDrawer" />
+      </div>
+      <div class="logo">
+        <el-button text @click="toWorkSpace">
+          <span>信安知识库</span>
+        </el-button>
+        <el-divider direction="vertical"></el-divider>
+        <el-button text @click="toConsole" :icon="HomeFilled">控制台</el-button>
+      </div>
     </div>
     <div class="header-right">
       <div class="header-user-con">
-        <!-- <div style="margin-right: 5px">
-                    <i><el-icon><full-screen /></el-icon></i>
-                </div> -->
-        <!-- 搜索 -->
         <div class="search">
           <el-input v-model="filterText" size="small" placeholder="搜索知识库" style="width: 250px; color: #409EFF"
             @keyup.enter="handleSearch" @focus="bus.emit('pauseKeyCommand')" @blur="bus.emit('recoveryCommand')">
@@ -96,90 +80,81 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from "vue-router";
 import { ElMessage } from 'element-plus'
-import { HomeFilled } from '@element-plus/icons-vue'
+import { HomeFilled, Operation, CloseBold } from '@element-plus/icons-vue'
+import Drawer from "@/components/Drawer.vue"
 import bus from "@/utils/bus.js"
 
-export default {
-  setup() {
-    const store = useStore()
-    const router = useRouter()
-    // 未读信息
-    const message = 2
-    // 全局搜索数据
-    const filterText = ref('')
-    // 用户昵称
-    const username = computed(() => sessionStorage.getItem("nickname"));
-    // 折叠
-    const collapse = computed(() => store.getters.collapse);
-    // 侧边栏折叠
-    const collapseChage = () => {
-      // store.commit("app/handleCollapse", !collapse.value)
-    };
-    // 到工作台
-    const toWorkSpace = () => {
-      store.commit("app/handleSiderbar", false)
-      sessionStorage.setItem("siderbar", '2')
-      router.push('/books');
-    }
-
-    onMounted(() => {
-      if (document.body.clientWidth < 1500) {
-        collapseChage();
-      }
-    });
-
-    // 控制台跳转
-    const toConsole = () => {
-      let url = sessionStorage.getItem("CONSOLE_URL") + '/#/center/mine'
-      window.location.href = url
-      // store.commit("app/handleSiderbar", false)
-      // sessionStorage.setItem("siderbar", '2')
-    }
-
-    // 全局搜索
-    const handleSearch = () => {
-      router.push({ name: 'search', query: { content: filterText.value } })
-      // filterText.value = ''
-    }
-
-    const toSelfInfo = () => {
-      ElMessage({
-        message: '暂不支持',
-        type: 'warning'
-      })
-    }
-
-    // 用户名下拉菜单选择事件
-    const loginOutFun = () => {
-      store.commit("user/clean_Toen");
-      store.commit("app/handleSiderbar", false)
-      router.push("/login");
-    }
-
-    return {
-      username,
-      filterText,
-      message,
-      collapse,
-      HomeFilled,
-      handleSearch,
-      collapseChage,
-      toSelfInfo,
-      loginOutFun,
-      toConsole,
-      toWorkSpace,
-      bus
-    }
-  },
+const store = useStore()
+const router = useRouter()
+const drawer = ref(false);
+// 未读信息
+const message = 2
+// 全局搜索数据
+const filterText = ref('')
+// 用户昵称
+const username = computed(() => sessionStorage.getItem("nickname"));
+// 折叠
+const collapse = computed(() => store.getters.collapse);
+// 侧边栏折叠
+const collapseChage = () => {
+  store.commit("app/handleCollapse", !collapse.value)
+};
+// 到工作台
+const toWorkSpace = () => {
+  store.commit("app/handleSiderbar", false)
+  sessionStorage.setItem("siderbar", '2')
+  router.push('/books');
 }
+
+onMounted(() => {
+  if (document.body.clientWidth < 1500) {
+    collapseChage();
+  }
+});
+
+// 控制台跳转
+const toConsole = () => {
+  let url = sessionStorage.getItem("CONSOLE_URL") + '/#/center/mine'
+  window.location.href = url
+  // store.commit("app/handleSiderbar", false)
+  // sessionStorage.setItem("siderbar", '2')
+}
+
+// 全局搜索
+const handleSearch = () => {
+  router.push({ name: 'search', query: { content: filterText.value } })
+  // filterText.value = ''
+}
+
+const toSelfInfo = () => {
+  ElMessage({
+    message: '暂不支持',
+    type: 'warning'
+  })
+}
+
+// 用户名下拉菜单选择事件
+const loginOutFun = () => {
+  store.commit("user/clean_Toen");
+  store.commit("app/handleSiderbar", false)
+  router.push("/login");
+}
+
+const openDrawer = (val) => {
+  val === "open" ? (drawer.value = true) : (drawer.value = false);
+};
+const changeDrawer = (drawer) => {
+  openDrawer(drawer)
+}
+
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .header {
   position: relative;
   box-sizing: border-box;
@@ -191,15 +166,20 @@ export default {
 .collapse-btn {
   /* background: #409EFF; */
   float: left;
-  padding: 0 21px;
+  /* padding: 0 21px; */
   cursor: pointer;
   line-height: 50px;
+
+  .el-button {
+    background-color: #242f42;
+    border: none;
+  }
 }
 
 .logo {
   float: left;
   width: 220px;
-  line-height: 45px;
+  line-height: 50px;
 }
 
 .logo span {
