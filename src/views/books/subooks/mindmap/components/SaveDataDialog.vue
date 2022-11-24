@@ -75,15 +75,9 @@ const handleSave = () => {
   saveFormRef.value.validate((valid) => {
     if (!valid) return false
     if (route.query.mid) {
-      setTimeout(() => {
-        store.commit('setActiveSidebar', '')
-      }, 0)
       updateMindMap()
       isShowDialog.value = false
     } else {
-      setTimeout(() => {
-        store.commit('setActiveSidebar', '')
-      }, 0)
       addMindMap()
       isShowDialog.value = false
     }
@@ -211,6 +205,7 @@ watch(() => route.query, () => {
 
 watch(() => isShowDialog.value, () => {
   if (isShowDialog.value == true) {
+    store.commit('setActiveSidebar', '')
     bus.emit('startTextEdit');
   } else {
     bus.emit('endTextEdit')
