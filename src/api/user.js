@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 export function login(data) {
-    return request({
-        url: 'forum/login/',
-        method: 'post',
-        data
-    })
+  return request({
+    url: 'forum/login/',
+    method: 'post',
+    data
+  })
 }

@@ -115,7 +115,7 @@
         </div>
       </div>
       <!-- 通用操作 -->
-      <div class="toolbarBlock">
+      <!-- <div class="toolbarBlock">
         <div class="toolbarBtn" @click="emit('showOutline')">
           <span class="icon iconfont iconfuhao-dagangshu"></span>
           <span class="text">{{ $t('toolbar.displayOutline') }}</span>
@@ -132,7 +132,7 @@
           <span class="icon iconfont iconjiegou"></span>
           <span class="text">{{ $t('toolbar.strusture') }}</span>
         </div>
-      </div>
+      </div> -->
       <!-- 导出 -->
       <div class="toolbarBlock">
         <!-- <div class="toolbarBtn" @click="createNewLocalFile">
@@ -155,10 +155,10 @@
           <span class="icon iconfont iconexport"></span>
           <span class="text">{{ $t('toolbar.export') }}</span>
         </div>
-        <div class="toolbarBtn" @click="emit('showShortcutKey')">
+        <!-- <div class="toolbarBtn" @click="emit('showShortcutKey')">
           <span class="icon iconfont iconjianpan"></span>
           <span class="text">{{ $t('toolbar.shortcutKey') }}</span>
-        </div>
+        </div> -->
       </div>
       <!--保存-->
       <div class="toolbarBlock">
@@ -244,16 +244,10 @@ export default {
     }
   },
   created() {
-    bus.on('mode_change', mode => {
-      this.readonly = mode === 'readonly'
-    })
-    bus.on('node_active', args => {
-      this.activeNodes = args[1]
-    })
-    bus.on('back_forward', (index, len) => {
-      this.backEnd = index <= 0
-      this.forwardEnd = index >= len - 1
-    })
+    bus.on('mode_change', this.onModeChange)
+    bus.on('node_active', this.onNodeActive)
+    bus.on('back_forward', this.onBackForward)
+    bus.on('write_local_file', this.onWriteLocalFile)
     bus.on('write_local_file', content => {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
@@ -261,7 +255,45 @@ export default {
       }, 1000)
     })
   },
+  beforeDestroy() {
+    bus.off('mode_change', this.onModeChange)
+    bus.off('node_active', this.onNodeActive)
+    bus.off('back_forward', this.onBackForward)
+    bus.off('write_local_file', this.onWriteLocalFile)
+  },
   methods: {
+    /**
+     * @Author: 黄原寅
+     * @Desc: 监听模式切换
+     */
+    onModeChange(mode) {
+      this.readonly = mode === 'readonly'
+    },
+    /**
+     * @Author: 黄原寅
+     * @Desc: 监听节点激活
+     */
+    onNodeActive(args) {
+      this.activeNodes = args[1]
+    },
+    /**
+     * @Author: 黄原寅
+     * @Desc: 监听前进后退
+     */
+    onBackForward(index, len) {
+      this.backEnd = index <= 0
+      this.forwardEnd = index >= len - 1
+    },
+    /**
+     * @Author: 黄原寅
+     * @Desc: 监听本地文件读写
+     */
+    onWriteLocalFile(content) {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.writeLocalFile(content)
+      }, 1000)
+    },
     /**
      * @Author: 黄原寅
      * @Desc: 打开本地文件
@@ -271,9 +303,9 @@ export default {
         let [_fileHandle] = await window.showOpenFilePicker({
           types: [
             {
-              description: 'file',
+              description: '',
               accept: {
-                'application/*': ['.json', '.smm']
+                'application/json': ['.smm']
               }
             }
           ],
@@ -291,9 +323,12 @@ export default {
         this.readFile()
       } catch (error) {
         console.log('error', error)
+        if (error.toString().includes('aborted')) {
+          return
+        }
         this.$message({
           type: 'warning',
-          message: '你的浏览器可能不支持哦',
+          message: '你的浏览器可能不支持，建议使用最新版本的Chrome浏览器',
           duration: 1000
         })
       }
@@ -389,10 +424,11 @@ export default {
         let _fileHandle = await window.showSaveFilePicker({
           types: [
             {
-              description: 'file',
-              accept: { 'application/*': ['.json', '.smm'] }
+              description: '',
+              accept: { 'application/json': ['.smm'] }
             }
-          ]
+          ],
+          suggestedName: '思维导图'
         })
         if (!_fileHandle) {
           return
@@ -411,9 +447,12 @@ export default {
         loading.close()
       } catch (error) {
         console.log(error)
+        if (error.toString().includes('aborted')) {
+          return
+        }
         this.$message({
           type: 'warning',
-          message: '你的浏览器可能不支持哦',
+          message: '你的浏览器可能不支持，建议使用最新版本的Chrome浏览器',
           duration: 1000
         })
       }

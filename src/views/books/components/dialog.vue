@@ -6,7 +6,13 @@
           <el-input v-model="form.name" maxlength="10" placeholder="知识库名称" show-word-limit type="text" />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="form.description" :autosize="{ minRows: 4, maxRows: 6 }" type="textarea" placeholder="请输入知识库简介..." maxlength="200" />
+          <el-input
+            v-model="form.description"
+            :autosize="{ minRows: 4, maxRows: 6 }"
+            type="textarea"
+            placeholder="请输入知识库简介..."
+            maxlength="200"
+          />
         </el-form-item>
         <el-form-item label="可见范围" prop="public">
           <el-radio-group v-model="form.public">

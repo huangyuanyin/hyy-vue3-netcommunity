@@ -12,17 +12,15 @@ export default {
   state: {
     // 存储状态
     // 节点数据
-    node: {},
+    node: {}
   },
   // 修改状态，且为同步
   mutations: {
     // 设置节点数据
     SET_NODE_DATA(state, data) {
-      state.node = data;
+      state.node = data
     }
   },
-  actions: {
-  },
-  modules: {
-  }
+  actions: {},
+  modules: {}
 }

@@ -33,8 +33,6 @@ export default {
       state.spaces = data
     }
   },
-  actions: {
-  },
-  modules: {
-  }
+  actions: {},
+  modules: {}
 }

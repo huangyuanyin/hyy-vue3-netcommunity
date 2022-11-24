@@ -1,15 +1,20 @@
 <template>
   <div class="navigatorContainer">
-    <div class="item">
+    <!-- <div class="item">
       <el-select v-model="lang" size="small" style="width: 100px" @change="onLangChange">
         <el-option v-for="item in langList" :key="item.value" :label="item.name" :value="item.value" />
       </el-select>
-    </div>
+    </div> -->
     <!-- <div class="item">
       <el-checkbox v-model="openMiniMap" @change="toggleMiniMap">$t('navigatorToolbar.openMiniMap')</el-checkbox>
     </div> -->
     <div class="item">
-      <el-switch v-model="isReadonly" :active-text="$t('navigatorToolbar.readonly')" :inactive-text="$t('navigatorToolbar.edit')" @change="readonlyChange"></el-switch>
+      <el-switch
+        v-model="isReadonly"
+        :active-text="$t('navigatorToolbar.readonly')"
+        :inactive-text="$t('navigatorToolbar.edit')"
+        @change="readonlyChange"
+      ></el-switch>
     </div>
     <div class="item">
       <Scale :mindMap="mindMap"></Scale>
@@ -32,6 +37,7 @@ import bus from '@/utils/bus.js'
 import { langList } from '@/config'
 import i18n from '@/i18n'
 import { storeLang, getLang } from '@/api'
+import { useStore } from 'vuex'
 
 const props = defineProps({
   mindMap: {
@@ -39,9 +45,18 @@ const props = defineProps({
   }
 })
 
+const store = useStore()
+const rightPosition = ref(false)
 const isReadonly = ref(false)
 const openMiniMap = ref(true)
 const lang = ref(getLang())
+
+watch(
+  () => store.state.activeSidebar,
+  () => {
+    store.state.activeSidebar ? (rightPosition.value = true) : (rightPosition.value = false)
+  }
+)
 
 const readonlyChange = value => {
   props.mindMap.setMode(value ? 'readonly' : 'edit')
@@ -71,7 +86,8 @@ export default {
 .navigatorContainer {
   padding: 0 12px;
   position: fixed;
-  right: 20px;
+  right: v-bind("rightPosition ? '320px' : '20px'");
+  transition: all 0.3s;
   bottom: 20px;
   background: hsla(0, 0%, 100%, 0.8);
   border-radius: 5px;

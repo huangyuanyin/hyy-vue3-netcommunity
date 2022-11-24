@@ -45,18 +45,25 @@
       <div class="item">
         {{ $t('contextmenu.expandTo') }}
         <div class="subItems listBox">
-          <div class="item" v-for="(item, index) in expandList" :key="item" @click="exec('UNEXPAND_TO_LEVEL', false, index + 1)">{{ item }}</div>
+          <div class="item" v-for="(item, index) in expandList" :key="item" @click="exec('UNEXPAND_TO_LEVEL', false, index + 1)">
+            {{ item }}
+          </div>
         </div>
       </div>
       <div class="item" @click="exec('RESET_LAYOUT')">
         {{ $t('contextmenu.arrangeLayout') }}
         <span class="desc">Ctrl + L</span>
       </div>
+      <div class="item" @click="exec('TOGGLE_ZEN_MODE')">
+        {{ $t('contextmenu.zenMode') }}
+        {{ isZenMode ? '🐶' : '' }}
+      </div>
     </template>
   </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import bus from '@/utils/bus.js'
 /**
  * @Author: 黄原寅
@@ -83,8 +90,18 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      isZenMode: state => state.localConfig.isZenMode
+    }),
     expandList() {
-      return [this.$t('contextmenu.level1'), this.$t('contextmenu.level2'), this.$t('contextmenu.level3'), this.$t('contextmenu.level4'), this.$t('contextmenu.level5'), this.$t('contextmenu.level6')]
+      return [
+        this.$t('contextmenu.level1'),
+        this.$t('contextmenu.level2'),
+        this.$t('contextmenu.level3'),
+        this.$t('contextmenu.level4'),
+        this.$t('contextmenu.level5'),
+        this.$t('contextmenu.level6')
+      ]
     },
     insertNodeBtnDisabled() {
       return !this.node || this.node.isRoot
@@ -146,6 +163,7 @@ export default {
     this.mindMap.keyCommand.removeShortcut('Control+x', this.cut)
   },
   methods: {
+    ...mapMutations(['setLocalConfig']),
     /**
      * @Author: 黄原寅
      * @Desc: 节点右键显示
@@ -237,6 +255,11 @@ export default {
         case 'RETURN_CENTER':
           this.mindMap.view.reset()
           break
+        case 'TOGGLE_ZEN_MODE':
+          this.setLocalConfig({
+            isZenMode: !this.isZenMode
+          })
+          break
         default:
           bus.emit('execCommand', [key, ...args])
           break
@@ -245,8 +268,7 @@ export default {
     },
 
     /**
-     * @Author: 王林25
-     * @Date: 2022-08-04 14:25:45
+     * @Author: 黄原寅
      * @Desc: 复制
      */
     copy() {
@@ -254,7 +276,7 @@ export default {
     },
 
     /**
-     * @Author: 王林25
+     * @Author: 黄原寅
      * @Date: 2022-08-04 14:26:43
      * @Desc: 粘贴
      */
@@ -263,7 +285,7 @@ export default {
     },
 
     /**
-     * @Author: 王林25
+     * @Author: 黄原寅
      * @Date: 2022-08-04 14:27:32
      * @Desc: 剪切
      */

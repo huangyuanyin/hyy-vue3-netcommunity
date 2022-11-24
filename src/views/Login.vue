@@ -10,11 +10,7 @@
   <div class="login-wrap">
     <div class="ms-login">
       <div class="ms-title">信安知识库</div>
-      <el-form
-        :model="form"
-        :rules="formRules"
-        ref="formRef"
-        class="ms-content">
+      <el-form :model="form" :rules="formRules" ref="formRef" class="ms-content">
         <el-form-item prop="username">
           <el-input v-model="form.username" placeholder="用户名">
             <template #prefix>
@@ -23,12 +19,7 @@
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
-            type="password"
-            placeholder="密码"
-            v-model="form.password"
-            @keyup.enter="submitForm()"
-          >
+          <el-input type="password" placeholder="密码" v-model="form.password" @keyup.enter="submitForm()">
             <template #prefix>
               <el-icon><Key /></el-icon>
             </template>
@@ -43,46 +34,46 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import { login } from '@/api/user.js';
+import { ref, reactive } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { login } from '@/api/user.js'
 // import jwtDecode from "jwt-decode";
 export default {
   setup() {
-    const router = useRouter();
-    const store = useStore();
+    const router = useRouter()
+    const store = useStore()
     const form = reactive({
       username: '',
-      password: '',
-    });
+      password: ''
+    })
     const formRules = {
       username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-      password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-    };
-    const formRef = ref(null);
+      password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+    }
+    const formRef = ref(null)
     const submitForm = () => {
-      formRef.value.validate((valid) => {
-        if (!valid) return;
-        login(form).then((data) => {
-          store.commit('user/SET_TOKEN', data.token);
+      formRef.value.validate(valid => {
+        if (!valid) return
+        login(form).then(data => {
+          store.commit('user/SET_TOKEN', data.token)
           // sessionStorage.setItem('token', data.token)
           // let decoded = jwtDecode(data.token)
           // console.log(decoded)
           // sessionStorage.setItem("nickname", decoded.nickname || '')
           // sessionStorage.setItem("username", decoded.username || '')
-          router.push('/dashboard');
-        });
-      });
-    };
+          router.push('/dashboard')
+        })
+      })
+    }
     return {
       form,
       formRules,
       formRef,
-      submitForm,
-    };
-  },
-};
+      submitForm
+    }
+  }
+}
 </script>
 <style scoped>
 .login-wrap {

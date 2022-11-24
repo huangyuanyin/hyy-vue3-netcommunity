@@ -1,15 +1,21 @@
 <template>
   <div id="editor">
     <!-- box-shadow-style="0 2px 5px 0 rgba(0, 0, 0, 0.1)" -->
-    <mavon-editor v-model="handbook" @change="handleChange" :ishljs="true"
-      :toolbars="toolbars" :subfield="false" :boxShadow="false"></mavon-editor>
+    <mavon-editor
+      v-model="handbook"
+      @change="handleChange"
+      :ishljs="true"
+      :toolbars="toolbars"
+      :subfield="false"
+      :boxShadow="false"
+    ></mavon-editor>
   </div>
 </template>
 
 <script>
 import { reactive, ref, watch } from 'vue'
 import { mavonEditor } from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css';
+import 'mavon-editor/dist/css/index.css'
 
 export default {
   name: 'editor',
@@ -54,13 +60,16 @@ export default {
       alignright: true, // 右对齐
       /* 2.2.1 */
       subfield: true, // 单双栏模式
-      preview: true, // 预览
+      preview: true // 预览
     })
 
-    watch(() => props.data, ()=> {
-      // console.log(props.data)
-      handbook.value = props.data
-    })
+    watch(
+      () => props.data,
+      () => {
+        // console.log(props.data)
+        handbook.value = props.data
+      }
+    )
 
     // render: html数据  val：markdown数据
     const handleChange = (val, render) => {
@@ -72,7 +81,7 @@ export default {
       toolbars,
       handleChange
     }
-  },
+  }
 }
 </script>
 

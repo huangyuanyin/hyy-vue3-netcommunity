@@ -20,12 +20,8 @@
                 <el-dropdown-item command="documentManage">
                   <svg-icon iconName="icon-shangchuanwenjian" className="is-Folder" />文档管理
                 </el-dropdown-item>
-                <el-dropdown-item command="article">
-                  <svg-icon iconName="icon-word" className="is-Folder" />新建文档
-                </el-dropdown-item>
-                <el-dropdown-item command="excel">
-                  <svg-icon iconName="icon-excel" className="is-Folder" />新建Excel
-                </el-dropdown-item>
+                <el-dropdown-item command="article"> <svg-icon iconName="icon-word" className="is-Folder" />新建文档 </el-dropdown-item>
+                <el-dropdown-item command="excel"> <svg-icon iconName="icon-excel" className="is-Folder" />新建Excel </el-dropdown-item>
                 <!-- <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item> -->
                 <el-dropdown-item command="mindmap">
                   <svg-icon iconName="icon-icon__liuchengtu" className="is-Folder" />新建思维导图
@@ -58,7 +54,7 @@
           <ul class="infinite-list" style="overflow: auto">
             <li v-for="(question, index) in datalist" :key="index">
               <el-card shadow="never" :body-style="{ padding: '0px' }" class="itemCard">
-                <div class='ribbon' v-if="question.type === 'd'">
+                <div class="ribbon" v-if="question.type === 'd'">
                   <span>仅预览</span>
                 </div>
                 <div style="padding: 14px">
@@ -83,27 +79,23 @@
                       </el-icon>
                       <span>{{ question.views }}</span>
                     </el-button>
-                    <el-button text @click="answerHandle(question.type, question.id)"
-                      v-if="!['d', 'm', 'e'].includes(question.type)">
+                    <el-button text @click="answerHandle(question.type, question.id)" v-if="!['d', 'm', 'e'].includes(question.type)">
                       <el-icon :size="16" color="#000000">
                         <chat-dot-round />
                       </el-icon>
                       <span v-if="question.type !== 'd'">{{ question.s_comments.length }}</span>
                     </el-button>
-                    <el-button text @click="handleEdit(question.type, question)"
-                      v-if="!['d', 'a', 'w'].includes(question.type)">
+                    <el-button text @click="handleEdit(question.type, question)" v-if="!['d', 'a', 'w'].includes(question.type)">
                       <el-icon :size="16">
                         <Edit />
                       </el-icon>
                     </el-button>
-                    <el-button text @click="handleDelete(question.title, question.id)"
-                      v-if="!['a', 'w'].includes(question.type)">
+                    <el-button text @click="handleDelete(question.title, question.id)" v-if="!['a', 'w'].includes(question.type)">
                       <el-icon :size="16">
                         <Delete />
                       </el-icon>
                     </el-button>
-                    <el-button text v-if="['d', 'a', 'w'].includes(question.type)"
-                      @click="handleDownload(question.id, question.type)">
+                    <el-button text v-if="['d', 'a', 'w'].includes(question.type)" @click="handleDownload(question.id, question.type)">
                       <el-icon :size="16">
                         <Download />
                       </el-icon>
@@ -113,10 +105,17 @@
               </el-card>
             </li>
           </ul>
-          <el-pagination v-if="datalist.length != 0" style="margin: 10px 0 50px 0;justify-content: flex-end"
-            :total="total" :current-page="page" :page-size="size" :page-sizes="[10, 20, 50, 100]"
-            @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+          <el-pagination
+            v-if="datalist.length != 0"
+            style="margin: 10px 0 50px 0;justify-content: flex-end"
+            :total="total"
+            :current-page="page"
+            :page-size="size"
+            :page-sizes="[10, 20, 50, 100]"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            layout="total, sizes, prev, pager, next, jumper"
+          ></el-pagination>
         </el-main>
       </el-container>
     </el-card>
@@ -126,12 +125,10 @@
           <el-input v-model="form.title" placeholder="请输入标题关键字"></el-input>
         </el-form-item>
         <el-form-item label="知识库">
-          <el-input v-model="form.body" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
-            placeholder="请输入要检索的知识库内容" />
+          <el-input v-model="form.body" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" placeholder="请输入要检索的知识库内容" />
         </el-form-item>
         <el-form-item label="标签">
-          <el-cascader :options="taglist" v-model="form.tags" clearable :props="{ value: 'id', label: 'name' }">
-          </el-cascader>
+          <el-cascader :options="taglist" v-model="form.tags" clearable :props="{ value: 'id', label: 'name' }"> </el-cascader>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -141,36 +138,40 @@
         </span>
       </template>
     </el-drawer>
-    <SaveDialog :isShowDialog="isShowDialog" v-on:closeSaveDialog="closeSaveDialog(res)" v-on:goRefresh="goRefresh()"
-      :treeData="treeData" />
+    <SaveDialog
+      :isShowDialog="isShowDialog"
+      v-on:closeSaveDialog="closeSaveDialog(res)"
+      v-on:goRefresh="goRefresh()"
+      :treeData="treeData"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, reactive, watchEffect, inject } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import SaveDialog from "@/components/SaveDialog.vue";
+import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
+import SaveDialog from '@/components/SaveDialog.vue'
 import { getForum, updateForum, getForumInfo, deleteForum } from '@/api/forum.js'
 import { downloadArticleFileApi } from '@/api/download.js'
-import { downloadFile } from "@/utils/file.js"
+import { downloadFile } from '@/utils/file.js'
 import { Search } from '@element-plus/icons-vue'
-import { getTag } from "@/api/tag.js"
-import { ElMessage, ElLoading, ElMessageBox } from "element-plus";
+import { getTag } from '@/api/tag.js'
+import { ElMessage, ElLoading, ElMessageBox } from 'element-plus'
 // import exampleData from 'simple-mind-map/example/exampleData';
-import bus from "@/utils/bus.js"
-import { Base64 } from 'js-base64';
+import bus from '@/utils/bus.js'
+import { Base64 } from 'js-base64'
 import { utc2beijing } from '@/utils/util.js'
 import { getCategorysInfo } from '@/api/category.js'
 import { judgeNodeType } from '@/utils/methods.js'
 
 const store = useStore()
-const route = useRoute();
+const route = useRoute()
 const router = useRouter()
 const spaceid = ref(sessionStorage.getItem('spaceid')) // 工作空间标题名
 const treeData = ref([])
 // 等待
-let loadingInstance;
+let loadingInstance
 const loading = ref(false)
 const isShowDialog = ref(false)
 // 数据列表
@@ -188,7 +189,7 @@ const page = ref(1)
 // 抽屉
 const drawer = ref(false)
 // 节点数据
-const node = computed(() => store.getters.node);
+const node = computed(() => store.getters.node)
 // 筛选表单
 const form = reactive({
   title: '',
@@ -196,7 +197,30 @@ const form = reactive({
   body: ''
 })
 // 初始化思维导图数据
-const exampleData = { "root": { "data": { "text": "中心主题", "expand": true, "isActive": false }, "children": [] }, "theme": { "template": "classic4", "config": {} }, "layout": "logicalStructure", "view": { "transform": { "scaleX": 1, "scaleY": 1, "shear": 0, "rotate": 0, "translateX": 0, "translateY": 0, "originX": 0, "originY": 0, "a": 1, "b": 0, "c": 0, "d": 1, "e": 0, "f": 0 }, "state": { "scale": 1, "x": 0, "y": 0, "sx": -55, "sy": -65 } } }
+const exampleData = {
+  root: { data: { text: '中心主题', expand: true, isActive: false }, children: [] },
+  theme: { template: 'classic4', config: {} },
+  layout: 'logicalStructure',
+  view: {
+    transform: {
+      scaleX: 1,
+      scaleY: 1,
+      shear: 0,
+      rotate: 0,
+      translateX: 0,
+      translateY: 0,
+      originX: 0,
+      originY: 0,
+      a: 1,
+      b: 0,
+      c: 0,
+      d: 1,
+      e: 0,
+      f: 0
+    },
+    state: { scale: 1, x: 0, y: 0, sx: -55, sy: -65 }
+  }
+}
 
 // 获取数据列表
 const getDataList = () => {
@@ -220,7 +244,7 @@ const getDataList = () => {
     total.value = res.total
     loading.value = false
   })
-};
+}
 
 const goRefresh = () => {
   getDataList()
@@ -236,17 +260,23 @@ const getTagList = () => {
 getTagList()
 
 // 监听
-watch(() => node.value.id, () => {
-  // console.log(node.value)
-  getDataList()
-})
-
-// 监听是否刷新
-watch(() => route.params.wRefresh, () => {
-  if (route.params.wRefresh) {
+watch(
+  () => node.value.id,
+  () => {
+    // console.log(node.value)
     getDataList()
   }
-})
+)
+
+// 监听是否刷新
+watch(
+  () => route.params.wRefresh,
+  () => {
+    if (route.params.wRefresh) {
+      getDataList()
+    }
+  }
+)
 
 // 监听是否刷新
 watchEffect(() => {
@@ -276,33 +306,33 @@ const handleSearch = () => {
   drawerClose()
 }
 
-// 
-const handleSizeChange = (value) => {
+//
+const handleSizeChange = value => {
   console.log(value)
   size.value = value
   getDataList()
 }
 
 // 页码响应
-const handleCurrentChange = (value) => {
+const handleCurrentChange = value => {
   page.value = value
   getDataList()
 }
 
 // 指令事件
-const handleCommand = (value) => {
+const handleCommand = value => {
   if (value == 'excel') {
-    router.push({ name: 'excel', query: { isRight: "right", isAdd: "add" } })
+    router.push({ name: 'excel', query: { isRight: 'right', isAdd: 'add' } })
   }
   if (value == 'article') {
-    router.push({ name: 'md', query: { isRight: "right", isAdd: "add" } })
+    router.push({ name: 'md', query: { isRight: 'right', isAdd: 'add' } })
   }
   // if (value == 'word') {
   //   router.push({ name: 'md', query: { type: "right", isAdd: "add" } })
   // }
   if (value == 'mindmap') {
-    bus.emit('setData', exampleData); // 初始化思维导图数据
-    router.push({ name: 'mindMap', query: { isRight: "right", isAdd: "add" } })
+    bus.emit('setData', exampleData) // 初始化思维导图数据
+    router.push({ name: 'mindMap', query: { isRight: 'right', isAdd: 'add' } })
   }
   if (value == 'documentManage') {
     isShowDialog.value = true
@@ -312,10 +342,10 @@ const handleCommand = (value) => {
 // 跳转至文章详情页
 const handleOpen = async (type, id) => {
   if (type == 'a' || type == 'w') {
-    router.push({ name: 'detail', query: { wid: id, isRight: "right" } })
+    router.push({ name: 'detail', query: { wid: id, isRight: 'right' } })
   }
   if (type == 'e') {
-    router.push({ name: 'excel', query: { eid: id, isRight: "right" } })
+    router.push({ name: 'excel', query: { eid: id, isRight: 'right' } })
   }
   if (type == 'm') {
     loadingInstance = ElLoading.service({
@@ -325,7 +355,7 @@ const handleOpen = async (type, id) => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
     await getMindMapDataApi(id)
-    router.push({ name: 'mindMap', query: { mid: id, isRight: "right" } })
+    router.push({ name: 'mindMap', query: { mid: id, isRight: 'right' } })
   }
   if (type == 'd') {
     getPreview(id)
@@ -335,13 +365,13 @@ const handleOpen = async (type, id) => {
 // 文章编辑
 const handleEdit = async (type, qs) => {
   if (type == 'a') {
-    router.push({ name: 'md', query: { tid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
+    router.push({ name: 'md', query: { tid: qs.id, type: 'edit', isRight: 'right', typeof: qs.type, category: qs.category } })
   }
   if (type == 'w') {
-    router.push({ name: 'md', query: { mid: qs.id, type: "edit", isRight: "right", typeof: qs.type, category: qs.category } })
+    router.push({ name: 'md', query: { mid: qs.id, type: 'edit', isRight: 'right', typeof: qs.type, category: qs.category } })
   }
   if (type == 'e') {
-    router.push({ name: 'excel', query: { eid: qs.id, isRight: "right" } })
+    router.push({ name: 'excel', query: { eid: qs.id, isRight: 'right' } })
   }
   if (type == 'm') {
     loadingInstance = ElLoading.service({
@@ -351,10 +381,10 @@ const handleEdit = async (type, qs) => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
     await getMindMapDataApi(qs.id)
-    router.push({ name: 'mindMap', query: { mid: qs.id, isRight: "right" } })
+    router.push({ name: 'mindMap', query: { mid: qs.id, isRight: 'right' } })
   }
   if (type == 'd') {
-    ElMessage.warning("预览文件，不支持编辑！")
+    ElMessage.warning('预览文件，不支持编辑！')
     return false
   }
 }
@@ -362,11 +392,11 @@ const handleEdit = async (type, qs) => {
 // 回复响应
 const answerHandle = (type, id) => {
   if (type == 'd') {
-    ElMessage.warning("预览文件，不支持评论！")
+    ElMessage.warning('预览文件，不支持评论！')
     return false
   }
   if (type === 'e') {
-    ElMessage.warning("表格类型文件，不支持评论！")
+    ElMessage.warning('表格类型文件，不支持评论！')
     return false
   }
   router.push({ name: 'detail', query: { wid: id, status: 'answer' } })
@@ -378,63 +408,63 @@ const handleDownload = async (id, type) => {
 }
 
 // 查看预览文件
-const getPreview = async (id) => {
+const getPreview = async id => {
   await getForumInfo(id).then(res => {
     // let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
     let url = 'http://10.20.84.55:8013' + '/' + res.data.body
-    window.open('http://10.20.84.55:8020/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)));
+    window.open('http://10.20.84.55:8020/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)))
   })
 }
 
 const handleDelete = (title, id) => {
   // 二次确认删除
-  ElMessageBox.confirm(`确定要删除【${title}】这个文件吗？`, "提示", {
+  ElMessageBox.confirm(`确定要删除【${title}】这个文件吗？`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
-    type: "warning",
-    draggable: true,
+    type: 'warning',
+    draggable: true
   })
     .then(() => {
       deleteForum(id).then(res => {
         if (res.code === 1000) {
-          ElMessage.success("删除成功");
+          ElMessage.success('删除成功')
           router.push({ name: 'subbooks', params: { wRefresh: true } })
           goRefresh()
         } else {
-          ElMessage.error(res.msg || "删除失败");
+          ElMessage.error(res.msg || '删除失败')
         }
       })
     })
     .catch(() => {
       ElMessage({
         type: 'info',
-        message: '取消删除',
+        message: '取消删除'
       })
     })
 }
 
 // 获取思维导图数据
-const getMindMapDataApi = (id) => {
+const getMindMapDataApi = id => {
   getForumInfo(id).then(res => {
     ElMessage({
-      message: "获取成功",
-      type: "success",
-      duration: 1000,
-    });
-    bus.emit('setData', JSON.parse(res.data.body));
-    bus.emit("execCommand", ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
+      message: '获取成功',
+      type: 'success',
+      duration: 1000
+    })
+    bus.emit('setData', JSON.parse(res.data.body))
+    bus.emit('execCommand', ['UNEXPAND_TO_LEVEL', 2]) // 默认展开到第二层级
     loadingInstance.close()
   })
 }
 
-const closeSaveDialog = (res) => {
+const closeSaveDialog = res => {
   isShowDialog.value = res
 }
 
 onBeforeRouteLeave((to, from, next) => {
   if (to.path === '/books') {
     datalist.value = []
-    node.value.label = ""
+    node.value.label = ''
   }
   if (from.name === 'subbooks' && !to.query.isRight) {
     sessionStorage.removeItem('node')
@@ -442,17 +472,19 @@ onBeforeRouteLeave((to, from, next) => {
   next()
 })
 
-watch(() => isShowDialog.value, () => {
-  getNodeList()
-})
+watch(
+  () => isShowDialog.value,
+  () => {
+    getNodeList()
+  }
+)
 
 // 获取分类列表
 const getNodeList = () => {
-  getCategorysInfo(sessionStorage.getItem('spaceid')).then((res) => {
+  getCategorysInfo(sessionStorage.getItem('spaceid')).then(res => {
     treeData.value = judgeNodeType(res.data)
   })
 }
-
 </script>
 
 <style lang="scss" scoped>
@@ -481,7 +513,7 @@ const getNodeList = () => {
     position: relative;
 
     .ribbon {
-      background-color: #1890FF;
+      background-color: #1890ff;
       overflow: hidden;
       white-space: nowrap;
       position: absolute;
@@ -502,7 +534,6 @@ const getNodeList = () => {
   h3:hover {
     cursor: pointer;
   }
-
 }
 
 .title {
@@ -512,7 +543,6 @@ const getNodeList = () => {
 .title:hover {
   cursor: pointer;
 }
-
 
 .subscript {
   margin-top: 13px;

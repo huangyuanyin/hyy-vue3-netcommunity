@@ -48,28 +48,37 @@ export default {
     const state = reactive({
       myInit: customer(init), // 初始化
       contentValue: props.modelValue, // 绑定文本
-      timeout: null,
+      timeout: null
     })
     onMounted(() => {
       tinymce.init({})
     })
     // 侦听文本变化并传给外界
-    watch(() => state.contentValue, (n) => {
-      debounce(() => {
-        emit('update:modelValue', state.contentValue)
-      })
-    })
+    watch(
+      () => state.contentValue,
+      n => {
+        debounce(() => {
+          emit('update:modelValue', state.contentValue)
+        })
+      }
+    )
     // 侦听默认值 外界第一次传进来一个 v-model 就赋值给 contentValue
-    watch(() => props.modelValue, (n) => {
-      if (n && n !== state.contentValue) {
-        state.contentValue = n
+    watch(
+      () => props.modelValue,
+      n => {
+        if (n && n !== state.contentValue) {
+          state.contentValue = n
+        }
       }
-    })
-    watch(() => route.query, () => {
-      if (route.query && route.query.isAdd) {
-        state.contentValue = ''
+    )
+    watch(
+      () => route.query,
+      () => {
+        if (route.query && route.query.isAdd) {
+          state.contentValue = ''
+        }
       }
-    })
+    )
 
     function debounce(fn, wait = 400) {
       // console.log('进到了防抖', wait)
@@ -109,25 +118,27 @@ export default {
         }
       }
       // 图片上传
-      axios.post(props.imgUploadUrl, params, config).then(res => {
-        if (res.data.code == 0) {
-          success(res.data.data.url) // 上传成功，在成功函数里填入图片路径
-          // console.log('[文件上传]', res.data)
-        } else {
-          failure('上传失败')
-        }
-      }).catch(() => {
-        failure('上传出错，服务器开小差了呢')
-      })
+      axios
+        .post(props.imgUploadUrl, params, config)
+        .then(res => {
+          if (res.data.code == 0) {
+            success(res.data.data.url) // 上传成功，在成功函数里填入图片路径
+            // console.log('[文件上传]', res.data)
+          } else {
+            failure('上传失败')
+          }
+        })
+        .catch(() => {
+          failure('上传出错，服务器开小差了呢')
+        })
     }
-    return ({
+    return {
       ...toRefs(state),
       customer,
       debounce
-    })
+    }
   }
 }
 </script>
 
-<style>
-</style>
+<style></style>
