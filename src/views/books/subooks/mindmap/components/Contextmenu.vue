@@ -268,8 +268,7 @@ export default {
     },
 
     /**
-     * @Author: 王林25
-     * @Date: 2022-08-04 14:25:45
+     * @Author: 黄原寅
      * @Desc: 复制
      */
     copy() {
@@ -277,7 +276,7 @@ export default {
     },
 
     /**
-     * @Author: 王林25
+     * @Author: 黄原寅
      * @Date: 2022-08-04 14:26:43
      * @Desc: 粘贴
      */
@@ -286,7 +285,7 @@ export default {
     },
 
     /**
-     * @Author: 王林25
+     * @Author: 黄原寅
      * @Date: 2022-08-04 14:27:32
      * @Desc: 剪切
      */

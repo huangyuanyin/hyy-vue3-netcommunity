@@ -19,8 +19,7 @@
 import { mapState, mapMutations } from 'vuex'
 import { sidebarTriggerList } from '@/config'
 /**
- * @Author: 王林
- * @Date: 2021-06-24 22:54:25
+ * @Author: 黄原寅
  * @Desc: 侧边栏触发器
  */
 export default {
@@ -48,7 +47,7 @@ export default {
 <style lang="less" scoped>
 .sidebarTriggerContainer {
   position: fixed;
-  right: 0px;
+  right: 3px;
   margin-top: 110px;
   transition: all 0.3s;
   top: 50%;
