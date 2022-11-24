@@ -75,9 +75,15 @@ const handleSave = () => {
   saveFormRef.value.validate((valid) => {
     if (!valid) return false
     if (route.query.mid) {
+      setTimeout(() => {
+        store.commit('setActiveSidebar', '')
+      }, 0)
       updateMindMap()
       isShowDialog.value = false
     } else {
+      setTimeout(() => {
+        store.commit('setActiveSidebar', '')
+      }, 0)
       addMindMap()
       isShowDialog.value = false
     }
