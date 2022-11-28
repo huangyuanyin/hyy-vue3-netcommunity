@@ -32,24 +32,14 @@
       </el-col>
     </el-row>
     <div>
-      <el-tree
-        :data="treeData"
-        ref="treeRef"
-        class="filter-tree"
-        highlight-current
-        draggable
-        accordion
-        @current-change="handleNodeClick"
-        @node-drop="handleDrop"
-        node-key="id"
-        :props="defaultProps"
-        :default-expanded-keys="defaultExpandIds"
-        :current-node-key="curTreeId"
-      >
+      <el-tree :data="treeData" ref="treeRef" class="filter-tree" highlight-current draggable accordion
+        @current-change="handleNodeClick" @node-drop="handleDrop" node-key="id" :props="defaultProps"
+        :default-expanded-keys="defaultExpandIds" :current-node-key="curTreeId">
         <template #default="{ node, data }">
           <div class="custom-tree-node">
             <div class="content">
-              <svg-icon iconName="icon-a-wenjianjiawenjian" v-if="data.type === 'l' && data.isFolder" className="is-Folder" />
+              <svg-icon iconName="icon-a-wenjianjiawenjian" v-if="data.type === 'l' && data.isFolder"
+                className="is-Folder" />
               <svg-icon iconName="icon-Document" v-if="data.type === 'l' && !data.isFolder" className="is-Folder" />
               <svg-icon iconName="icon-word" v-if="data.type === 'a'" className="is-Folder"></svg-icon>
               <svg-icon iconName="icon-file-markdown-fill" v-if="data.type === 'w'" className="is-Folder"></svg-icon>
@@ -79,8 +69,10 @@
                     <el-dropdown-item :command="'mindmap' + ',' + data.id">
                       <svg-icon iconName="icon-icon__liuchengtu" className="is-Folder" />新建思维导图
                     </el-dropdown-item>
+                    <el-dropdown-item :command="'ppt' + ',' + data.id">
+                      <svg-icon iconName="icon-ppt" className="is-Folder" />新建PPT
+                    </el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>
-                    <el-dropdown-item :command="'ppt' + ',' + data.id" disabled>新建PPT</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建白板</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -96,7 +88,8 @@
                   <template #dropdown>
                     <el-dropdown-menu>
                       <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
-                      <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
+                      <el-dropdown-item
+                        :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
                         <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
                       </el-dropdown-item>
                       <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type">
@@ -347,6 +340,15 @@ const handleNewInstruction = value => {
     bus.emit('setData', exampleData) // 初始化思维导图数据
     router.push({
       path: '/mindMap',
+      query: {
+        category: tmp[1],
+        isAdd: 'add'
+      }
+    })
+  }
+  if (tmp[0] == 'ppt') {
+    router.push({
+      path: '/ppt',
       query: {
         category: tmp[1],
         isAdd: 'add'
@@ -671,7 +673,7 @@ watch(
 /* .sidebar-el-menu:not(.el-menu--collapse) {
     width: 280px;
 } */
-.sidebar > ul {
+.sidebar>ul {
   height: 100%;
 }
 
