@@ -32,19 +32,30 @@
       </el-col>
     </el-row>
     <div>
-      <el-tree :data="treeData" ref="treeRef" class="filter-tree" highlight-current draggable accordion
-        @current-change="handleNodeClick" @node-drop="handleDrop" node-key="id" :props="defaultProps"
-        :default-expanded-keys="defaultExpandIds" :current-node-key="curTreeId">
+      <el-tree
+        :data="treeData"
+        ref="treeRef"
+        class="filter-tree"
+        highlight-current
+        draggable
+        accordion
+        @current-change="handleNodeClick"
+        @node-drop="handleDrop"
+        node-key="id"
+        :props="defaultProps"
+        :default-expanded-keys="defaultExpandIds"
+        :current-node-key="curTreeId"
+      >
         <template #default="{ node, data }">
           <div class="custom-tree-node">
             <div class="content">
-              <svg-icon iconName="icon-a-wenjianjiawenjian" v-if="data.type === 'l' && data.isFolder"
-                className="is-Folder" />
+              <svg-icon iconName="icon-a-wenjianjiawenjian" v-if="data.type === 'l' && data.isFolder" className="is-Folder" />
               <svg-icon iconName="icon-Document" v-if="data.type === 'l' && !data.isFolder" className="is-Folder" />
               <svg-icon iconName="icon-word" v-if="data.type === 'a'" className="is-Folder"></svg-icon>
               <svg-icon iconName="icon-file-markdown-fill" v-if="data.type === 'w'" className="is-Folder"></svg-icon>
               <svg-icon iconName="icon-excel" v-if="data.type === 'e'" className="is-Folder"></svg-icon>
               <svg-icon iconName="icon-icon__liuchengtu" v-if="data.type === 'm'" className="is-Folder"></svg-icon>
+              <svg-icon iconName="icon-ppt" v-if="data.type === 'p'" className="is-Folder"></svg-icon>
               <span class="labelStyle" :title="node.label">{{ node.label }}</span>
             </div>
             <div class="buttonStyle">
@@ -88,8 +99,7 @@
                   <template #dropdown>
                     <el-dropdown-menu>
                       <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
-                      <el-dropdown-item
-                        :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
+                      <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
                         <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
                       </el-dropdown-item>
                       <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type">
@@ -536,6 +546,9 @@ const handleNodeClick = async node => {
       await getMindMapDataApi(node.articleId)
       router.push({ name: 'mindMap', query: { mid: node.articleId } })
       break
+    case 'p':
+      router.push({ name: 'FramePPT', query: { pid: node.articleId } })
+      break
   }
 }
 
@@ -673,7 +686,7 @@ watch(
 /* .sidebar-el-menu:not(.el-menu--collapse) {
     width: 280px;
 } */
-.sidebar>ul {
+.sidebar > ul {
   height: 100%;
 }
 
