@@ -22,10 +22,12 @@ watch(
   () => route.fullPath,
   () => {
     iframeUrl.value = 'http://10.20.70.73:8081/#' + route.fullPath
-    dialogVisible.value = false
-    nextTick(() => {
-      dialogVisible.value = true
-    })
+    if (route.fullPath.includes('ppt')) {
+      dialogVisible.value = false
+      nextTick(() => {
+        dialogVisible.value = true
+      })
+    }
   }
 )
 </script>
