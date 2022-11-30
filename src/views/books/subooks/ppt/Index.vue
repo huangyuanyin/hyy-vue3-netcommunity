@@ -1,7 +1,7 @@
 <template>
-  <div class="frame">
+  <div class="frame" id="frame" v-if="dialogVisible">
     <!-- <iframe src="https://10.20.86.27:8080/netppt/" class="frame-iframe" ref="frameRef" /> -->
-    <iframe :src="iframeUrl" class="frame-iframe" ref="frameRef" />
+    <iframe :src="iframeUrl" class="frame-iframe" ref="frameRef" id="iframe3" />
   </div>
 </template>
 
@@ -11,8 +11,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const iframeUrl = ref('')
-
-var iframe = document.getElementById('iframe')
+const dialogVisible = ref(true)
 
 onMounted(() => {
   iframeUrl.value = 'http://10.20.70.73:8081/#' + route.fullPath
@@ -21,7 +20,13 @@ onMounted(() => {
 
 watch(
   () => route.fullPath,
-  () => (iframeUrl.value = 'http://10.20.70.73:8081/#' + route.fullPath)
+  () => {
+    iframeUrl.value = 'http://10.20.70.73:8081/#' + route.fullPath
+    dialogVisible.value = false
+    nextTick(() => {
+      dialogVisible.value = true
+    })
+  }
 )
 </script>
 
