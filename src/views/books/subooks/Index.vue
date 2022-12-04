@@ -26,8 +26,8 @@
                 <el-dropdown-item command="mindmap">
                   <svg-icon iconName="icon-icon__liuchengtu" className="is-Folder" />新建思维导图
                 </el-dropdown-item>
+                <el-dropdown-item command="ppt"> <svg-icon iconName="icon-ppt" className="is-Folder" />新建PPT</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
-                <el-dropdown-item command="ppt" disabled>新建PPT</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -334,6 +334,9 @@ const handleCommand = value => {
     bus.emit('setData', exampleData) // 初始化思维导图数据
     router.push({ name: 'mindMap', query: { isRight: 'right', isAdd: 'add' } })
   }
+  if (value == 'ppt') {
+    router.push({ path: '/ppt', query: { isRight: 'right', isAdd: 'add', spaceid: spaceid.value, category: node.value.id } })
+  }
   if (value == 'documentManage') {
     isShowDialog.value = true
   }
@@ -356,6 +359,9 @@ const handleOpen = async (type, id) => {
     })
     await getMindMapDataApi(id)
     router.push({ name: 'mindMap', query: { mid: id, isRight: 'right' } })
+  }
+  if (type == 'p') {
+    router.push({ path: 'ppt', query: { pid: id, isRight: 'right', category: node.value.id, spaceid: spaceid.value } })
   }
   if (type == 'd') {
     getPreview(id)

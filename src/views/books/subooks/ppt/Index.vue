@@ -6,22 +6,27 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, watch, nextTick, inject } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 
 const route = useRoute()
+const store = useStore()
+const _reload = inject('reload')
 const iframeUrl = ref('')
 const dialogVisible = ref(true)
+const iframeWin = ref('')
+const frameRef = ref(null)
 
 onMounted(() => {
-  iframeUrl.value = 'http://10.20.70.73:8081/#' + route.fullPath
-  console.log('reportUrl', iframeUrl.value)
+  iframeUrl.value = 'http://192.168.0.102:8081#' + route.fullPath
+  window.addEventListener('message', handleMessage)
 })
 
 watch(
   () => route.fullPath,
   () => {
-    iframeUrl.value = 'http://10.20.70.73:8081/#' + route.fullPath
+    iframeUrl.value = 'http://192.168.0.102:8081#' + route.fullPath
     if (route.fullPath.includes('ppt')) {
       dialogVisible.value = false
       nextTick(() => {
@@ -30,6 +35,14 @@ watch(
     }
   }
 )
+
+const handleMessage = event => {
+  const { isRefresh, id } = event.data
+  if (isRefresh) {
+    setTimeout(_reload, 100)
+    store.commit('changeCurTreeId', id)
+  }
+}
 </script>
 
 <style lang="less" scoped>
