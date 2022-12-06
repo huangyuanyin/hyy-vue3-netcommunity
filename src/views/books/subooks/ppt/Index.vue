@@ -53,10 +53,12 @@ const handleMessage = event => {
 
 <style lang="less" scoped>
 .frame {
-  height: 100vh;
+  height: 100%;
+  overflow: hidden;
   .frame-iframe {
     height: 100vh;
     width: calc(100vw - 270px);
+    border: none;
   }
 }
 </style>
