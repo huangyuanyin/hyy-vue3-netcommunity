@@ -5,6 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "stage": "vue-cli-service serve --mode staging",
+    "build:stage": "vue-cli-service build --mode staging",
+    "prod": "vue-cli-service serve --mode production",
+    "build:prod": "vue-cli-service build --mode production",
     "format": "prettier --write src/* src/*/* src/*/*/* src/*/*/*/*"
   },
   "dependencies": {

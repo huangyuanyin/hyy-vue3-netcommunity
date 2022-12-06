@@ -1,6 +1,5 @@
 <template>
   <div class="frame" id="frame" v-if="dialogVisible">
-    <!-- <iframe src="https://10.20.86.27:8080/netppt/" class="frame-iframe" ref="frameRef" /> -->
     <iframe :src="iframeUrl" class="frame-iframe" ref="frameRef" id="iframe3" />
   </div>
 </template>
@@ -15,25 +14,33 @@ const store = useStore()
 const _reload = inject('reload')
 const iframeUrl = ref('')
 const dialogVisible = ref(true)
-const iframeWin = ref('')
 const frameRef = ref(null)
+const iframeIp = ref(
+  process.env.VUE_APP_BASE_SETTING == 'dev'
+    ? 'http://localhost:8081#'
+    : process.env.VUE_APP_BASE_SETTING == 'prod'
+    ? 'http://10.20.84.55:8080/netppt/#'
+    : 'http://10.20.86.27:8080/netppt/#'
+)
 
 onMounted(() => {
-  iframeUrl.value = 'http://192.168.0.102:8081#' + route.fullPath
+  // iframeUrl.value = iframeIp.value + route.fullPath
   window.addEventListener('message', handleMessage)
 })
 
 watch(
   () => route.fullPath,
   () => {
-    iframeUrl.value = 'http://192.168.0.102:8081#' + route.fullPath
+    iframeUrl.value = iframeIp.value + route.fullPath
+    console.log('daa')
     if (route.fullPath.includes('ppt')) {
       dialogVisible.value = false
       nextTick(() => {
         dialogVisible.value = true
       })
     }
-  }
+  },
+  { immediate: true }
 )
 
 const handleMessage = event => {
@@ -48,7 +55,6 @@ const handleMessage = event => {
 <style lang="less" scoped>
 .frame {
   height: 100vh;
-
   .frame-iframe {
     height: 100vh;
     width: calc(100vw - 270px);

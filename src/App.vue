@@ -15,14 +15,15 @@ export default {
       })
     }
     const setServerConfig = () => {
-      // axios.get('./../netforum/static/config.json').then((res) => { // /netforum/static/ -- 线上
-      axios.get('./../static/config.json').then(res => {
-        // /static/ 本地
-        // axios.defaults.baseURL = res.data.FORM_URL;
-        // console.log("axios.defaults.baseURL", axios.defaults.baseURL);
-        sessionStorage.setItem('COMMUNITY_URL', res.data.FORM_URL)
-        sessionStorage.setItem('CONSOLE_URL', res.data.CONSOLE_URL)
-      })
+      // axios.get('./../netforum/static/config.json').then(res => {
+      // /netforum/static/ -- 线上
+      // axios.get('./../static/config1.json').then(res => {
+      // /static/ 本地
+      // sessionStorage.setItem('COMMUNITY_URL', process.env.VUE_APP_BASE_URL)
+      // sessionStorage.setItem('CONSOLE_URL', process.env.VUE_APP_CONSOLE_URL)
+      // })
+      sessionStorage.setItem('COMMUNITY_URL', process.env.VUE_APP_BASE_URL)
+      sessionStorage.setItem('CONSOLE_URL', process.env.VUE_APP_CONSOLE_URL)
     }
     setServerConfig()
     provide('reload', reload)

@@ -13,16 +13,12 @@ import { useRouter } from 'vue-router'
 
 // create an axios instance
 const service = axios.create({
-  // baseURL: 'http://172.16.71.179:8013',  sessionStorage.setItem("COMMUNITY_URL", res.data.FORM_URL)
-  // baseURL: sessionStorage.getItem('COMMUNITY_URL'),
-  // baseURL: axios.defaults.baseURL,
-  baseURL: 'http://10.20.86.27:8013',
+  baseURL: process.env.VUE_APP_BASE_URL,
+  // baseURL: 'http://10.20.86.27:8013',
   // baseURL: 'http://10.20.84.55:8013', // url = base url + request url 打包线上
   // baseURL: 'http://172.16.71.179:8013', // 华耀 打包线上
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 200000 // request timeout
+  timeout: 200000
 })
-console.log('axios', axios.defaults.baseURL)
 // request interceptor
 service.interceptors.request.use(
   config => {

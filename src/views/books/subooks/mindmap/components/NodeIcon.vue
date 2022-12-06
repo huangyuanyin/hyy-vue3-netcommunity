@@ -84,7 +84,7 @@ export default {
 
 <style lang="less" scoped>
 .nodeDialog {
-  /deep/ .el-dialog__body {
+  :deep(.el-dialog__body) {
     padding: 0 20px;
   }
 
