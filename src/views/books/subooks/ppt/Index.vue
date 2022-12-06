@@ -32,7 +32,6 @@ watch(
   () => route.fullPath,
   () => {
     iframeUrl.value = iframeIp.value + route.fullPath
-    console.log('daa')
     if (route.fullPath.includes('ppt')) {
       dialogVisible.value = false
       nextTick(() => {
@@ -46,7 +45,7 @@ watch(
 const handleMessage = event => {
   const { isRefresh, id } = event.data
   if (isRefresh) {
-    setTimeout(_reload, 100)
+    _reload()
     store.commit('changeCurTreeId', id)
   }
 }
