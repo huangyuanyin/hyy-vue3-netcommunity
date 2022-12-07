@@ -245,7 +245,6 @@ const handleNodeExpand = data => {
 
 onMounted(async () => {
   await judgeGetNodeList()
-  console.log('treeData.value', spaceid.value)
   if (curTreeId.value) {
     await handleNodeClick({
       label: store.state.curTreeName || '',

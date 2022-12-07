@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick, inject } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, nextTick, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
@@ -24,8 +24,11 @@ const iframeIp = ref(
 )
 
 onMounted(() => {
-  // iframeUrl.value = iframeIp.value + route.fullPath
   window.addEventListener('message', handleMessage)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('message', handleMessage)
 })
 
 watch(
