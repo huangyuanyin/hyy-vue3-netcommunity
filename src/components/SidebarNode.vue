@@ -459,7 +459,7 @@ const getUpdateCategorysApi = (id, name) => {
     if (curTreeData.value.id == id) {
       console.log('name', name.name)
       // reload() 刷新页面用来更新title，此处需优化
-      if (curTreeData.value.type == 'a' || curTreeData.value.type == 'w') {
+      if (['a', 'w', 'p'].includes(curTreeData.value.type)) {
         reload()
       }
       handleNodeClick({
