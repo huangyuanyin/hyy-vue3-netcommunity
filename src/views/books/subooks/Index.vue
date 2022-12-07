@@ -259,28 +259,9 @@ const getTagList = () => {
 
 getTagList()
 
-// 监听
-watch(
-  () => node.value.id,
-  () => {
-    // console.log(node.value)
-    getDataList()
-  }
-)
-
-// 监听是否刷新
-watch(
-  () => route.params.wRefresh,
-  () => {
-    if (route.params.wRefresh) {
-      getDataList()
-    }
-  }
-)
-
 // 监听是否刷新
 watchEffect(() => {
-  if (route.params.wRefresh) {
+  if (route.params.wRefresh || node.value.id) {
     getDataList()
   }
 })
@@ -335,7 +316,7 @@ const handleCommand = value => {
     router.push({ name: 'mindMap', query: { isRight: 'right', isAdd: 'add' } })
   }
   if (value == 'ppt') {
-    router.push({ path: '/ppt', query: { isRight: 'right', isAdd: 'add', spaceid: spaceid.value, category: node.value.id } })
+    router.push({ path: '/ppt', query: { isRight: 'right', isAdd: 'add', category: node.value.id } })
   }
   if (value == 'documentManage') {
     isShowDialog.value = true
@@ -361,7 +342,7 @@ const handleOpen = async (type, id) => {
     router.push({ name: 'mindMap', query: { mid: id, isRight: 'right' } })
   }
   if (type == 'p') {
-    router.push({ path: 'ppt', query: { pid: id, isRight: 'right', category: node.value.id, spaceid: spaceid.value } })
+    router.push({ path: 'ppt', query: { pid: id, isRight: 'right' } })
   }
   if (type == 'd') {
     getPreview(id)

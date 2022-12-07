@@ -29,7 +29,7 @@ onMounted(() => {
 })
 
 watch(
-  () => route.fullPath,
+  () => route.query.pid,
   () => {
     iframeUrl.value = iframeIp.value + route.fullPath
     if (route.fullPath.includes('ppt')) {
