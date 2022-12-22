@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      v-model="isShowDialog"
+      :show="isShowDialog"
       custom-class="saveDialog"
       title="新建文档"
       @close="closeSaveDialog"
