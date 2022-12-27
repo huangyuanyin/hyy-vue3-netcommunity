@@ -24,6 +24,7 @@ export default {
       // })
       sessionStorage.setItem('COMMUNITY_URL', process.env.VUE_APP_BASE_URL)
       sessionStorage.setItem('CONSOLE_URL', process.env.VUE_APP_CONSOLE_URL)
+      console.log(process.env.VUE_APP_BASE_URL)
     }
     setServerConfig()
     provide('reload', reload)
@@ -34,6 +35,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 @import './assets/css/main.css';
 @import './assets/css/color-dark.css';

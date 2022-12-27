@@ -68,10 +68,10 @@ const routes = [
         component: () => import(/* webpackChunkName: "monitor" */ '../views/books/subooks/mindMap/Index.vue')
       },
       {
-        path: "/ppt",
-        name: "FramePPT",
+        path: '/ppt',
+        name: 'FramePPT',
         meta: {
-          title: "PPT",
+          title: 'PPT'
         },
         component: () => import(/* webpackChunkName: "monitor" */ '../views/books/subooks/ppt/Index.vue')
       },

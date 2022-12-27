@@ -15,13 +15,7 @@ const _reload = inject('reload')
 const iframeUrl = ref('')
 const dialogVisible = ref(true)
 const frameRef = ref(null)
-const iframeIp = ref(
-  process.env.VUE_APP_BASE_SETTING == 'dev'
-    ? 'http://localhost:8081#'
-    : process.env.VUE_APP_BASE_SETTING == 'prod'
-    ? 'http://10.20.84.55:8080/netppt/#'
-    : 'http://10.20.86.27:8080/netppt/#'
-)
+const iframeIp = ref(process.env.VUE_APP_PPT_URL)
 
 onMounted(() => {
   window.addEventListener('message', handleMessage)
@@ -58,6 +52,7 @@ const handleMessage = event => {
 .frame {
   height: 100%;
   overflow: hidden;
+
   .frame-iframe {
     height: 100vh;
     width: calc(100vw - 270px);
