@@ -14,7 +14,7 @@ import { useRouter } from 'vue-router'
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
-  // baseURL: 'http://10.4.84.27:8013',
+  // baseURL: 'http://10.4.150.27:8013',
   // baseURL: 'http://10.4.150.55:8013', // url = base url + request url 打包线上
   // baseURL: 'http://172.16.71.179:8013', // 华耀 打包线上
   timeout: 200000
