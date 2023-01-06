@@ -21,7 +21,7 @@
       <el-tabs>
         <el-tab-pane label="常用"> </el-tab-pane>
       </el-tabs>
-      <el-tabs v-model="activeName" @tab-change="changeTab">
+      <el-tabs v-model="activeName" @tab-change="changeTab" class="booksStyle">
         <el-tab-pane label="共享知识库" name="public">
           <tablelist :data="pubooks"></tablelist>
         </el-tab-pane>
@@ -85,5 +85,13 @@ onMounted(() => {
 
 .el-tabs {
   margin-top: 25px;
+}
+</style>
+
+<style lang="scss">
+.booksStyle {
+  .el-tabs__content {
+    overflow: auto;
+  }
 }
 </style>

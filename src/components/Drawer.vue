@@ -45,6 +45,10 @@
               </el-icon>
               <template #title>信安云网管</template>
             </el-menu-item>
+            <el-menu-item index="netapv">
+              <el-icon><TrendCharts /></el-icon>
+              <template #title>APV自动化</template>
+            </el-menu-item>
           </el-menu>
         </el-col>
         <el-col :span="20">
@@ -217,19 +221,8 @@ const goTo = value => {
 const handleSelect = value => {
   let url = ''
   let console_url = sessionStorage.getItem('CONSOLE_URL')
-  localStorage.setItem('jwtToken', sessionStorage.getItem('token'))
-  console.log('')
+  localStorage.setItem('token', sessionStorage.getItem('token'))
   url = console_url + '/' + value
-  if (value === 'prodandserver') {
-    return
-  }
-  if (value == 'netpts') {
-    url += '/#/center/mine'
-  }
-  if (value === 'apitest') {
-    url = ''
-    url = console_url + '/#/center/mine'
-  }
   window.location.href = url
 }
 const direction = ref('ltr')

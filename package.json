@@ -5,6 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "stage": "vue-cli-service serve --mode staging",
+    "build:stage": "vue-cli-service build --mode staging",
+    "prod": "vue-cli-service serve --mode production",
+    "build:prod": "vue-cli-service build --mode production",
     "format": "prettier --write src/* src/*/* src/*/*/* src/*/*/*/*"
   },
   "dependencies": {
@@ -40,6 +44,7 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.2.37",
+    "hyy-demo-comp": "^0.0.0",
     "less": "^3.12.2",
     "less-loader": "^7.1.0",
     "prettier": "^1.19.1",

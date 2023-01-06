@@ -55,6 +55,7 @@
               <svg-icon iconName="icon-file-markdown-fill" v-if="data.type === 'w'" className="is-Folder"></svg-icon>
               <svg-icon iconName="icon-excel" v-if="data.type === 'e'" className="is-Folder"></svg-icon>
               <svg-icon iconName="icon-icon__liuchengtu" v-if="data.type === 'm'" className="is-Folder"></svg-icon>
+              <svg-icon iconName="icon-ppt" v-if="data.type === 'p'" className="is-Folder"></svg-icon>
               <span class="labelStyle" :title="node.label">{{ node.label }}</span>
             </div>
             <div class="buttonStyle">
@@ -79,8 +80,10 @@
                     <el-dropdown-item :command="'mindmap' + ',' + data.id">
                       <svg-icon iconName="icon-icon__liuchengtu" className="is-Folder" />新建思维导图
                     </el-dropdown-item>
+                    <el-dropdown-item :command="'ppt' + ',' + data.id">
+                      <svg-icon iconName="icon-ppt" className="is-Folder" />新建PPT
+                    </el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建流程图</el-dropdown-item>
-                    <el-dropdown-item :command="'ppt' + ',' + data.id" disabled>新建PPT</el-dropdown-item>
                     <el-dropdown-item :command="'process' + ',' + data.id" disabled>新建白板</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -242,7 +245,6 @@ const handleNodeExpand = data => {
 
 onMounted(async () => {
   await judgeGetNodeList()
-  console.log('treeData.value', spaceid.value)
   if (curTreeId.value) {
     await handleNodeClick({
       label: store.state.curTreeName || '',
@@ -353,6 +355,15 @@ const handleNewInstruction = value => {
       }
     })
   }
+  if (tmp[0] == 'ppt') {
+    router.push({
+      path: '/ppt',
+      query: {
+        category: tmp[1],
+        isAdd: 'add'
+      }
+    })
+  }
 }
 
 // 监听下拉菜单的显示/隐藏
@@ -448,7 +459,7 @@ const getUpdateCategorysApi = (id, name) => {
     if (curTreeData.value.id == id) {
       console.log('name', name.name)
       // reload() 刷新页面用来更新title，此处需优化
-      if (curTreeData.value.type == 'a' || curTreeData.value.type == 'w') {
+      if (['a', 'w', 'p'].includes(curTreeData.value.type)) {
         reload()
       }
       handleNodeClick({
@@ -533,6 +544,9 @@ const handleNodeClick = async node => {
       })
       await getMindMapDataApi(node.articleId)
       router.push({ name: 'mindMap', query: { mid: node.articleId } })
+      break
+    case 'p':
+      router.push({ name: 'FramePPT', query: { pid: node.articleId } })
       break
   }
 }

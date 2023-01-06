@@ -114,4 +114,3 @@ export const getLocalConfig = () => {
   }
   return null
 }
-

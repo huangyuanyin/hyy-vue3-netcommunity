@@ -119,9 +119,9 @@ const toWorkSpace = () => {
 }
 
 onMounted(() => {
-  if (document.body.clientWidth < 1500) {
-    collapseChage()
-  }
+  // if (document.body.clientWidth < 1500) {
+  //   collapseChage()
+  // }
 })
 
 // 控制台跳转

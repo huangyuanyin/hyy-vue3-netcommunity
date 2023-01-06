@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      v-model="isShowDialog"
+      v-model="showDialog"
       custom-class="saveDialog"
       title="新建文档"
       @close="closeSaveDialog"
@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, toRefs, defineProps, defineEmits, onMounted, computed, watch } from 'vue'
+import { reactive, ref, toRefs, defineEmits, onMounted, computed, watch } from 'vue'
 import { getTag } from '@/api/tag.js'
 import { uploadArticleFileApi } from '@/api/upload.js'
 import { getCategorysInfo } from '@/api/category.js'
@@ -96,6 +96,7 @@ const props = defineProps({
 const { treeData } = toRefs(props)
 const emits = defineEmits(['closeSaveDialog', 'goRefresh'])
 
+const showDialog = ref(false)
 const taglist = ref([]) // 标签列表
 const fileUpload = ref(null)
 const fileName = ref('')
@@ -117,6 +118,7 @@ const disabled = ref(false)
 watch(
   () => props.isShowDialog,
   () => {
+    showDialog.value = props.isShowDialog
     if (props.isShowDialog) {
       saveForm.category = JSON.parse(sessionStorage.getItem('node')) ? JSON.parse(sessionStorage.getItem('node')).id : null
     }
