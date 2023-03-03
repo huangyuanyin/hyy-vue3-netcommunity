@@ -7,12 +7,12 @@
   * @FilePath: \vue3-netforum\src\Dashboard.vue
 -->
 <template>
-  <div>
-    <el-card shadow="never">
+  <div style="height: 100%;">
+    <el-card shadow="never" style="height: 100%;">
       <span class="spantop">推荐话题</span>
       <el-row>
         <el-col :span="20" :offset="2">
-          <el-carousel :interval="4000" type="card" height="400px">
+          <el-carousel :interval="4000" type="card" class="carousel">
             <el-carousel-item v-for="(item, index) in topics" :key="index">
               <el-card :body-style="{ padding: '0px' }">
                 <el-image :src="item.url" fit="cover" class="image"></el-image>
@@ -144,6 +144,10 @@ export default {
   line-height: 20px;
   font-weight: 600;
   color: #606266;
+}
+
+.carousel {
+  height: 400px;
 }
 .el-row {
   margin-top: 15px;

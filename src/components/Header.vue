@@ -178,7 +178,11 @@ const changeDrawer = drawer => {
 
   .el-button {
     background-color: #242f42;
+    color: #fff;
     border: none;
+  }
+  .el-button:hover {
+    color: #409eff;
   }
 }
 
@@ -186,6 +190,12 @@ const changeDrawer = drawer => {
   float: left;
   // width: 220px;
   line-height: 50px;
+  .el-button {
+    color: #fff;
+  }
+  .el-button:hover {
+    color: #242f42;
+  }
 }
 
 .logo span {
