@@ -10,7 +10,7 @@
               </el-icon>
               <template #title
                 >产品与服务
-                <el-icon style="margin-left: 40px">
+                <el-icon class="icon-style">
                   <ArrowRight />
                 </el-icon>
               </template>
@@ -51,7 +51,7 @@
             </el-menu-item>
           </el-menu>
         </el-col>
-        <el-col :span="20">
+        <el-col :span="20" class="server-wrap">
           <el-card body-style="{ padding: '60px' }" :style="{ height: height }">
             <template #header>
               <el-input v-model="filter" style="width: 80%" placeholder="请输入服务名称"></el-input>
@@ -109,7 +109,7 @@
 <script setup>
 import { defineProps, ref, computed, defineEmits } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Grid, Monitor, ArrowRight, Close, Suitcase, Platform, Notebook, Position } from '@element-plus/icons-vue'
+import { Grid, Monitor, ArrowRight, Close, Suitcase, Platform, Notebook, Position, TrendCharts } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 // import { useAppStore } from "@/store/modules/app";
 
@@ -220,7 +220,7 @@ const goTo = value => {
 // 侧边栏响应
 const handleSelect = value => {
   let url = ''
-  let console_url = sessionStorage.getItem('CONSOLE_URL')
+  let console_url = process.env.VITE_APP_CONSOLE_URL
   localStorage.setItem('token', sessionStorage.getItem('token'))
   url = console_url + '/' + value
   window.location.href = url
@@ -249,8 +249,19 @@ const handleClose = () => {
     display: flex !important;
     align-items: center;
   }
+  :deep(.el-card__header) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .icon-style {
+    margin-left: 40px;
+  }
 
   :deep(.el-drawer__body) {
+    ul {
+      height: 100vh;
+    }
     padding: 0px;
   }
 
@@ -277,6 +288,14 @@ const handleClose = () => {
 
   .closeStyle:hover {
     cursor: pointer;
+  }
+}
+</style>
+
+<style lang="scss">
+.server-wrap {
+  .el-card {
+    height: 99vh !important;
   }
 }
 </style>

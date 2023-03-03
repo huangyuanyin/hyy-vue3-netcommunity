@@ -3,7 +3,7 @@
     <v-header />
     <v-sidebar v-if="!siderbar" />
     <vSidebarNode v-if="siderbar" />
-    <div class="content-box" :class="{ 'content-collapse': collapse }">
+    <div class="content-box ignore-width" :class="{ 'content-collapse': collapse }">
       <div class="content">
         <router-view v-slot="{ Component }">
           <transition name="move" mode="out-in">
@@ -50,7 +50,8 @@ export default {
   height: 100vh;
 }
 
-.content-box {
+.ignore-width {
   // height: 100%;
+  margin-right: -17px;
 }
 </style>

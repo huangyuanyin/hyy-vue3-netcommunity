@@ -184,7 +184,7 @@ const changeDrawer = drawer => {
 
 .logo {
   float: left;
-  width: 220px;
+  // width: 220px;
   line-height: 50px;
 }
 

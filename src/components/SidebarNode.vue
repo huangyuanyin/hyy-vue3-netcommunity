@@ -665,7 +665,6 @@ watch(
   overflow: hidden;
   margin-right: 1px;
 }
-
 .labelStyle {
   max-width: 170px;
   white-space: nowrap;

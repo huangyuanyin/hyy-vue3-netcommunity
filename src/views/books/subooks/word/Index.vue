@@ -65,19 +65,13 @@
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item command="delete">
-                        <el-icon>
-                          <delete />
-                        </el-icon>删除
+                        <el-icon> <delete /> </el-icon>删除
                       </el-dropdown-item>
                       <el-dropdown-item command="download">
-                        <el-icon>
-                          <Download />
-                        </el-icon>下载
+                        <el-icon> <Download /> </el-icon>下载
                       </el-dropdown-item>
                       <el-dropdown-item command="update" disabled>
-                        <el-icon>
-                          <Checked />
-                        </el-icon>评审
+                        <el-icon> <Checked /> </el-icon>评审
                       </el-dropdown-item>
                       <!-- <el-dropdown-item command="update">
                         <el-icon><edit /></el-icon>编辑
@@ -134,18 +128,18 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, inject } from "vue";
+import { ref, computed, watch, onMounted, inject } from 'vue'
 import { getForumInfo, deleteForum, deleteTopics } from '@/api/forum.js'
 import { downloadArticleFileApi } from '@/api/download.js'
-import { downloadFile } from "@/utils/file.js"
-import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { downloadFile } from '@/utils/file.js'
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import Markdown from '@/components/markdown/preview.vue'
-import answerpost from "./subdetail/AnswerPost.vue";
-import AnswerList from "./subdetail/AnswerList.vue";
+import answerpost from './subdetail/AnswerPost.vue'
+import AnswerList from './subdetail/AnswerList.vue'
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 const reload = inject('reload')
 // 是否刷新回复列表
 const isRefresh = ref(0)
@@ -154,8 +148,8 @@ const fourumdata = ref({})
 
 // 最小高度
 const minHeight = computed(() => {
-  return window.innerHeight - 55 + "px";
-});
+  return window.innerHeight - 55 + 'px'
+})
 
 // 回复按钮事件
 const answerHandle = () => {
@@ -170,19 +164,22 @@ const getForumData = () => {
   getForumInfo(route.query.wid).then(res => {
     fourumdata.value = res.data
   })
-};
+}
 
 getForumData()
 
-watch(() => route.query, () => {
-  if (route.query.wid) {
-    getForumData()
+watch(
+  () => route.query,
+  () => {
+    if (route.query.wid) {
+      getForumData()
+    }
+    if (route.query.aricleName) {
+      fourumdata.value.title = route.query.aricleName
+      console.log('dada', fourumdata.value.title)
+    }
   }
-  if (route.query.aricleName) {
-    fourumdata.value.title = route.query.aricleName
-    console.log("dada", fourumdata.value.title);
-  }
-})
+)
 
 onMounted(() => {
   setTimeout(() => {
@@ -198,25 +195,31 @@ onMounted(() => {
 // 点赞事件
 const likeHandle = () => {
   ElMessage({
-    message: "暂不支持",
-    type: "warning",
-  });
-};
+    message: '暂不支持',
+    type: 'warning'
+  })
+}
 
 // 收藏事件
 const collectHandle = () => {
   ElMessage({
-    message: "暂不支持",
-    type: "warning",
-  });
-};
+    message: '暂不支持',
+    type: 'warning'
+  })
+}
 
 // 编辑按钮
 const handleEdit = () => {
   if (fourumdata.value.type == 'a') {
-    router.push({ name: 'md', query: { tid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'a' } })
+    router.push({
+      name: 'md',
+      query: { tid: route.query.wid, category: fourumdata.value.category, type: 'edit', isRight: route.query.isRight, typeof: 'a' }
+    })
   } else {
-    router.push({ name: 'md', query: { mid: route.query.wid, category: fourumdata.value.category, type: "edit", isRight: route.query.isRight, typeof: 'w' } })
+    router.push({
+      name: 'md',
+      query: { mid: route.query.wid, category: fourumdata.value.category, type: 'edit', isRight: route.query.isRight, typeof: 'w' }
+    })
   }
 }
 
@@ -226,49 +229,49 @@ const goBack = () => {
 }
 
 // 是否刷新
-const getAnswerPostMsg = (msg) => {
+const getAnswerPostMsg = msg => {
   isRefresh.value = msg
 }
 
 // 更多操作按钮帖子
-const handleCommandMore = (command) => {
+const handleCommandMore = command => {
   switch (command) {
     case 'delete':
-      deleteApi();
-      break;
+      deleteApi()
+      break
     case 'download':
       handleDownload(route.query.wid)
-      break;
+      break
     default:
-      break;
+      break
   }
-};
+}
 
 // 下载预览文件
-const handleDownload = async (id) => {
+const handleDownload = async id => {
   downloadFile.judgeType(id)
 }
 
 // 删除接口
 const deleteApi = () => {
   // 二次确认删除
-  ElMessageBox.confirm("确定要删除吗？", "提示", {
+  ElMessageBox.confirm('确定要删除吗？', '提示', {
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
-    type: "warning",
-    draggable: true,
+    type: 'warning',
+    draggable: true
   })
     .then(() => {
       if (route.query && route.query.isRight) {
         // 删除帖子
         deleteForum(route.query.wid).then(res => {
-          ElMessage.success("删除成功");
+          ElMessage.success('删除成功')
           router.push({ name: 'subbooks', params: { wRefresh: true } })
         })
       } else {
         // 删除分类
         deleteTopics(fourumdata.value.category).then(res => {
-          ElMessage.success("删除成功");
+          ElMessage.success('删除成功')
           router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
         })
       }
@@ -276,22 +279,22 @@ const deleteApi = () => {
     .catch(() => {
       ElMessage({
         type: 'info',
-        message: 'Delete canceled',
+        message: 'Delete canceled'
       })
-    });
+    })
 }
 </script>
 
 <style lang="scss" scoped>
 .detail-wrap {
-  margin-bottom: 40px;
+  // margin-bottom: 40px;
 }
 
 .title {
   font-size: 24px;
   font-style: normal;
   font-weight: 700;
-  font-family: "宋体";
+  font-family: '宋体';
   color: black;
 }
 

@@ -82,6 +82,7 @@ export default {
   height: 100%;
   background-image: url(../assets/img/login-bg.jpg);
   background-size: 100%;
+  background-repeat: round;
 }
 .ms-title {
   width: 100%;
