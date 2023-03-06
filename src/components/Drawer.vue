@@ -220,8 +220,8 @@ const goTo = value => {
 // 侧边栏响应
 const handleSelect = value => {
   let url = ''
-  let console_url = process.env.VITE_APP_CONSOLE_URL
-  localStorage.setItem('token', sessionStorage.getItem('token'))
+  let console_url = process.env.VUE_APP_CONSOLE_URL
+  // localStorage.setItem('token', sessionStorage.getItem('token'))
   url = console_url + '/' + value
   window.location.href = url
 }

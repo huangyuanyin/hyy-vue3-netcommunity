@@ -1,11 +1,3 @@
-<!--
-  * @Description: 登录页面
-  * @Author: maxf
-  * @Date: 2021-12-12 22:49:29
-  * @LastEditors: maxf
-  * @LastEditTime: 2022-03-25 18:54:07
-  * @FilePath: \vue3-netforum\src\Login.vue
--->
 <template>
   <div class="login-wrap">
     <div class="ms-login">

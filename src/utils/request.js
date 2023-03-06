@@ -1,17 +1,8 @@
-/*
- * @Description: 请求封装
- * @Author: maxf
- * @Date: 2021-12-05 11:41:32
- * @LastEditors: maxf
- * @LastEditTime: 2022-03-15 11:41:32
- * @FilePath: \vue3-netforum\src\utils\request.js
- */
 import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import store from '@/store'
 import { useRouter } from 'vue-router'
 
-// create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
   // baseURL: 'http://10.4.150.27:8013',
@@ -19,41 +10,26 @@ const service = axios.create({
   // baseURL: 'http://172.16.71.179:8013', // 华耀 打包线上
   timeout: 200000
 })
-// request interceptor
+
 service.interceptors.request.use(
   config => {
     // do something before request is sent
     let token = sessionStorage.getItem('token')
     if (token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
       config.headers['Authorization'] = token
     }
     return config
   },
   error => {
-    // do something with request error
-    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
-const router = useRouter()
-// response interceptor
-service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-   */
 
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
+const router = useRouter()
+
+service.interceptors.response.use(
   response => {
     const res = response.data
-
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 1000) {
       ElMessage({
@@ -80,7 +56,6 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
     ElMessage({
       message: error.message,
       type: 'error',
