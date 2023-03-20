@@ -1,12 +1,3 @@
-/*
- * @Author: maxf
- * @Date: 2022-01-11 17:30:30
- * @LastEditTime: 2022-01-25 23:36:41
- * @LastEditors: Please set LastEditors
- * @Description: 用户信息
- * @FilePath: \vue3-netforum\src\store\modules\user.js
- */
-
 import jwtDecode from 'jwt-decode'
 
 export default {
@@ -27,7 +18,7 @@ export default {
     SET_TOKEN(state, data) {
       let decoded = jwtDecode(data)
       state.token = data
-      sessionStorage.setItem('token', state.token)
+      localStorage.setItem('token', state.token)
       sessionStorage.setItem('nickname', decoded.nickname || '')
       sessionStorage.setItem('username', decoded.username || '')
       state.username = decoded.username || ''
@@ -35,7 +26,7 @@ export default {
       state.role = decoded.role || ''
     },
     clean_Toen(state) {
-      sessionStorage.setItem('token', '')
+      localStorage.removeItem('token')
       sessionStorage.setItem('nickname', '')
       sessionStorage.setItem('username', '')
       sessionStorage.setItem('siderbar', '2')

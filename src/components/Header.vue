@@ -126,7 +126,7 @@ onMounted(() => {
 
 // 控制台跳转
 const toConsole = () => {
-  let url = sessionStorage.getItem('CONSOLE_URL') + '/#/center/mine'
+  let url = process.env.VUE_APP_CONSOLE_URL
   window.location.href = url
   // store.commit("app/handleSiderbar", false)
   // sessionStorage.setItem("siderbar", '2')
