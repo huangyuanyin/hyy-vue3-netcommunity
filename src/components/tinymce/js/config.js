@@ -25,7 +25,7 @@ export const init = {
     '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;苹果苹方=PingFang SC,Microsoft YaHei,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;', // 字体样式 微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif, 宋体=simsun,serif,仿宋体=FangSong,黑体=SimHei,Arial=arial,
   lineheight_formats: '0.5 0.8 1 1.2 1.5 1.75 2 2.5 3 4 5', // 行高配置，也可配置成"12px 14px 16px 20px"这种形式
   branding: false, // tiny技术支持信息是否显示
-  resize: false, // 编辑器宽高是否可变，false-否,true-高可变，'both'-宽高均可，注意引号
+  resize: true, // 编辑器宽高是否可变，false-否,true-高可变，'both'-宽高均可，注意引号
   // statusbar: false,  //最下方的元素路径和字数统计那一栏是否显示
   elementpath: false, // 元素路径是否显示
 

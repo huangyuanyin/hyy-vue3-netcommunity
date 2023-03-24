@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card :style="{ 'min-height': minHeight }">
+    <el-card>
       <template #header>
         <el-button @click="goBack">
           <el-icon>
@@ -12,11 +12,16 @@
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
         <el-form-item label="分类" prop="category" v-if="isRight === 'right' || categoryId === ''">
           <el-space>
-            <el-cascader :options="treeData" v-model="form.category" @change="handleChange"
-              :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
+            <el-cascader
+              :options="treeData"
+              v-model="form.category"
+              @change="handleChange"
+              :props="{ value: 'id', checkStrictly: true }"
+              clearable
+              :show-all-levels="false"
+            />
             <span style="margin-left: 30px">标签</span>
-            <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }">
-            </el-cascader>
+            <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }"> </el-cascader>
           </el-space>
         </el-form-item>
         <el-form-item label="标题" prop="title">
@@ -48,12 +53,12 @@
 <script>
 import { ref, reactive, toRefs, computed, watch, onMounted, inject } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router';
-import { ElMessage } from "element-plus";
+import { useRouter, useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.js'
 import { upload } from '@/api/common.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
-import { getTag } from "@/api/tag.js"
+import { getTag } from '@/api/tag.js'
 import Tinymce from '@/components/tinymce'
 import { judgeNodeType } from '@/utils/methods.js'
 export default {
@@ -62,17 +67,17 @@ export default {
   },
   setup() {
     const reload = inject('reload')
-    const router = useRouter();
-    const route = useRoute();
+    const router = useRouter()
+    const route = useRoute()
     const store = useStore()
     // 工作空间
-    const spaceid = computed(() => sessionStorage.getItem('spaceid'));
+    const spaceid = computed(() => sessionStorage.getItem('spaceid'))
     // 节点数据
-    const node = computed(() => store.getters.node);
+    const node = computed(() => store.getters.node)
     // 最小高度
     const minHeight = computed(() => {
-      return window.innerHeight - 55 + "px";
-    });
+      return window.innerHeight - 55 + 'px'
+    })
     // 预览对话框
     const dialog = ref(false)
     // 节点数据
@@ -80,15 +85,15 @@ export default {
     // 标签列表
     const taglist = ref([])
     // 路由传参
-    const categoryId = ref("")
+    const categoryId = ref('')
     // 富文本数据
     const state = reactive({
       value: ''
     })
     // 是否显示分类
-    const isRight = ref("")
+    const isRight = ref('')
 
-    const formRef = ref(null);
+    const formRef = ref(null)
     // 表单
     const form = reactive({
       category: '',
@@ -105,7 +110,7 @@ export default {
 
     // 获取节点数据
     const getNodeList = () => {
-      getCategorysInfo(spaceid.value).then((res) => {
+      getCategorysInfo(spaceid.value).then(res => {
         treeData.value = judgeNodeType(res.data)
       })
     }
@@ -125,45 +130,51 @@ export default {
         form.tags = res.data.tags
         state.value = res.data.body
       })
-    };
+    }
 
     getTagList()
     getNodeList()
     form.category = node.value.id
 
     // 监控 文章编辑
-    watch(() => route.query.tid, () => {
-      if (route.query.tid) {
-        getForumData()
+    watch(
+      () => route.query.tid,
+      () => {
+        if (route.query.tid) {
+          getForumData()
+        }
       }
-    })
+    )
 
-    watch(() => route.query, () => {
-      // 监控 分组ID
-      if (route.query && route.query.category) {
-        form.category = categoryId.value = route.query.category
-      } else {
-        categoryId.value = ''
+    watch(
+      () => route.query,
+      () => {
+        // 监控 分组ID
+        if (route.query && route.query.category) {
+          form.category = categoryId.value = route.query.category
+        } else {
+          categoryId.value = ''
+        }
+        // 监控 是否显示分类
+        if (route.query && route.query.isRight) {
+          isRight.value = route.query.isRight
+        } else {
+          isRight.value = ''
+        }
+        if (route.query && route.query.isAdd) {
+          formRef.value.resetFields()
+          state.value = ''
+          form.body = ''
+          form.title = ''
+          form.tags = []
+        }
+        if (route.query && route.query.type == 'right') {
+          getTagList()
+          getNodeList()
+          form.category = ' '
+        }
       }
-      // 监控 是否显示分类
-      if (route.query && route.query.isRight) {
-        isRight.value = route.query.isRight
-      } else {
-        isRight.value = ''
-      }
-      if (route.query && route.query.isAdd) {
-        formRef.value.resetFields()
-        state.value = ''
-        form.body = ''
-        form.title = ''
-        form.tags = []
-      }
-      if (route.query && route.query.type == 'right') {
-        getTagList()
-        getNodeList()
-        form.category = " "
-      }
-    })
+    )
 
     onMounted(() => {
       form.category = categoryId.value = route.query.category || ''
@@ -174,7 +185,7 @@ export default {
       }
     })
 
-    const loadWord = (evt) => {
+    const loadWord = evt => {
       const files = evt.target.files
       if (files == null || files.length == 0) {
         alert('No files wait for import')
@@ -183,12 +194,12 @@ export default {
       let name = files[0].name
       // console.log(name)
       // console.log(files[0])
-      let formData = new FormData();
+      let formData = new FormData()
       let header = {
-        "Content-Type": "multipart/form-data"
-      };
-      formData.append("file", files[0]);
-      formData.append("type", 'html');
+        'Content-Type': 'multipart/form-data'
+      }
+      formData.append('file', files[0])
+      formData.append('type', 'html')
       upload(header, formData).then(res => {
         form.title = name
         state.value = res.data
@@ -208,7 +219,7 @@ export default {
       router.push({ name: 'subbooks', params: { wRefresh: true } })
     }
 
-    const handleChange = (id) => {
+    const handleChange = id => {
       var len = id.length
       form.category = id[len - 1]
     }
@@ -217,9 +228,9 @@ export default {
     const saveHandle = () => {
       if (state.value == '') {
         ElMessage({
-          message: "内容不能为空",
-          type: "warning",
-        });
+          message: '内容不能为空',
+          type: 'warning'
+        })
         return
       }
       if (route.query.tid) {
@@ -233,9 +244,9 @@ export default {
     const addApi = () => {
       form.body = state.value
       form.author = sessionStorage.getItem('username')
-      formRef.value.validate((valid) => {
+      formRef.value.validate(valid => {
         if (!valid) return
-        if (route.query.type == "right") {
+        if (route.query.type == 'right') {
           getSaveApi(form)
         } else {
           save()
@@ -247,7 +258,7 @@ export default {
     const updateApi = () => {
       form.body = state.value
       form.author = sessionStorage.getItem('username')
-      formRef.value.validate((valid) => {
+      formRef.value.validate(valid => {
         if (!valid) return
         if (route.query && route.query.isRight == 'right') {
           getUpdateForumApi(route.query.tid, form)
@@ -264,26 +275,26 @@ export default {
       })
     }
 
-    // 编辑文章API 
+    // 编辑文章API
     const getUpdateForumApi = (id, form) => {
       updateForum(id, form).then(res => {
         ElMessage({
-          message: "编辑成功！",
-          type: "success",
-        });
+          message: '编辑成功！',
+          type: 'success'
+        })
         handleClose()
         toDetail(route.query.tid)
       })
     }
 
     // 新增文章 API
-    const getSaveApi = (form) => {
+    const getSaveApi = form => {
       addForum(form).then(res => {
         if (res.code === 1000) {
           ElMessage({
-            message: "新增成功",
-            type: "success",
-          });
+            message: '新增成功',
+            type: 'success'
+          })
           handleClose()
           toDetail(res.data)
         }
@@ -298,16 +309,16 @@ export default {
         type: form.type
       }
       // 新增节点
-      addCategorys(params).then((res) => {
+      addCategorys(params).then(res => {
         if (res.code == 1000) {
           form.category = res.data
           // 新增文章
           addForum(form).then(res => {
             if (res.code === 1000) {
               ElMessage({
-                message: "新增成功",
-                type: "success",
-              });
+                message: '新增成功',
+                type: 'success'
+              })
               handleClose()
               reload()
               toDetail(res.data)
@@ -320,15 +331,15 @@ export default {
     // 更新节点 API
     const getUpdateCategorysApi = () => {
       const title = { name: form.title }
-      updateCategorys(form.category, title).then((res) => {
+      updateCategorys(form.category, title).then(res => {
         ElMessage({
           message: '编辑成功！',
-          type: 'success',
+          type: 'success'
         })
       })
     }
     // 跳转到详情页
-    const toDetail = (wid) => {
+    const toDetail = wid => {
       router.replace({ name: 'detail', query: { wid: wid } })
     }
     // 预览
@@ -339,12 +350,12 @@ export default {
 
     // 保存草稿
     const draftHandle = () => {
-      formRef.value.validate((valid) => {
+      formRef.value.validate(valid => {
         if (!valid) return
         ElMessage({
-          message: "暂不支持",
-          type: "warning",
-        });
+          message: '暂不支持',
+          type: 'warning'
+        })
       })
     }
 
@@ -368,9 +379,10 @@ export default {
       save,
       reload,
       getSaveApi,
-      isRight, toDetail
+      isRight,
+      toDetail
     }
-  },
+  }
 }
 </script>
 

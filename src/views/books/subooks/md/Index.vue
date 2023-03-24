@@ -3,8 +3,12 @@
     <el-card>
       <template #header>
         <el-button type="primary" @click="goBack">
-          <el-icon> <Back /> </el-icon>返回
+          <el-icon> <Back /></el-icon> 返回
         </el-button>
+        <div>
+          <el-button disabled>保存草稿</el-button>
+          <el-button type="primary" @click="saveHandle">发布文章</el-button>
+        </div>
       </template>
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
         <el-form-item label="分类" prop="category" v-if="isRight === 'right' || categoryId === ''">
@@ -26,11 +30,23 @@
         <el-form-item label="编辑器风格" prop="editorType">
           <el-radio-group v-model="editorType" class="ml-4" :disabled="editorDisabled">
             <el-radio label="tiny" size="large">富文本</el-radio>
-            <el-radio label="Markdown" size="large">Markdown</el-radio>
+            <el-radio label="Markdown" size="large">Markdown（推荐）</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item prop="body">
-          <markdown-com :data="md" @input="getMd" v-show="editorType === 'Markdown'"></markdown-com>
+        <el-form-item label="word解析">
+          <input type="file" accept=".docx" @change="loadWord" />
+        </el-form-item>
+        <el-form-item label="上传附件">
+          <span>暂不支持</span>
+        </el-form-item>
+        <el-form-item prop="body" style="height: 70vh;">
+          <markdown-com
+            style="z-index: 99999;"
+            :data="md"
+            @input="getMd"
+            @fullScreen="fullScreen"
+            v-show="editorType === 'Markdown'"
+          ></markdown-com>
           <tinymce-com v-model="tinyValue" placeholder="请输入帖子详情内容(不少于10个字)" v-show="editorType === 'tiny'"> </tinymce-com>
         </el-form-item>
         <!-- <el-form-item>
@@ -39,16 +55,6 @@
         <!-- <div>
           <markdown-com :data="md" @input="getMd"></markdown-com>
         </div> -->
-        <el-form-item label="word解析">
-          <input type="file" accept=".docx" @change="loadWord" />
-        </el-form-item>
-        <el-form-item label="上传附件">
-          <span>暂不支持</span>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="saveHandle" round>发布文章</el-button>
-          <el-button round disabled>保存草稿</el-button>
-        </el-form-item>
       </el-form>
     </el-card>
   </div>
@@ -207,6 +213,10 @@ export default {
       if (typeof evt == 'string') {
         form.body = evt
       }
+    }
+
+    const fullScreen = val => {
+      console.log(`output->`)
     }
 
     // 选择分类ID
@@ -402,7 +412,8 @@ export default {
       editorType,
       tinyValue,
       editorDisabled,
-      judgeEditor
+      judgeEditor,
+      fullScreen
     }
   }
 }
@@ -412,13 +423,31 @@ export default {
 .my-tinymce {
   margin-bottom: 30px;
   width: 100%;
+  :deep(.tox-tinymce) {
+    min-height: 83vh;
+  }
 }
 
 .md-wrap {
-  // margin-bottom: 40px;
   min-height: calc(100vh - 50px);
+  max-width: calc(100vw - 260px);
+  position: relative;
+  :deep(.el-card__header) {
+    position: fixed;
+    top: 50px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    max-width: calc(100vw - 260px);
+    overflow: hidden;
+    padding-right: 40px;
+    padding-left: 40px;
+    z-index: 2;
+  }
   :deep(.el-card__body) {
-    height: calc(100vh - 50px);
+    position: relative;
+    margin-top: 60px;
   }
 }
 </style>
