@@ -17,12 +17,11 @@ export class downloadFile {
     this.url = url
   }
   static judgeType = async (id, type) => {
-    console.log('dada', type)
     switch (type) {
       case 'd':
         await getForumInfo(id).then(res => {
           if (res.code === 1000) {
-            let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
+            let url = process.env.VUE_APP_BASE_URL + '/' + res.data.body
             // var elemIF = document.createElement('iframe')
             // elemIF.src = url
             // elemIF.style.display = 'none'

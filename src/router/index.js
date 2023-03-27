@@ -141,8 +141,8 @@ const router = createRouter({
 })
 
 import store from '@/store'
-if (sessionStorage.getItem('token')) {
-  store.commit('user/SET_TOKEN', sessionStorage.getItem('token'))
+if (localStorage.getItem('token')) {
+  store.commit('user/SET_TOKEN', localStorage.getItem('token'))
 }
 
 if (sessionStorage.getItem('siderbar') == '1') {
@@ -171,7 +171,7 @@ router.beforeEach((to, from, next) => {
     store.commit('app/handleSiderbar', true)
   }
   // 获取Token
-  const token = sessionStorage.getItem('token')
+  const token = localStorage.getItem('token')
   if (token || to.path === '/login') {
     next()
   } else {

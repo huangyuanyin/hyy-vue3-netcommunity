@@ -1,6 +1,5 @@
 <template>
   <div id="editor">
-    <!-- box-shadow-style="0 2px 5px 0 rgba(0, 0, 0, 0.1)" -->
     <mavon-editor
       class="md"
       v-model="handbook"
@@ -61,7 +60,7 @@ export default {
       alignright: false, // 右对齐
       /* 2.2.1 */
       subfield: false, // 单双栏模式
-      preview: true // 预览
+      preview: false // 预览
     })
 
     watch(

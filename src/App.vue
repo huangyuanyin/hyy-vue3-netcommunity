@@ -22,8 +22,8 @@ export default {
       // sessionStorage.setItem('COMMUNITY_URL', process.env.VUE_APP_BASE_URL)
       // sessionStorage.setItem('CONSOLE_URL', process.env.VUE_APP_CONSOLE_URL)
       // })
-      sessionStorage.setItem('COMMUNITY_URL', process.env.VUE_APP_BASE_URL)
-      sessionStorage.setItem('CONSOLE_URL', process.env.VUE_APP_CONSOLE_URL)
+      // sessionStorage.setItem('COMMUNITY_URL', process.env.VUE_APP_BASE_URL)
+      // sessionStorage.setItem('CONSOLE_URL', process.env.VUE_APP_CONSOLE_URL)
       console.log(process.env.VUE_APP_BASE_URL)
     }
     setServerConfig()

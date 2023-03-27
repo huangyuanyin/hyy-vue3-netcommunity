@@ -364,3 +364,10 @@ const deleteApi = () => {
   align-items: center;
 }
 </style>
+<style lang="scss">
+.detail-wrap {
+  .fa-mavon-eye-slash {
+    display: none;
+  }
+}
+</style>

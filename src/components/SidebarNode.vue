@@ -41,6 +41,7 @@
         accordion
         @current-change="handleNodeClick"
         @node-drop="handleDrop"
+        :allow-drop="allowDrop"
         node-key="id"
         :props="defaultProps"
         :default-expanded-keys="defaultExpandIds"
@@ -60,11 +61,12 @@
             </div>
             <div class="buttonStyle">
               <!-- +号 -->
-              <el-dropdown @command="handleNewInstruction" trigger="hover" @visible-change="showIcon">
+              <el-dropdown @command="handleNewInstruction" trigger="hover" @visible-change="showIcon" v-if="data.type === 'l'">
                 <span class="left-button" ref="leftButton">
-                  <el-icon>
+                  <!-- <el-icon>
                     <Plus />
-                  </el-icon>
+                  </el-icon> -->
+                  <svg-icon iconName="icon-top"></svg-icon>
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -92,9 +94,7 @@
               <div style="display: flex;" @click.stop>
                 <el-dropdown @command="handleRoot" trigger="hover">
                   <span>
-                    <el-icon>
-                      <more-filled />
-                    </el-icon>
+                    <svg-icon iconName="icon-gengduo"></svg-icon>
                   </span>
                   <template #dropdown>
                     <el-dropdown-menu>
@@ -563,6 +563,14 @@ const getMindMapDataApi = id => {
     })
     loadingInstance.value.close()
   })
+}
+
+const allowDrop = (draggingNode, dropNode, type) => {
+  if (dropNode.data.type !== 'l') {
+    return false
+  } else {
+    return true
+  }
 }
 
 // 节点拖拽
