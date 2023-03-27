@@ -95,6 +95,14 @@
                         <Delete />
                       </el-icon>
                     </el-button>
+                    <el-button
+                      text
+                      class="copy"
+                      :data-clipboard-text="shareLink"
+                      @click="handleShare(question.type, question.id, question)"
+                    >
+                      <el-icon :size="16"><Share /></el-icon>
+                    </el-button>
                     <el-button text v-if="['d', 'a', 'w'].includes(question.type)" @click="handleDownload(question.id, question.type)">
                       <el-icon :size="16">
                         <Download />
@@ -148,7 +156,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, reactive, watchEffect, inject } from 'vue'
+import { ref, computed, watch, reactive, watchEffect, nextTick } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
 import SaveDialog from '@/components/SaveDialog.vue'
@@ -164,11 +172,13 @@ import { Base64 } from 'js-base64'
 import { utc2beijing } from '@/utils/util.js'
 import { getCategorysInfo } from '@/api/category.js'
 import { judgeNodeType } from '@/utils/methods.js'
+import Clipboard from 'clipboard'
 
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
 const spaceid = ref(sessionStorage.getItem('spaceid')) // 工作空间标题名
+const shareLink = ref('') // 分享链接
 const treeData = ref([])
 // 等待
 let loadingInstance
@@ -321,6 +331,47 @@ const handleCommand = value => {
   if (value == 'documentManage') {
     isShowDialog.value = true
   }
+}
+
+// 分享链接
+const handleShare = async (type, id) => {
+  let clipboard = await new Clipboard('.copy')
+  if (type == 'd') {
+    await getForumInfo(id).then(async res => {
+      if (res.code === 1000) {
+        let url = 'http://10.4.150.55:8013' + '/' + res.data.body
+        shareLink.value = 'http://10.4.150.55:8020/onlinePreview?url=' + encodeURIComponent(Base64.encode(url))
+      }
+    })
+  }
+  if (type === 'w') {
+    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/detail?wid=' + id + '&isRight=right'
+  }
+  if (type === 'e') {
+    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/excel?eid=' + id + '&isRight=right'
+  }
+  if (type === 'a') {
+    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/detail?wid=' + id + '&isRight=right'
+  }
+  if (type === 'm') {
+    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/mindMap?mid=' + id + '&isRight=right'
+  }
+  if (type === 'p') {
+    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/FramePPT?pid=' + id + '&isRight=right'
+  }
+  nextTick(() => {
+    clipboard.on('success', e => {
+      ElMessage.success('分享链接已复制到剪贴板')
+      // 释放内存
+      clipboard.destroy()
+    })
+    clipboard.on('error', e => {
+      // 不支持复制
+      ElMessage.error('该浏览器不支持自动复制')
+      // 释放内存
+      clipboard.destroy()
+    })
+  })
 }
 
 // 跳转至文章详情页

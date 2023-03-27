@@ -63,9 +63,6 @@
               <!-- +号 -->
               <el-dropdown @command="handleNewInstruction" trigger="hover" @visible-change="showIcon" v-if="data.type === 'l'">
                 <span class="left-button" ref="leftButton">
-                  <!-- <el-icon>
-                    <Plus />
-                  </el-icon> -->
                   <svg-icon iconName="icon-top"></svg-icon>
                 </span>
                 <template #dropdown>
@@ -98,9 +95,13 @@
                   </span>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <!-- <el-dropdown-item :command="'add' + ',' + data.id">新建子分组</el-dropdown-item> -->
                       <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
                         <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
+                      </el-dropdown-item>
+                      <el-dropdown-item :command="'share' + ',' + data.articleId + ',' + data.type" v-if="data.type !== 'l'">
+                        <div class="copy" :data-clipboard-text="shareLink">
+                          <svg-icon iconName="icon-fenxiang1" className="is-Folder" />分享
+                        </div>
                       </el-dropdown-item>
                       <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type">
                         <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
@@ -152,12 +153,14 @@ import { getCategorysInfo, addCategorys, updateCategorys, deleteCategorys } from
 import { updateForum, getForumInfo } from '@/api/forum.js'
 // import exampleData from 'simple-mind-map/example/exampleData';
 import bus from '@/utils/bus.js'
+import Clipboard from 'clipboard'
 
 const reload = inject('reload')
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
 const loadingInstance = ref('')
+const shareLink = ref('') // 分享链接
 const spacename = computed(() => sessionStorage.getItem('spacename'))
 const spaceid = computed(() => sessionStorage.getItem('spaceid'))
 // const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
@@ -303,6 +306,47 @@ const handleRoot = command => {
       articleId: tmp[4]
     }
     dialogEdit.value = true
+  }
+  if (tmp[0] === 'share') {
+    switch (tmp[2]) {
+      case 'w':
+        nextTick(() => {
+          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/detail?wid=' + tmp[1]
+        })
+        break
+      case 'e':
+        nextTick(() => {
+          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/excel?eid=' + tmp[1]
+        })
+        break
+      case 'a':
+        nextTick(() => {
+          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/detail?wid=' + tmp[1]
+        })
+        break
+      case 'm':
+        nextTick(() => {
+          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/mindMap?mid=' + tmp[1]
+        })
+        break
+      case 'p':
+        nextTick(() => {
+          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/FramePPT?pid=' + tmp[1]
+        })
+        break
+    }
+    let clipboard = new Clipboard('.copy')
+    clipboard.on('success', e => {
+      ElMessage.success('分享链接已复制到剪贴板')
+      // 释放内存
+      clipboard.destroy()
+    })
+    clipboard.on('error', e => {
+      // 不支持复制
+      ElMessage.error('该浏览器不支持自动复制')
+      // 释放内存
+      clipboard.destroy()
+    })
   }
   if (tmp[0] === 'remove') {
     nodeData.value = tmp[2]

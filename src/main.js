@@ -27,7 +27,9 @@ import i18n from './i18n.js'
 // });
 
 const app = createApp(App)
+
 app.component('SvgIcon', SvgIcon)
+
 app
   .use(installElementPlus)
   .use(elementIcon)
