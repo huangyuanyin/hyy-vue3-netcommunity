@@ -7,11 +7,9 @@
 <script>
 import { onMounted, reactive, toRefs, watch } from 'vue'
 import axios from 'axios'
-// 引入tinymce编辑器
-import Editor from '@tinymce/tinymce-vue'
+import Editor from '@tinymce/tinymce-vue' // 引入tinymce编辑器
 import tinymce from 'tinymce/tinymce' // tinymce默认hidden，不引入则不显示编辑器
-// 导入配置文件
-import './js/importTinymce'
+import './js/importTinymce' // 导入配置文件
 import { init } from './js/config'
 import { useRoute } from 'vue-router'
 export default {
@@ -34,7 +32,7 @@ export default {
     style: {
       type: Object,
       default: () => {
-        return { width: '100%', heigth: '500' }
+        return { width: '100%', heigth: '70vh' }
       }
     },
     // 图片上传服务器地址

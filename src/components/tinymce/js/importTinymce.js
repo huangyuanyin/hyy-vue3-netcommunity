@@ -16,7 +16,6 @@ import 'tinymce/plugins/code' // 编辑源码
 import 'tinymce/plugins/codesample' // 代码示例
 import 'tinymce/plugins/directionality' // 文字方向
 import 'tinymce/plugins/emoticons' // 表情
-
 import 'tinymce/plugins/fullpage' // 文档属性
 import 'tinymce/plugins/fullscreen' // 全屏
 import 'tinymce/plugins/help' // 帮助

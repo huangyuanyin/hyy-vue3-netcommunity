@@ -5,9 +5,10 @@
       @change="handleChange"
       :ishljs="true"
       :toolbars="toolbars"
-      :subfield="false"
       :boxShadow="false"
       @fullScreen="fullScreen"
+      ref="mavonEditorRef"
+      @imgAdd="imgAdd"
     ></mavon-editor>
   </div>
 </template>
@@ -16,12 +17,16 @@
 import { reactive, ref, watch } from 'vue'
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import { useRoute } from 'vue-router'
+import { uploadMdImageApi } from '@/api/upload'
 
 const props = defineProps({
   data: String
 })
 const emit = defineEmits(['input'])
 
+const route = useRoute()
+const mavonEditorRef = ref() // 获取编辑器Vue实例子
 const handbook = ref('')
 const toolbars = reactive({
   bold: true, // 粗体
@@ -73,6 +78,18 @@ const handleChange = (val, render) => {
 
 const fullScreen = () => {
   emit('fullScreen', true)
+}
+
+const imgAdd = async (name, $file) => {
+  // 第一步.将图片上传到服务器.
+  var formdata = new FormData()
+  formdata.append('id', route.query.mid)
+  formdata.append('file', $file)
+  let res = await uploadMdImageApi(formdata)
+  if (res.code === 1000) {
+    // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
+    mavonEditorRef.value.$img2Url(name, process.env.VUE_APP_BASE_URL + '/' + res.data[0])
+  }
 }
 </script>
 

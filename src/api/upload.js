@@ -13,3 +13,13 @@ export function uploadArticleFileApi(data) {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
+
+// markdown上传图片
+export function uploadMdImageApi(data) {
+  return request({
+    url: '/forum/upload_image/',
+    method: 'post',
+    data,
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+}

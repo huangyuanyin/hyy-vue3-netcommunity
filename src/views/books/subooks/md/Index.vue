@@ -2,11 +2,11 @@
   <div class="md-wrap">
     <el-card>
       <template #header>
-        <el-button type="primary" @click="goBack">
-          <el-icon> <Back /></el-icon> 返回
+        <el-button type="danger" @click="goBack">
+          放弃
         </el-button>
         <div>
-          <el-button disabled>保存草稿</el-button>
+          <el-button type="info" disabled>保存草稿</el-button>
           <el-button type="primary" @click="saveHandle">发布文章</el-button>
         </div>
       </template>
@@ -24,7 +24,7 @@
             <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }"> </el-cascader>
           </el-space>
         </el-form-item>
-        <el-form-item label="标题" prop="title">
+        <el-form-item label="文章标题" prop="title">
           <el-input v-model="form.title" show-word-limit maxlength="200" placeholder="请输入标题" type="text"></el-input>
         </el-form-item>
         <el-form-item label="编辑器风格" prop="editorType">
@@ -33,21 +33,21 @@
             <el-radio label="Markdown" size="large">Markdown（推荐）</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="word解析">
-          <input type="file" accept=".docx" @change="loadWord" />
+        <el-form-item label="word解析" v-if="editorType === 'tiny'">
+          <div>
+            <label for="fileInput" class="customUploadButton">上传文件</label>
+            <span>{{ fileName }}</span>
+          </div>
+          <input type="file" accept=".docx" id="fileInput" @change="loadWord" class="uploadInput" />
         </el-form-item>
         <el-form-item label="上传附件">
-          <span>暂不支持</span>
+          <el-tag type="info">暂不支持</el-tag>
         </el-form-item>
-        <el-form-item prop="body" style="height: 70vh;">
-          <markdown-com
-            style="z-index: 99999;"
-            :data="md"
-            @input="getMd"
-            @fullScreen="fullScreen"
-            v-show="editorType === 'Markdown'"
-          ></markdown-com>
-          <tinymce-com v-model="tinyValue" placeholder="请输入帖子详情内容(不少于10个字)" v-show="editorType === 'tiny'"> </tinymce-com>
+        <el-form-item prop="body" style="height: 70vh;" v-if="editorType === 'Markdown'">
+          <markdown-com style="z-index: 99999;" :data="md" @input="getMd" @fullScreen="fullScreen"></markdown-com>
+        </el-form-item>
+        <el-form-item prop="body" v-if="editorType === 'tiny'">
+          <tinymce-com v-model="tinyValue" placeholder="请输入帖子详情内容(不少于10个字)"> </tinymce-com>
         </el-form-item>
         <!-- <el-form-item>
           <v-md-editor v-model="md" height="400px"></v-md-editor>
@@ -76,6 +76,7 @@ import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from '@/api/tag.js'
 import { upload } from '@/api/common.js'
 import { judgeNodeType } from '@/utils/methods.js'
+
 export default {
   name: 'editor',
   components: {
@@ -106,6 +107,7 @@ export default {
     const tinyValue = ref('') // 富文本编辑器数据
     const editorType = ref('tiny')
     const editorDisabled = ref(false)
+    const fileName = ref('暂无文件')
     const formRef = ref(null)
     // 路由传参
     const categoryId = ref('')
@@ -228,6 +230,7 @@ export default {
     // 上传word
     const loadWord = evt => {
       const files = evt.target.files
+      fileName.value = files[0].name
       if (files == null || files.length == 0) {
         alert('请至少选择一个文件！')
         return
@@ -413,7 +416,8 @@ export default {
       tinyValue,
       editorDisabled,
       judgeEditor,
-      fullScreen
+      fullScreen,
+      fileName
     }
   }
 }
@@ -423,9 +427,6 @@ export default {
 .my-tinymce {
   margin-bottom: 30px;
   width: 100%;
-  :deep(.tox-tinymce) {
-    min-height: 83vh;
-  }
 }
 
 .md-wrap {
@@ -448,6 +449,26 @@ export default {
   :deep(.el-card__body) {
     position: relative;
     margin-top: 60px;
+  }
+  :deep(.el-card) {
+    min-height: 100vh;
+  }
+  .customUploadButton {
+    display: inline-block;
+    background-color: #ecf5ff;
+    color: #409eff;
+    border: 1px solid #d9ecff;
+    cursor: pointer;
+    padding: 0 0.556vw;
+    height: 1.616vw;
+    line-height: 1.616vw;
+    border-radius: 0.202vw;
+    font-size: 0.606vw;
+    box-sizing: border-box;
+    margin-right: 10px;
+  }
+  .uploadInput {
+    display: none;
   }
 }
 </style>
