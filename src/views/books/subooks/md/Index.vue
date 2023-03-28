@@ -33,12 +33,12 @@
             <el-radio label="Markdown" size="large">Markdown（推荐）</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="word解析" v-if="editorType === 'tiny'">
+        <el-form-item label="word解析">
           <div>
             <label for="fileInput" class="customUploadButton">上传文件</label>
             <span>{{ fileName }}</span>
           </div>
-          <input type="file" accept=".docx" id="fileInput" @change="loadWord" class="uploadInput" />
+          <input type="file" accept=".docx,.md" id="fileInput" @change="loadWord" class="uploadInput" />
         </el-form-item>
         <el-form-item label="上传附件">
           <el-tag type="info">暂不支持</el-tag>
@@ -252,6 +252,7 @@ export default {
       formRef.value.resetFields()
       md.value = ''
       form.body = ''
+      form.category = ''
       router.push({ name: 'subbooks', params: { wRefresh: true } })
     }
 
@@ -346,7 +347,8 @@ export default {
     const save = () => {
       let params = {
         name: form.title,
-        parent_category: form.category,
+        // parent_category: form.category,
+        parent_category: route.query.category,
         type: form.type,
         author: sessionStorage.getItem('username'),
         public: sessionStorage.getItem('spacePublic')

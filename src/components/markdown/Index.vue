@@ -105,7 +105,7 @@ const imgAdd = async (name, $file) => {
   .v-note-panel {
     height: 100%;
     overflow: auto;
-    min-height: 100vh;
+    // min-height: 100vh;
     height: 100%;
     overflow-y: auto;
     box-sizing: border-box;
@@ -113,10 +113,6 @@ const imgAdd = async (name, $file) => {
     box-sizing: content-box;
     padding-left: 25px;
     overflow: hidden;
-    .v-note-show {
-      height: 100% !important;
-      padding: 0;
-    }
   }
   .v-show-content {
     min-height: 100vh;
@@ -128,5 +124,11 @@ const imgAdd = async (name, $file) => {
     padding-left: 25px;
     overflow: hidden;
   }
+}
+</style>
+<style lang="scss">
+.v-note-show {
+  max-height: 100% !important;
+  padding: 0;
 }
 </style>
