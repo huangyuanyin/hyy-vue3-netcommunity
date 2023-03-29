@@ -28,6 +28,7 @@
     "jszip": "^3.10.0",
     "jwt-decode": "^3.1.2",
     "luckyexcel": "^1.0.1",
+    "markdown-it": "^13.0.1",
     "mavon-editor": "^3.0.0-beta",
     "mitt": "^3.0.0",
     "simple-mind-map": "^0.2.16",

@@ -89,14 +89,15 @@
             <span class="title">{{ fourumdata.title }}</span>
           </el-row>
           <el-row class="topinfo">
-            <el-col :span="2" class="user">
+            <el-col :span="8" class="user">
               <div>
                 <img src="@/assets/img/img.jpg" />
               </div>
-              <span>{{ fourumdata.author }}</span>
-            </el-col>
-            <el-col :span="4" :offset="18">
-              <time class="time">{{ fourumdata.pub_time }}</time>
+              <div>
+                <span>{{ fourumdata.author }}</span>
+                <time class="time" style="margin: 10px;">发布于</time>
+                <time class="time">{{ utc2beijing(fourumdata.pub_time) }}</time>
+              </div>
             </el-col>
           </el-row>
           <el-row style="margin-top: 30px">
@@ -137,6 +138,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import Markdown from '@/components/markdown/preview.vue'
 import answerpost from './subdetail/AnswerPost.vue'
 import AnswerList from './subdetail/AnswerList.vue'
+import { utc2beijing } from '@/utils/util.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -304,7 +306,6 @@ const deleteApi = () => {
 
 .topinfo .user {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 

@@ -3,7 +3,7 @@
     <el-card>
       <template #header>
         <el-button type="danger" @click="goBack">
-          放弃
+          返回
         </el-button>
         <div>
           <el-button type="info" disabled>保存草稿</el-button>
@@ -33,12 +33,19 @@
             <el-radio label="Markdown" size="large">Markdown（推荐）</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="word解析">
+        <el-form-item label="word解析" v-if="editorType === 'tiny'">
           <div>
             <label for="fileInput" class="customUploadButton">上传文件</label>
             <span>{{ fileName }}</span>
           </div>
-          <input type="file" accept=".docx,.md" id="fileInput" @change="loadWord" class="uploadInput" />
+          <input type="file" accept=".docx" id="fileInput" @change="loadWord" class="uploadInput" />
+        </el-form-item>
+        <el-form-item label="文件解析" v-if="editorType === 'Markdown'">
+          <div>
+            <label for="fileInput" class="customUploadButton">上传文件</label>
+            <span>{{ fileName }}</span>
+          </div>
+          <input type="file" accept=".docx,.md" id="fileInput" @change="loadMd" class="uploadInput" />
         </el-form-item>
         <el-form-item label="上传附件">
           <el-tag type="info">暂不支持</el-tag>
@@ -76,6 +83,9 @@ import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from '@/api/tag.js'
 import { upload } from '@/api/common.js'
 import { judgeNodeType } from '@/utils/methods.js'
+
+import MarkdownIt from 'markdown-it'
+import { uploadMdImageApi } from '@/api/upload'
 
 export default {
   name: 'editor',
@@ -248,6 +258,32 @@ export default {
       })
     }
 
+    // 解析md
+    const loadMd = () => {
+      // 本地上传md文件并解析
+      const file = document.getElementById('fileInput').files[0]
+      fileName.value = file.name
+      console.log(`output->file`, file)
+      if (file) {
+        const reader = new FileReader()
+        reader.readAsText(file, 'UTF-8')
+        reader.onload = evt => {
+          md.value = evt.target.result
+        }
+      }
+    }
+
+    const uploadFile = async file => {
+      // 第一步.将图片上传到服务器.
+      var formdata = new FormData()
+      formdata.append('id', route.query.mid)
+      formdata.append('file', file)
+      let res = await uploadMdImageApi(formdata)
+      if (res.code === 1000) {
+        return res.data
+      }
+    }
+
     const handleClose = () => {
       formRef.value.resetFields()
       md.value = ''
@@ -385,6 +421,7 @@ export default {
     const goBack = () => {
       // router.push({ name: 'subbooks' })
       router.go(-1)
+      fileName.value = ''
     }
 
     // 判断编辑器种类和内容
@@ -419,7 +456,10 @@ export default {
       editorDisabled,
       judgeEditor,
       fullScreen,
-      fileName
+      fileName,
+      loadMd,
+      MarkdownIt,
+      uploadFile
     }
   }
 }
