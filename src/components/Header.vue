@@ -167,6 +167,12 @@ const changeDrawer = drawer => {
   width: 100%;
   height: 50px;
   color: #fff;
+  display: flex;
+  justify-content: space-between;
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .collapse-btn {

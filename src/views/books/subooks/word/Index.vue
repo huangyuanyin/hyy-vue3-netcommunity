@@ -2,8 +2,8 @@
   <div class="detail-wrap">
     <el-card :style="{ 'min-height': minHeight }">
       <!-- 帖子内容 -->
-      <el-row>
-        <el-col :span="1" :offset="1" style="margin-top: 10px">
+      <el-row style="justify-content: center;">
+        <!-- <el-col :span="1" :offset="1" style="margin-top: 10px">
           <div class="suspension">
             <el-row>
               <el-space direction="vertical" :size="12">
@@ -73,34 +73,59 @@
                       <el-dropdown-item command="update" disabled>
                         <el-icon> <Checked /> </el-icon>评审
                       </el-dropdown-item>
-                      <!-- <el-dropdown-item command="update">
-                        <el-icon><edit /></el-icon>编辑
-                      </el-dropdown-item> -->
                     </el-dropdown-menu>
                   </template>
                 </el-dropdown>
               </el-tooltip>
             </el-row>
           </div>
-        </el-col>
-        <el-col :span="18" :offset="1">
+        </el-col> -->
+        <el-col :span="22" class="row-title">
           <!-- <el-card shadow="never" :body-style="{ padding: '30px' }"> -->
-          <el-row>
-            <span class="title">{{ fourumdata.title }}</span>
-          </el-row>
-          <el-row class="topinfo">
-            <el-col :span="8" class="user">
-              <div>
-                <img src="@/assets/img/img.jpg" />
-              </div>
-              <div>
-                <span>{{ fourumdata.author }}</span>
-                <time class="time" style="margin: 10px;">发布于</time>
-                <time class="time">{{ utc2beijing(fourumdata.pub_time) }}</time>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row style="margin-top: 30px">
+          <div class="button-row">
+            <el-row>
+              <el-col :span="24">
+                <div class="is-editIcon">
+                  <span class="title">{{ fourumdata.title }}</span>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row class="topinfo">
+              <el-col :span="23" class="user" style="display:flex">
+                <div style="display: flex;align-items: center;">
+                  <img src="@/assets/img/img.jpg" />
+                  <div style="display: inline;">
+                    <span>{{ fourumdata.author }}</span>
+                    <time class="time" style="margin: 10px;">发布于</time>
+                    <time class="time">{{ utc2beijing(fourumdata.pub_time) }}</time>
+                  </div>
+                </div>
+                <div>
+                  <el-tooltip content="编辑" placement="bottom" :show-after="300">
+                    <svg-icon iconName="icon-bianji1" className="is-editIcon-item" @click="handleEdit" />
+                  </el-tooltip>
+                  <el-tooltip content="分享" placement="bottom" :show-after="300">
+                    <div class="copy" :data-clipboard-text="shareLink" style="display:inline">
+                      <svg-icon iconName="icon-fenxiang" className="is-editIcon-item" @click="handleShare" />
+                    </div>
+                  </el-tooltip>
+                  <el-tooltip content="下载" placement="bottom" :show-after="300">
+                    <svg-icon iconName="icon-_xiazai" className="is-editIcon-item" @click="handleDownload(route.query.wid)" />
+                  </el-tooltip>
+                  <el-tooltip content="评论" placement="bottom" :show-after="300">
+                    <div class="aa" style="display: inline;">
+                      <svg-icon iconName="icon-pinglun" className="is-editIcon-item" @click="answerHandle" />
+                      <div class="tips">{{ fourumdata.comment_num }}</div>
+                    </div>
+                  </el-tooltip>
+                  <el-tooltip content="删除" placement="bottom" :show-after="300">
+                    <svg-icon iconName="icon-shanchu2" className="is-editIcon-item" @click="deleteApi()" />
+                  </el-tooltip>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+          <el-row style="margin-top: 13vh;z-index: 300;">
             <Markdown :data="fourumdata.body" />
           </el-row>
           <!-- v-md-editor -->
@@ -112,8 +137,9 @@
               <!-- <el-tag size="large" type="success">{{fourumdata.tags[0].name}}</el-tag> -->
             </el-col>
           </el-row>
+          <div style="height: 60px" id="answerlist"></div>
           <!-- 回复列表 -->
-          <AnswerList :refresh="isRefresh" id="answerlist" />
+          <AnswerList :refresh="isRefresh" />
           <!-- </el-card> -->
         </el-col>
       </el-row>
@@ -139,10 +165,12 @@ import Markdown from '@/components/markdown/preview.vue'
 import answerpost from './subdetail/AnswerPost.vue'
 import AnswerList from './subdetail/AnswerList.vue'
 import { utc2beijing } from '@/utils/util.js'
+import Clipboard from 'clipboard'
 
 const router = useRouter()
 const route = useRoute()
 const reload = inject('reload')
+const shareLink = ref('')
 // 是否刷新回复列表
 const isRefresh = ref(0)
 // 数据
@@ -157,7 +185,23 @@ const minHeight = computed(() => {
 const answerHandle = () => {
   document.querySelector('#answerlist').scrollIntoView({
     behavior: 'smooth',
-    block: 'end'
+    inline: 'start'
+  })
+}
+
+const handleShare = () => {
+  shareLink.value = window.location.href
+  let clipboard = new Clipboard('.copy')
+  clipboard.on('success', e => {
+    ElMessage.success('分享链接已复制到剪贴板')
+    // 释放内存
+    clipboard.destroy()
+  })
+  clipboard.on('error', e => {
+    // 不支持复制
+    ElMessage.error('该浏览器不支持自动复制')
+    // 释放内存
+    clipboard.destroy()
   })
 }
 
@@ -184,14 +228,14 @@ watch(
 )
 
 onMounted(() => {
-  setTimeout(() => {
-    if (route.query.status == 'answer') {
-      document.querySelector('#answerlist').scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      })
-    }
-  }, 100)
+  // setTimeout(() => {
+  //   if (route.query.status == 'answer') {
+  //     document.querySelector('#answerlist').scrollIntoView({
+  //       behavior: 'smooth',
+  //       block: 'start'
+  //     })
+  //   }
+  // }, 100)
 })
 
 // 点赞事件
@@ -258,8 +302,8 @@ const handleDownload = async id => {
 const deleteApi = () => {
   // 二次确认删除
   ElMessageBox.confirm('确定要删除吗？', '提示', {
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     type: 'warning',
     draggable: true
   })
@@ -281,7 +325,7 @@ const deleteApi = () => {
     .catch(() => {
       ElMessage({
         type: 'info',
-        message: 'Delete canceled'
+        message: '取消操作'
       })
     })
 }
@@ -290,6 +334,22 @@ const deleteApi = () => {
 <style lang="scss" scoped>
 .detail-wrap {
   // margin-bottom: 40px;
+  :deep(.el-card__body) {
+    overflow: -moz-scrollbars-none;
+    padding-top: 0px;
+  }
+
+  .row-title {
+    .button-row {
+      position: fixed;
+      top: 50px;
+      z-index: 301;
+      padding: 20px 0;
+      background-color: #fff;
+      width: 80%;
+      // margin-left: -20px;
+    }
+  }
 }
 
 .title {
@@ -301,16 +361,45 @@ const deleteApi = () => {
 }
 
 .topinfo {
-  margin-top: 30px;
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  .is-editIcon-item {
+    margin-left: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
+  .aa {
+    position: relative;
+  }
+  .tips {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 10px;
+    color: #fff;
+    text-align: center;
+    background-color: #f00;
+    border-radius: 50%;
+    position: absolute;
+    right: -10px;
+    top: -18px;
+  }
 }
 
 .topinfo .user {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .topinfo .user img {
-  display: block;
+  display: inline;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -363,6 +452,20 @@ const deleteApi = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.is-editIcon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  .is-editIcon-item {
+    margin-left: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    &:hover {
+      background: #409eff;
+    }
+  }
 }
 </style>
 <style lang="scss">

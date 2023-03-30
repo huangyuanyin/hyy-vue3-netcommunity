@@ -65,14 +65,10 @@
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item :command="'delete' + ',' + answer.id">
-                          <el-icon>
-                            <delete />
-                          </el-icon>删除
+                          <el-icon> <delete /> </el-icon>删除
                         </el-dropdown-item>
                         <el-dropdown-item :command="'update' + ',' + answer.id">
-                          <el-icon>
-                            <edit />
-                          </el-icon>编辑
+                          <el-icon> <edit /> </el-icon>编辑
                         </el-dropdown-item>
                       </el-dropdown-menu>
                     </template>
@@ -103,10 +99,10 @@
 </template>
 
 <script>
-import { ref, reactive, toRefs, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
-import "mavon-editor/dist/css/index.css";
+import { ref, reactive, toRefs, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import 'mavon-editor/dist/css/index.css'
 import { getComments, addComment, deleteComment } from '@/api/comment.js'
 import commentlist from './subAnswer/CommentList.vue'
 import Tinymce from '@/components/tinymce'
@@ -114,28 +110,28 @@ export default {
   props: {
     refresh: Number
   },
-  name: "editor",
+  name: 'editor',
   components: {
     'comment-list-com': commentlist,
     'tinymce-com': Tinymce
   },
   setup(props, ctx) {
-    const route = useRoute();
-    const router = useRouter();
+    const route = useRoute()
+    const router = useRouter()
     // 总评论数
-    const total = ref(100);
+    const total = ref(100)
     // 页码
-    const page = ref(1);
+    const page = ref(1)
     // 当前页码条数
-    const size = ref(10);
+    const size = ref(10)
     // 回复列表
-    const answers = ref([]);
+    const answers = ref([])
     // 回复评论对话框
-    const commentDialog = ref(false);
+    const commentDialog = ref(false)
     // 回复id
-    const answerid = ref(0);
+    const answerid = ref(0)
     // 菜单
-    const commandData = ref("最新回复");
+    const commandData = ref('最新回复')
     const state = reactive({
       value: ''
     })
@@ -147,11 +143,14 @@ export default {
     //   }
     // })
 
-    watch(() => route.query.wid, () => {
-      if (route.query.wid) {
-        getAnswerList();
+    watch(
+      () => route.query.wid,
+      () => {
+        if (route.query.wid) {
+          getAnswerList()
+        }
       }
-    })
+    )
 
     // 获取回复列表
     const getAnswerList = () => {
@@ -161,55 +160,55 @@ export default {
       getComments(params).then(res => {
         answers.value = res.data
       })
-    };
+    }
 
-    getAnswerList();
+    getAnswerList()
 
     // 下拉菜单
-    const handleCommand = (value) => {
-      commandData.value = value;
+    const handleCommand = value => {
+      commandData.value = value
       getAnswerList()
-    };
+    }
 
     // 页码响应
     const handleCurrentChange = () => {
-      getAnswerList();
-    };
+      getAnswerList()
+    }
 
     // 条数/页 响应
     const handleSizeChange = () => {
       page.value = 1
-      getAnswerList();
-    };
+      getAnswerList()
+    }
 
     // 点赞
-    const likeHandle = (id) => {
+    const likeHandle = id => {
       console.log(id)
       ElMessage({
-        message: "暂不支持",
-        type: "warning",
-      });
+        message: '暂不支持',
+        type: 'warning'
+      })
     }
 
     // 更多操作 回复
-    const answerHandleMore = (command) => {
+    const answerHandleMore = command => {
       let tmp = command.split(',')
       if (tmp[0] == 'delete') {
-        deleteApi(tmp[1]);
+        deleteApi(tmp[1])
       } else {
         ElMessage({
-          message: "暂不支持",
-          type: "warning",
-        });
+          message: '暂不支持',
+          type: 'warning'
+        })
       }
-    };
+    }
 
     // 提交回复
     const confirmHandle = () => {
       if (state.value.length == 0) {
         ElMessage({
           type: 'warning',
-          message: "内容不能为空！",
+          message: '内容不能为空！'
         })
         return
       }
@@ -220,47 +219,47 @@ export default {
       }
       addComment(params).then(res => {
         ElMessage({
-          message: "发布成功",
-          type: "success",
-        });
-        getAnswerList();
+          message: '发布成功',
+          type: 'success'
+        })
+        getAnswerList()
       })
     }
 
     // 查看回复的评论
-    const commentHandle = (id) => {
+    const commentHandle = id => {
       commentDialog.value = true
       answerid.value = id
     }
 
     // 评论对话框子组件回调
-    const getComment = (msg) => {
-      commentDialog.value = msg;
-    };
+    const getComment = msg => {
+      commentDialog.value = msg
+    }
 
     // 删除接口
-    const deleteApi = (id) => {
+    const deleteApi = id => {
       // 二次确认删除
-      ElMessageBox.confirm("确定要删除吗？", "提示", {
+      ElMessageBox.confirm('确定要删除吗？', '提示', {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
-        type: "warning",
-        draggable: true,
+        type: 'warning',
+        draggable: true
       })
         .then(() => {
           deleteComment(id).then(res => {
-            ElMessage.success("删除成功");
-            getAnswerList();
+            ElMessage.success('删除成功')
+            getAnswerList()
             router.push({ name: 'subbooks', params: { wRefresh: true } })
           })
         })
         .catch(() => {
           ElMessage({
             type: 'info',
-            message: 'Delete canceled',
+            message: 'Delete canceled'
           })
-        });
-    };
+        })
+    }
 
     return {
       total,
@@ -278,15 +277,16 @@ export default {
       handleCurrentChange,
       handleCommand,
       confirmHandle,
-      answerHandleMore, router
-    };
-  },
-};
+      answerHandleMore,
+      router
+    }
+  }
+}
 </script>
 
 <style scoped>
 .bottom {
-  margin-top: 30px;
+  /* margin-top: 30px; */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -327,7 +327,7 @@ export default {
   align-items: center;
   font-size: 18px;
   font-weight: 700;
-  font-family: "宋体";
+  font-family: '宋体';
 }
 
 .confirm {

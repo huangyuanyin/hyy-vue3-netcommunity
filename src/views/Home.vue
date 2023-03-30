@@ -3,7 +3,7 @@
     <v-header />
     <v-sidebar v-if="!siderbar" />
     <vSidebarNode v-if="siderbar" />
-    <div class="content-box ignore-width" :class="{ 'content-collapse': collapse }">
+    <div class="content-box" :class="{ 'content-collapse': collapse }">
       <div class="content">
         <router-view v-slot="{ Component }">
           <transition name="move" mode="out-in">
@@ -48,10 +48,5 @@ export default {
 <style lang="scss" scoped>
 :deep(.v-note-show) {
   height: 100vh;
-}
-
-.ignore-width {
-  // height: 100%;
-  margin-right: -17px;
 }
 </style>

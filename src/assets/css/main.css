@@ -33,6 +33,14 @@ a {
     background: #f0f0f0;
 }
 
+.content::-webkit-scrollbar {
+    width: 0.1em;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: #999;
+    border-radius: 1em;
+}
 .content {
     width: auto;
     height: 100%;
