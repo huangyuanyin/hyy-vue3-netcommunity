@@ -82,7 +82,7 @@
         </el-col> -->
         <el-col :span="22" class="row-title">
           <!-- <el-card shadow="never" :body-style="{ padding: '30px' }"> -->
-          <div class="button-row">
+          <div class="button-row" v-show="isShow">
             <el-row>
               <el-col :span="24">
                 <div class="is-editIcon">
@@ -126,7 +126,7 @@
             </el-row>
           </div>
           <el-row style="margin-top: 13vh;z-index: 300;">
-            <Markdown :data="fourumdata.body" />
+            <Markdown :data="fourumdata.body" @fullScreen="fullScreen" />
           </el-row>
           <!-- v-md-editor -->
           <!-- <el-row style="margin-top: 30px">
@@ -171,6 +171,7 @@ const router = useRouter()
 const route = useRoute()
 const reload = inject('reload')
 const shareLink = ref('')
+const isShow = ref(true)
 // 是否刷新回复列表
 const isRefresh = ref(0)
 // 数据
@@ -210,6 +211,10 @@ const getForumData = () => {
   getForumInfo(route.query.wid).then(res => {
     fourumdata.value = res.data
   })
+}
+
+const fullScreen = val => {
+  isShow.value = !val
 }
 
 getForumData()
