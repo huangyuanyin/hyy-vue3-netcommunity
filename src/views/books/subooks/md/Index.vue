@@ -27,10 +27,13 @@
         <el-form-item label="文章标题" prop="title">
           <el-input v-model="form.title" show-word-limit maxlength="200" placeholder="请输入标题" type="text"></el-input>
         </el-form-item>
+        <el-form-item label="文章描述" prop="description" v-if="isRight === 'right' || categoryId === ''">
+          <el-input v-model="form.description" show-word-limit maxlength="200" placeholder="请输入文章描述" type="text"></el-input>
+        </el-form-item>
         <el-form-item label="编辑器风格" prop="editorType">
           <el-radio-group v-model="editorType" class="ml-4" :disabled="editorDisabled">
             <el-radio label="tiny" size="large">富文本</el-radio>
-            <el-radio label="Markdown" size="large">Markdown（推荐）</el-radio>
+            <el-radio label="Markdown" size="large">Markdown</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="word解析" v-if="editorType === 'tiny'">
@@ -53,8 +56,11 @@
         <el-form-item prop="body" style="height: 70vh;" v-if="editorType === 'Markdown'">
           <markdown-com style="z-index: 99999;" :data="md" @input="getMd" @fullScreen="fullScreen"></markdown-com>
         </el-form-item>
-        <el-form-item prop="body" v-if="editorType === 'tiny'">
+        <!-- <el-form-item prop="body" v-if="editorType === 'tiny'">
           <tinymce-com v-model="tinyValue" placeholder="请输入帖子详情内容(不少于10个字)"> </tinymce-com>
+        </el-form-item> -->
+        <el-form-item prop="body" v-if="editorType === 'tiny'">
+          <CKEditor5-com :data="tinyValue" @input="CKEditorInput" />
         </el-form-item>
         <!-- <el-form-item>
           <v-md-editor v-model="md" height="400px"></v-md-editor>
@@ -73,8 +79,9 @@ import markdown from '@/components/markdown/Index.vue'
 import 'mavon-editor/dist/css/index.css'
 
 import Tinymce from '@/components/tinymce'
+import CKEditor5 from '@/components/CKEditor5/index.vue'
 
-import { ref, computed, reactive, watch, onMounted, inject, watchEffect } from 'vue'
+import { ref, computed, reactive, watch, onMounted, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -83,7 +90,6 @@ import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from '@/api/tag.js'
 import { upload } from '@/api/common.js'
 import { judgeNodeType } from '@/utils/methods.js'
-
 import MarkdownIt from 'markdown-it'
 import { uploadMdImageApi } from '@/api/upload'
 
@@ -92,7 +98,8 @@ export default {
   components: {
     mavonEditor,
     'markdown-com': markdown,
-    'tinymce-com': Tinymce
+    'tinymce-com': Tinymce,
+    'CKEditor5-com': CKEditor5
   },
   setup() {
     const reload = inject('reload')
@@ -125,6 +132,7 @@ export default {
     const form = reactive({
       category: '',
       title: '',
+      description: '',
       tags: [],
       type: '',
       body: ''
@@ -156,6 +164,7 @@ export default {
         form.title = res.data.title
         form.category = res.data.category
         form.tags = res.data.tags
+        form.description = res.data.description
         tinyValue.value = res.data.body
         md.value = res.data.body
       })
@@ -235,6 +244,10 @@ export default {
     const handleChange = id => {
       var len = id.length
       form.category = id[len - 1]
+    }
+
+    const CKEditorInput = val => {
+      tinyValue.value = val
     }
 
     // 上传word
@@ -386,6 +399,7 @@ export default {
         // parent_category: form.category,
         parent_category: route.query.category,
         type: form.type,
+        description: form.description,
         author: sessionStorage.getItem('username'),
         public: sessionStorage.getItem('spacePublic')
       }
@@ -459,7 +473,8 @@ export default {
       fileName,
       loadMd,
       MarkdownIt,
-      uploadFile
+      uploadFile,
+      CKEditorInput
     }
   }
 }

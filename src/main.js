@@ -13,6 +13,7 @@ import '@/assets/iconfont/iconfont.js'
 import '@/assets/iconfont/iconfont_drawer.js'
 import SvgIcon from '@/components/SvgIcon/SvgIcon.vue'
 import i18n from './i18n.js'
+import Ckeditor from '@ckeditor/ckeditor5-vue'
 
 // import VMdPreview from '@kangc/v-md-editor/lib/preview';
 // import '@kangc/v-md-editor/lib/style/preview.css';
@@ -37,4 +38,5 @@ app
   .use(store)
   .use(router)
   .use(i18n)
+  .use(Ckeditor)
   .mount('#app')
