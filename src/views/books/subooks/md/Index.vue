@@ -81,10 +81,10 @@ import 'mavon-editor/dist/css/index.css'
 import Tinymce from '@/components/tinymce'
 import CKEditor5 from '@/components/CKEditor5/index.vue'
 
-import { ref, computed, reactive, watch, onMounted, inject } from 'vue'
+import { ref, computed, reactive, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { useRouter, useRoute, NavigationGuardNext } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from '@/api/tag.js'
@@ -120,6 +120,7 @@ export default {
     const treeData = ref([])
     // 标签列表
     const taglist = ref([])
+    const rawData = ref('') // 原始数据
     const md = ref('') // markdown编辑器数据
     const tinyValue = ref('') // 富文本编辑器数据
     const editorType = ref('tiny')
@@ -167,9 +168,11 @@ export default {
         form.description = res.data.description
         tinyValue.value = res.data.body
         md.value = res.data.body
+        rawData.value = res.data.body
       })
     }
 
+    rawData.value = ''
     md.value = ''
     tinyValue.value = ''
     getNodeList()
@@ -213,11 +216,13 @@ export default {
     )
 
     onMounted(() => {
+      window.addEventListener('beforeunload', beforeUnloadHandler, false)
       form.category = categoryId.value = route.query.category || ''
       isRight.value = route.query.isRight || ''
       route.query.typeof === 'w'
         ? (editorType.value = 'Markdown') && (editorDisabled.value = true)
         : (editorType.value = 'tiny') && (editorDisabled.value = true)
+      rawData.value = ''
       md.value = ''
       tinyValue.value = ''
       if (route.query && route.query.isAdd) {
@@ -228,6 +233,57 @@ export default {
         getForumData()
       }
     })
+
+    // 卸载
+    onUnmounted(() => {
+      window.removeEventListener('beforeunload', beforeUnloadHandler, false)
+      rawData.value = ''
+      tinyValue.value = ''
+      md.value = ''
+    })
+
+    const beforeUnloadHandler = e => {
+      e.returnValue = '离开此页面？'
+    }
+
+    const checkUnsavedContent = callback => {
+      if (rawData.value !== tinyValue.value || rawData.value !== md.value) {
+        ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
+          confirmButtonText: '去保存',
+          cancelButtonText: '直接离开',
+          type: 'warning'
+        })
+          .then(() => {
+            // saveHandle()
+            // rawData.value = ''
+            // tinyValue.value = ''
+            // md.value = ''
+            // callback()
+          })
+          .catch(() => {
+            rawData.value = ''
+            tinyValue.value = ''
+            md.value = ''
+            callback()
+          })
+      } else {
+        callback()
+      }
+    }
+
+    // 使用路由守卫，在离开页面时，判断是否有未保存的内容
+    router.beforeEach((to, from, next) => {
+      checkUnsavedContent(() => {
+        next()
+      })
+    })
+
+    // 返回
+    const goBack = () => {
+      checkUnsavedContent(() => {
+        router.go(-1)
+      })
+    }
 
     // 获取md数据
     const getMd = evt => {
@@ -431,12 +487,6 @@ export default {
         router.replace({ name: 'detail', query: { wid: wid } })
       }
     }
-    // 返回
-    const goBack = () => {
-      // router.push({ name: 'subbooks' })
-      router.go(-1)
-      fileName.value = ''
-    }
 
     // 判断编辑器种类和内容
     const judgeEditor = () => {
@@ -474,7 +524,8 @@ export default {
       loadMd,
       MarkdownIt,
       uploadFile,
-      CKEditorInput
+      CKEditorInput,
+      beforeUnloadHandler
     }
   }
 }

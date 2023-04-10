@@ -61,6 +61,17 @@
             </template> -->
           </el-upload>
         </el-form-item>
+        <el-form-item label="文档描述">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 3, maxRows: 10 }"
+            v-model="saveForm.description"
+            show-word-limit
+            maxlength="200"
+            placeholder="请输入文档描述"
+          >
+          </el-input>
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -105,6 +116,7 @@ const saveForm = reactive({
   category: '',
   title: '',
   tags: [],
+  description: '',
   author: sessionStorage.getItem('username')
 })
 const saveFormRef = ref(null)
@@ -145,6 +157,7 @@ const handleSave = async () => {
     formData.append('author', saveForm.author)
     formData.append('title', saveForm.title)
     formData.append('category', saveForm.category)
+    formData.append('description', saveForm.description)
     formData.append('tags', JSON.stringify(saveForm.tags))
     formData.append('file', saveForm.file[0].raw)
     fileUpload.value.submit()
@@ -210,7 +223,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .saveDialog {
   width: 800px !important;
-
+  .el-textarea,
   .el-input {
     width: 503px;
   }

@@ -24,7 +24,8 @@ export default {
   },
   data() {
     return {
-      show: false
+      show: false,
+      rawData: {}
     }
   },
   computed: {
@@ -41,13 +42,20 @@ export default {
     await this.getUserMindMapData()
     this.show = true
     loading.close()
+    this.rawData = localStorage.getItem('SIMPLE_MIND_MAP_DATA')
     // 浏览器控制按钮前进后退触发函数
     window.addEventListener('popstate', this.popstate, false)
+    window.addEventListener('beforeunload', this.beforeUnloadHandler, false)
   },
   // 销毁vm组件
   destroyed() {
     // 避免堆栈溢出，多次创建、多次触发
     window.removeEventListener('popstate', this.popstate, false)
+  },
+  // 组件销毁时调用
+  beforeDestroy() {
+    // 避免堆栈溢出，多次创建、多次触发
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler, false)
   },
   // watch: {
   //   $route: {
@@ -66,6 +74,12 @@ export default {
   //     immediate: true,//第一次就执行
   //   }
   // },
+  // 路由守卫-离开
+  beforeRouteLeave(to, from, next) {
+    this.checkUnsavedContent(() => {
+      next()
+    })
+  },
   methods: {
     ...mapActions(['getUserMindMapData']),
     ...mapMutations(['setLocalConfig']),
@@ -102,6 +116,25 @@ export default {
       //   loadingInstance.close()
       // })
       this.$router.push({ name: 'subbooks' })
+    },
+    beforeUnloadHandler(e) {
+      e.returnValue = '离开此页面？'
+    },
+    checkUnsavedContent(callback) {
+      if (localStorage.getItem('SIMPLE_MIND_MAP_DATA') == this.rawData) {
+        callback()
+        return
+      } else {
+        ElMessageBox.confirm('有未保存的内容，请先保存？', '提示', {
+          confirmButtonText: '去保存',
+          cancelButtonText: '不保存，直接离开',
+          type: 'warning'
+        })
+          .then(() => {})
+          .catch(() => {
+            callback()
+          })
+      }
     }
   }
 }

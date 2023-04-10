@@ -2,6 +2,7 @@
   <div>
     <div id="luckysheet"></div>
     <div class="operate">
+      <!-- <el-icon @click="goBack"><ArrowLeftBold /></el-icon> -->
       <el-button @click="downloadExcel">导出</el-button>
       <el-button type="primary" @click="dialogOpen" style="margin-right: 30px">保存</el-button>
       <input type="file" accept=".xlsx" @change="loadExcel" />
@@ -10,7 +11,13 @@
       <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
         <el-form-item label="分类" prop="category" v-if="isRight == 'right'">
           <el-space>
-            <el-cascader :options="treeData" v-model="form.category" @change="handleChange" :props="{ value: 'id', checkStrictly: true }" :show-all-levels="false" />
+            <el-cascader
+              :options="treeData"
+              v-model="form.category"
+              @change="handleChange"
+              :props="{ value: 'id', checkStrictly: true }"
+              :show-all-levels="false"
+            />
             <span style="margin-left: 30px">标签</span>
             <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }"> </el-cascader>
           </el-space>
@@ -30,9 +37,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, computed, inject } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch, computed, inject } from 'vue'
 import { exportExcel } from '@/utils/export'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useStore } from 'vuex'
 import { useRoute, useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
@@ -40,6 +47,7 @@ import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.
 import { getTag } from '@/api/tag.js'
 import LuckyExcel from 'luckyexcel'
 import { judgeNodeType } from '@/utils/methods.js'
+import { ArrowLeftBold } from '@element-plus/icons-vue'
 
 const reload = inject('reload')
 const store = useStore()
@@ -136,7 +144,6 @@ const loadExcel = evt => {
       alert('Failed to read the content of the excel file, currently does not support xls files!')
       return
     }
-    // console.log('exportJson', exportJson)
     // jsonData.value = exportJson
 
     luckysheet.destroy()
@@ -168,7 +175,39 @@ onMounted(() => {
       lang: 'zh' //中文
     })
   }
+  window.addEventListener('beforeunload', beforeUnloadHandler, false)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('beforeunload', beforeUnloadHandler, false)
+})
+
+const beforeUnloadHandler = e => {
+  e.returnValue = '离开此页面？'
+}
+
+// onBeforeRouteLeave((to, from, next) => {
+//   checkUnsavedContent(() => {
+//     next()
+//   })
+// })
+
+// const goBack = () => {
+//   checkUnsavedContent(() => {})
+// }
+
+// const checkUnsavedContent = callback => {
+//   ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
+//     confirmButtonText: '去保存',
+//     cancelButtonText: '不保存，直接离开',
+//     type: 'warning'
+//   })
+//     .then(() => {})
+//     .catch(() => {
+//       form.body = ''
+//       callback()
+//     })
+// }
 
 const loadExcelForServer = () => {
   getForumInfo(route.query.eid).then(res => {
@@ -329,7 +368,7 @@ const toDetail = eid => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #luckysheet {
   margin: 0px;
   padding: 0px;
@@ -347,6 +386,13 @@ const toDetail = eid => {
   top: 15px;
   width: 100%;
   position: absolute;
+  display: flex;
+  align-items: center;
+  // margin-left: -40px;
+  .el-icon {
+    margin-right: 10px;
+    cursor: pointer;
+  }
 }
 
 #tip {
@@ -362,6 +408,10 @@ const toDetail = eid => {
   align-items: center;
   justify-content: center;
   display: flex;
+}
+
+:deep(.luckysheet_info_detail_back) {
+  // display: none;
 }
 
 /* 

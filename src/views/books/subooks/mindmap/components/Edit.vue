@@ -99,6 +99,7 @@ export default {
   deactivated() {
     this.pauseKeyCommand()
   },
+
   methods: {
     /**
      * @Author: 黄原寅

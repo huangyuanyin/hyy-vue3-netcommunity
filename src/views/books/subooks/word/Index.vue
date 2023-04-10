@@ -115,7 +115,7 @@
                   <el-tooltip content="评论" placement="bottom" :show-after="300">
                     <div class="aa" style="display: inline;">
                       <svg-icon iconName="icon-pinglun" className="is-editIcon-item" @click="answerHandle" />
-                      <div class="tips">{{ fourumdata.comment_num }}</div>
+                      <div v-if="fourumdata.comment_num" class="tips">{{ fourumdata.comment_num }}</div>
                     </div>
                   </el-tooltip>
                   <el-tooltip content="删除" placement="bottom" :show-after="300">
@@ -128,6 +128,9 @@
           <el-row style="margin-top: 13vh;z-index: 300;">
             <Markdown :data="fourumdata.body" @fullScreen="fullScreen" />
           </el-row>
+          <!-- <el-row style="margin-top: 13vh;z-index: 300;">
+            <Markdown :data="fourumdata.body" @fullScreen="fullScreen" />
+          </el-row> -->
           <!-- v-md-editor -->
           <!-- <el-row style="margin-top: 30px">
               <v-md-preview :text="fourumdata.body"></v-md-preview>
