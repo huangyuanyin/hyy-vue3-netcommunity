@@ -56,12 +56,12 @@
         <el-form-item prop="body" style="height: 70vh;" v-if="editorType === 'Markdown'">
           <markdown-com style="z-index: 99999;" :data="md" @input="getMd" @fullScreen="fullScreen"></markdown-com>
         </el-form-item>
-        <!-- <el-form-item prop="body" v-if="editorType === 'tiny'">
-          <tinymce-com v-model="tinyValue" placeholder="请输入帖子详情内容(不少于10个字)"> </tinymce-com>
-        </el-form-item> -->
         <el-form-item prop="body" v-if="editorType === 'tiny'">
-          <CKEditor5-com :data="tinyValue" @input="CKEditorInput" />
+          <tinymce-com v-model="tinyValue" placeholder="请输入帖子详情内容(不少于10个字)"> </tinymce-com>
         </el-form-item>
+        <!-- <el-form-item prop="body" v-if="editorType === 'tiny'">
+          <CKEditor5-com :data="tinyValue" @input="CKEditorInput" />
+        </el-form-item> -->
         <!-- <el-form-item>
           <v-md-editor v-model="md" height="400px"></v-md-editor>
         </el-form-item> -->
@@ -79,7 +79,7 @@ import markdown from '@/components/markdown/Index.vue'
 import 'mavon-editor/dist/css/index.css'
 
 import Tinymce from '@/components/tinymce'
-import CKEditor5 from '@/components/CKEditor5/index.vue'
+// import CKEditor5 from '@/components/CKEditor5/index.vue'
 
 import { ref, computed, reactive, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
 import { useStore } from 'vuex'
@@ -98,8 +98,8 @@ export default {
   components: {
     mavonEditor,
     'markdown-com': markdown,
-    'tinymce-com': Tinymce,
-    'CKEditor5-com': CKEditor5
+    'tinymce-com': Tinymce
+    // 'CKEditor5-com': CKEditor5
   },
   setup() {
     const reload = inject('reload')
@@ -302,9 +302,9 @@ export default {
       form.category = id[len - 1]
     }
 
-    const CKEditorInput = val => {
-      tinyValue.value = val
-    }
+    // const CKEditorInput = val => {
+    //   tinyValue.value = val
+    // }
 
     // 上传word
     const loadWord = evt => {
@@ -524,7 +524,7 @@ export default {
       loadMd,
       MarkdownIt,
       uploadFile,
-      CKEditorInput,
+      // CKEditorInput,
       beforeUnloadHandler
     }
   }

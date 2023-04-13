@@ -4,7 +4,7 @@ const buttonPlugins =
 
 // 导入工具栏
 const toolbar =
-  'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor  table image | alignleft aligncenter alignright alignjustify outdent indent |  styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons hr pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs'
+  'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor  table image | alignleft aligncenter alignright alignjustify outdent indent |  styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons hr pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs '
 
 // 初始化配置
 export const init = {
@@ -17,7 +17,13 @@ export const init = {
   plugins: buttonPlugins, // 插件配置
   toolbar: toolbar, // 工具栏配置，设为false则隐藏
   // menubar: false, // 菜单栏配置，设为false则隐藏，不配置则默认显示全部菜单，也可自定义配置--查看 http://tinymce.ax-z.cn/configure/editor-appearance.php --搜索“自定义菜单”
-  emoticons_database_url: './tinymce/emoticons/js/emojis.js',
+  // emoticons_database_url: './tinymce/emoticons/js/emojis.js',
+  emoticons_append: {
+    custom_mind_explode: {
+      keywords: ['brain', 'mind', 'explode', 'blown'],
+      char: '🤯'
+    }
+  },
   fontsize_formats: '12px 14px 16px 18px 20px 22px 24px 28px 32px 36px 48px 56px 72px', // 字体大小
   font_formats:
     '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;苹果苹方=PingFang SC,Microsoft YaHei,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;', // 字体样式 微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif, 宋体=simsun,serif,仿宋体=FangSong,黑体=SimHei,Arial=arial,
