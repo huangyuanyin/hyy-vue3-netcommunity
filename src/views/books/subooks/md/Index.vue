@@ -580,3 +580,9 @@ export default {
   }
 }
 </style>
+
+<style lang="scss">
+.v-note-help-wrapper {
+  z-index: 99999 !important;
+}
+</style>
