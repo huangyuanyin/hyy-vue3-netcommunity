@@ -44,3 +44,4 @@ import 'tinymce/plugins/toc' // 目录生成器
 import 'tinymce/plugins/visualblocks' // 显示元素范围
 import 'tinymce/plugins/visualchars' // 显示不可见字符
 import 'tinymce/plugins/wordcount' // 字数统计
+import 'tinymce/plugins/vr' // 垂直线

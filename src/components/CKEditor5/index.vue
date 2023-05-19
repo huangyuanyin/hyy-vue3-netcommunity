@@ -1,11 +1,11 @@
-<template>
+<!-- <template>
   <div id="divcontent">
     <div id="divleft">
       <ckeditor :editor="editor" v-model="editorData" @input="onEditorInput" :config="editorConfig"></ckeditor>
     </div>
-    <!-- <div id="divright">
+    <div id="divright">
       {{ editorData }}
-    </div> -->
+    </div> 
   </div>
 </template>
 
@@ -154,4 +154,4 @@ const onEditorInput = val => {
 :deep(.ck-restricted-editing_mode_standard) {
   padding: 0 2%;
 }
-</style>
+</style> -->
