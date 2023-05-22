@@ -166,6 +166,22 @@ export const backgroundPositionList = [
   }
 ]
 
+// 背景图片大小
+export const backgroundSizeList = [
+  {
+    name: 'Auto',
+    value: 'auto'
+  },
+  {
+    name: 'Cover',
+    value: 'cover'
+  },
+  {
+    name: 'Contain',
+    value: 'contain'
+  }
+]
+
 // 快捷键列表
 export const shortcutKeyList = [
   {
@@ -351,5 +367,45 @@ export const sidebarTriggerList = [
     name: 'ShortcutKey',
     value: 'shortcutKey',
     icon: 'iconjianpan'
+  }
+]
+
+// 下载类型列表
+export const downTypeList = [
+  {
+    name: 'Dedicated file',
+    type: 'smm',
+    icon: 'iconwenjian',
+    desc: 'Available for import'
+  },
+  {
+    name: 'JSON',
+    type: 'json',
+    icon: 'iconjson',
+    desc: 'Popular data exchange formats, Available for import'
+  },
+  {
+    name: 'Image',
+    type: 'png',
+    icon: 'iconPNG',
+    desc: 'Suitable for viewing and sharing'
+  },
+  {
+    name: 'SVG',
+    type: 'svg',
+    icon: 'iconSVG',
+    desc: 'Scalable Vector Graphics'
+  },
+  {
+    name: 'PDF',
+    type: 'pdf',
+    icon: 'iconpdf',
+    desc: 'Suitable for printing'
+  },
+  {
+    name: 'Markdown',
+    type: 'md',
+    icon: 'iconmarkdown',
+    desc: 'Easy for other software to open'
   }
 ]

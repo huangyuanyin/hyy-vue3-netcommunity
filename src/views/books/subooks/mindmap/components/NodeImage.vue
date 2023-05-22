@@ -1,5 +1,5 @@
 <template>
-  <el-dialog custom-class="nodeDialog" v-model="dialogVisible" :title="$t('nodeImage.title')">
+  <el-dialog custom-class="nodeImageDialog" v-model="dialogVisible" :title="$t('nodeImage.title')">
     <ImgUpload ref="imgUpload" @changeImg="onchange" :value="img"></ImgUpload>
     <div class="imgTitleBox">
       <span class="title">{{ $t('nodeImage.imgTitle') }}</span>
@@ -88,7 +88,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.nodeDialog {
+.nodeImageDialog {
   .imgTitleBox {
     display: flex;
     align-items: center;

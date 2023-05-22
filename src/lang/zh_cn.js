@@ -5,6 +5,8 @@ export default {
     color: '颜色',
     image: '图片',
     imageRepeat: '图片重复',
+    imagePosition: '图片位置',
+    imageSize: '图片大小',
     line: '连线',
     width: '粗细',
     style: '风格',
@@ -18,7 +20,30 @@ export default {
     icon: '图标',
     size: '大小',
     level2Node: '二级节点',
-    belowLevel2Node: '三级及以下节点'
+    belowLevel2Node: '三级及以下节点',
+    nodeBorderType: '节点边框风格',
+    nodeUseLineStyle: '是否使用只有底边框的风格',
+    otherConfig: '其他配置',
+    enableFreeDrag: '是否开启节点自由拖拽',
+    watermark: '水印',
+    showWatermark: '是否显示水印',
+    watermarkDefaultText: '水印文字',
+    watermarkText: '水印文字',
+    watermarkTextColor: '文字颜色',
+    watermarkLineSpacing: '水印行间距',
+    watermarkTextSpacing: '水印文字间距',
+    watermarkAngle: '旋转角度',
+    watermarkTextOpacity: '文字透明度',
+    watermarkTextFontSize: '文字字号',
+    isEnableNodeRichText: '是否开启节点富文本编辑',
+    mousewheelAction: '鼠标滚轮行为',
+    zoomView: '缩放视图',
+    moveViewUpDown: '上下移动视图',
+    associativeLine: '关联线',
+    associativeLineWidth: '粗细',
+    associativeLineColor: '颜色',
+    associativeLineActiveWidth: '激活粗细',
+    associativeLineActiveColor: '激活颜色'
   },
   color: {
     moreColor: '更多颜色'
@@ -63,15 +88,26 @@ export default {
     imageFile: '图片文件',
     svgFile: 'svg文件',
     pdfFile: 'pdf文件',
-    tips: 'tips：.smm和.json文件可用于导入'
+    markdownFile: 'markdown文件',
+    tips: 'tips：.smm和.json文件可用于导入',
+    isTransparent: '背景是否透明',
+    pngTips: 'tips：富文本模式导出图片非常耗时，建议导出为svg格式',
+    svgTips: 'tips：富文本模式导出图片非常耗时',
+    transformingDomToImages: '正在转换节点：',
+    notifyTitle: '消息',
+    notifyMessage: '如果没有触发下载，请检查是否被浏览器拦截了',
+    paddingX: '水平内边距',
+    paddingY: '垂直内边距'
   },
   fullscreen: {
-    fullscreen: '全屏'
+    fullscreen: '全屏',
+    fullscreenShow: '全屏查看',
+    fullscreenEdit: '全屏编辑'
   },
   import: {
     title: '导入',
     selectFile: '选取文件',
-    supportFile: '支持.smm、.json、.xmind、.xlsx文件'
+    supportFile: '支持.smm、.json、.xmind、.xlsx、.md文件'
   },
   navigatorToolbar: {
     openMiniMap: '开启小地图',
@@ -160,6 +196,12 @@ export default {
     saveAs: '另存为',
     import: '导入',
     export: '导出',
-    shortcutKey: '快捷键'
+    shortcutKey: '快捷键',
+    associativeLine: '关联线'
+  },
+  edit: {
+    newFeatureNoticeTitle: '新特性提醒',
+    newFeatureNoticeMessage:
+      '本次更新支持了节点富文本编辑，但是存在一定缺陷，最主要的影响是导出为图片的时间和节点数量成正比，所以对导出需求比较依赖的话可以通过【基础样式】-【其他配置】-【是否开启节点富文本编辑】设置关掉富文本编辑模式。'
   }
 }

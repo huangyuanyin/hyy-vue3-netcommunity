@@ -15,7 +15,8 @@ export default createStore({
     isHandleLocalFile: false, // 是否操作的是本地文件
     localConfig: {
       // 本地配置
-      isZenMode: false // 是否是禅模式
+      isZenMode: false, // 是否是禅模式
+      openNodeRichText: true // 是否开启节点富文本
     },
     activeSidebar: '', // 当前显示的侧边栏
     curTreeId: sessionStorage.getItem('curTreeId') || null, // 存放 高亮的节点ID

@@ -679,6 +679,7 @@ watch(
   bottom: 0;
   overflow-y: scroll;
   width: 270px;
+  background-color: #ffffff;
 }
 
 .title {

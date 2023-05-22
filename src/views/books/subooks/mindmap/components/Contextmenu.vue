@@ -5,7 +5,7 @@
         {{ $t('contextmenu.insertSiblingNode') }}
         <span class="desc">Enter</span>
       </div>
-      <div class="item" @click="exec('INSERT_CHILD_NODE')">
+      <div class="item" @click="exec('INSERT_CHILD_NODE')" :class="{ disabled: isGeneralization }">
         {{ $t('contextmenu.insertChildNode') }}
         <span class="desc">Tab</span>
       </div>
@@ -15,21 +15,21 @@
       </div>
       <div class="item" @click="exec('UP_NODE')" :class="{ disabled: upNodeBtnDisabled }">
         {{ $t('contextmenu.moveUpNode') }}
-        <span class="desc">Ctrl / Alt + ↑</span>
+        <span class="desc">Ctrl + ↑</span>
       </div>
       <div class="item" @click="exec('DOWN_NODE')" :class="{ disabled: downNodeBtnDisabled }">
         {{ $t('contextmenu.moveDownNode') }}
-        <span class="desc">Ctrl / Alt + ↓</span>
+        <span class="desc">Ctrl + ↓</span>
       </div>
       <div class="item danger" @click="exec('REMOVE_NODE')">
         {{ $t('contextmenu.deleteNode') }}
         <span class="desc">Delete</span>
       </div>
-      <div class="item" @click="exec('COPY_NODE')">
+      <div class="item" @click="exec('COPY_NODE')" :class="{ disabled: isGeneralization }">
         {{ $t('contextmenu.copyNode') }}
         <span class="desc">Ctrl + C</span>
       </div>
-      <div class="item" @click="exec('CUT_NODE')">
+      <div class="item" @click="exec('CUT_NODE')" :class="{ disabled: isGeneralization }">
         {{ $t('contextmenu.cutNode') }}
         <span class="desc">Ctrl + X</span>
       </div>
@@ -39,9 +39,15 @@
       </div>
     </template>
     <template v-if="type === 'svg'">
-      <div class="item" @click="exec('RETURN_CENTER')">{{ $t('contextmenu.backCenter') }}</div>
-      <div class="item" @click="exec('EXPAND_ALL')">{{ $t('contextmenu.expandAll') }}</div>
-      <div class="item" @click="exec('UNEXPAND_ALL')">{{ $t('contextmenu.unExpandAll') }}</div>
+      <div class="item" @click="exec('RETURN_CENTER')">
+        {{ $t('contextmenu.backCenter') }}
+      </div>
+      <div class="item" @click="exec('EXPAND_ALL')">
+        {{ $t('contextmenu.expandAll') }}
+      </div>
+      <div class="item" @click="exec('UNEXPAND_ALL')">
+        {{ $t('contextmenu.unExpandAll') }}
+      </div>
       <div class="item">
         {{ $t('contextmenu.expandTo') }}
         <div class="subItems listBox">
@@ -63,8 +69,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
 import bus from '@/utils/bus.js'
+import { mapState, mapMutations } from 'vuex'
 /**
  * @Author: 黄原寅
  * @Desc: 右键菜单
@@ -104,10 +110,10 @@ export default {
       ]
     },
     insertNodeBtnDisabled() {
-      return !this.node || this.node.isRoot
+      return !this.node || this.node.isRoot || this.node.isGeneralization
     },
     upNodeBtnDisabled() {
-      if (!this.node || this.node.isRoot) {
+      if (!this.node || this.node.isRoot || this.node.isGeneralization) {
         return true
       }
       let isFirst =
@@ -117,7 +123,7 @@ export default {
       return isFirst
     },
     downNodeBtnDisabled() {
-      if (!this.node || this.node.isRoot) {
+      if (!this.node || this.node.isRoot || this.node.isGeneralization) {
         return true
       }
       let children = this.node.parent.children
@@ -127,6 +133,9 @@ export default {
         }) ===
         children.length - 1
       return isLast
+    },
+    isGeneralization() {
+      return this.node.isGeneralization
     }
   },
   created() {
@@ -168,8 +177,7 @@ export default {
      * @Author: 黄原寅
      * @Desc: 节点右键显示
      */
-    // show(e, node) {
-    // mitt只支持传一个参数
+    // mitt只能传一个参数
     show([e, node]) {
       this.type = 'node'
       this.left = e.clientX + 10

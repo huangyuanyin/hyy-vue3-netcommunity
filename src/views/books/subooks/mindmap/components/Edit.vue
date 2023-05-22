@@ -2,15 +2,16 @@
   <div class="editContainer">
     <div class="mindMapContainer" ref="mindMapContainer"></div>
     <Count v-if="!isZenMode"></Count>
-    <!-- <Navigator :mindMap="mindMap"></Navigator> -->
+    <Navigator :mindMap="mindMap"></Navigator>
     <NavigatorToolbar :mindMap="mindMap" v-if="!isZenMode"></NavigatorToolbar>
-    <Outline></Outline>
+    <Outline :mindMap="mindMap"></Outline>
     <Style v-if="!isZenMode"></Style>
     <BaseStyle :data="mindMapData" :mindMap="mindMap"></BaseStyle>
     <Theme :mindMap="mindMap"></Theme>
     <Structure :mindMap="mindMap"></Structure>
     <ShortcutKey></ShortcutKey>
     <Contextmenu v-if="mindMap" :mindMap="mindMap"></Contextmenu>
+    <RichTextToolbar v-if="mindMap" :mindMap="mindMap"></RichTextToolbar>
     <NodeNoteContentShow v-if="mindMap" :mindMap="mindMap"></NodeNoteContentShow>
     <NodeImgPreview v-if="mindMap" :mindMap="mindMap"></NodeImgPreview>
     <SidebarTrigger v-if="!isZenMode"></SidebarTrigger>
@@ -20,6 +21,14 @@
 <script>
 import { toRaw } from 'vue'
 import MindMap from 'simple-mind-map'
+import MiniMap from 'simple-mind-map/src/MiniMap.js'
+import Watermark from 'simple-mind-map/src/Watermark.js'
+import Drag from 'simple-mind-map/src/Drag.js'
+import KeyboardNavigation from 'simple-mind-map/src/KeyboardNavigation.js'
+import Export from 'simple-mind-map/src/Export.js'
+import Select from 'simple-mind-map/src/Select.js'
+import RichText from 'simple-mind-map/src/RichText.js'
+import AssociativeLine from 'simple-mind-map/src/AssociativeLine.js'
 import Outline from './Outline'
 import Style from './Style'
 import BaseStyle from './BaseStyle'
@@ -29,6 +38,7 @@ import Count from './Count'
 import NavigatorToolbar from './NavigatorToolbar'
 import ShortcutKey from './ShortcutKey'
 import Contextmenu from './Contextmenu'
+import RichTextToolbar from './RichTextToolbar'
 import NodeNoteContentShow from './NodeNoteContentShow.vue'
 import Navigator from './Navigator.vue'
 import NodeImgPreview from './NodeImgPreview.vue'
@@ -37,6 +47,23 @@ import { getData, getExampleData, storeData, storeConfig } from '@/api'
 import bus from '@/utils/bus.js'
 import { getForumInfo } from '@/api/forum.js'
 import { mapState } from 'vuex'
+import customThemeList from '@/customThemes'
+import icon from '@/config/icon'
+
+// 注册插件
+MindMap.usePlugin(MiniMap)
+  .usePlugin(Watermark)
+  .usePlugin(Drag)
+  .usePlugin(KeyboardNavigation)
+  .usePlugin(Export)
+  .usePlugin(Select)
+  .usePlugin(AssociativeLine)
+
+// 注册自定义主题
+// customThemeList.forEach(item => {
+//   MindMap.defineTheme(item.value, item.theme)
+// })
+
 /**
  * @Author: 黄原寅
  * @Desc: 编辑区域
@@ -53,6 +80,7 @@ export default {
     NavigatorToolbar,
     ShortcutKey,
     Contextmenu,
+    RichTextToolbar,
     NodeNoteContentShow,
     Navigator,
     NodeImgPreview,
@@ -68,14 +96,26 @@ export default {
   },
   computed: {
     ...mapState({
-      isZenMode: state => state.localConfig.isZenMode
+      isZenMode: state => state.localConfig.isZenMode,
+      openNodeRichText: state => state.localConfig.openNodeRichText
     })
   },
+  watch: {
+    openNodeRichText() {
+      if (this.openNodeRichText) {
+        this.addRichTextPlugin()
+      } else {
+        this.removeRichTextPlugin()
+      }
+    }
+  },
   mounted() {
+    // this.showNewFeatureInfo()
     this.init()
     bus.on('pauseKeyCommand', this.pauseKeyCommand)
     bus.on('recoveryCommand', this.recoveryCommand)
     bus.on('execCommand', this.execCommand)
+    bus.on('paddingChange', this.onPaddingChange)
     bus.on('export', this.export)
     bus.on('setData', this.setData)
     bus.on('startTextEdit', () => {
@@ -83,6 +123,12 @@ export default {
     })
     bus.on('endTextEdit', () => {
       this.mindMap.renderer.endTextEdit()
+    })
+    bus.on('createAssociativeLine', () => {
+      this.mindMap.associativeLine.createLineFromActiveNode()
+    })
+    window.addEventListener('resize', () => {
+      this.mindMap.resize()
     })
     if (this.openTest) {
       setTimeout(() => {
@@ -168,7 +214,13 @@ export default {
                     e: -373.3000000000004,
                     f: -281.10000000000025
                   },
-                  state: { scale: 1.6000000000000005, x: 179, y: 0, sx: 0, sy: 0 }
+                  state: {
+                    scale: 1.6000000000000005,
+                    x: 179,
+                    y: 0,
+                    sx: 0,
+                    sy: 0
+                  }
                 }
                 this.mindMap.view.setTransformData(viewData)
               }, 1000)
@@ -247,7 +299,7 @@ export default {
      * @Desc: 初始化
      */
     init() {
-      let { root, layout, theme, view } = this.getData()
+      let { root, layout, theme, view, config } = this.getData()
       this.mindMap = new MindMap({
         el: this.$refs.mindMapContainer,
         data: root,
@@ -255,15 +307,20 @@ export default {
         theme: theme.template,
         themeConfig: theme.config,
         viewData: view,
+        nodeTextEditZIndex: 1000,
+        nodeNoteTooltipZIndex: 1000,
         customNoteContentShow: {
           show: (content, left, top) => {
             bus.emit('showNoteContent', [content, left, top])
           },
           hide: () => {
-            // bus.emit('hideNoteContent');
+            // bus.emit('hideNoteContent')
           }
-        }
+        },
+        ...(config || {}),
+        iconList: icon
       })
+      if (this.openNodeRichText) this.addRichTextPlugin()
       this.mindMap.keyCommand.addShortcut('Control+s', () => {
         this.manualSave()
       })
@@ -280,10 +337,13 @@ export default {
         'svg_mousedown',
         'mouseup',
         'mode_change',
-        'node_tree_render_end'
+        'node_tree_render_end',
+        'rich_text_selection_change',
+        'transforming-dom-to-images',
+        'generalization_node_contextmenu'
       ].forEach(event => {
         this.getMindMap().on(event, (...args) => {
-          if (['node_contextmenu', 'node_active'].includes(event)) {
+          if (['node_contextmenu', 'node_active', 'rich_text_selection_change'].includes(event)) {
             bus.emit(event, args)
           } else {
             bus.emit(event, ...args)
@@ -323,6 +383,7 @@ export default {
       } else {
         this.getMindMap().setData(data)
       }
+      this.mindMap.view.reset()
       this.manualSave()
     },
 
@@ -352,6 +413,49 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+
+    /**
+     * @Author: 黄原寅
+     * @Desc: 修改导出内边距
+     */
+    onPaddingChange(data) {
+      this.mindMap.updateConfig(data)
+    },
+
+    /**
+     * @Author: 黄原寅
+     * @Desc: 显示新特性提示
+     */
+    showNewFeatureInfo() {
+      let showed = localStorage.getItem('SIMPLE_MIND_MAP_NEW_FEATURE_TIP_1')
+      if (!showed) {
+        this.$notify.info({
+          title: this.$t('edit.newFeatureNoticeTitle'),
+          message: this.$t('edit.newFeatureNoticeMessage'),
+          duration: 0,
+          onClose: () => {
+            localStorage.setItem('SIMPLE_MIND_MAP_NEW_FEATURE_TIP_1', true)
+          }
+        })
+      }
+    },
+
+    /**
+     * @Author: 黄原寅
+     * @Desc: 加载节点富文本编辑插件
+     */
+    addRichTextPlugin() {
+      if (!this.mindMap) return
+      this.mindMap.addPlugin(RichText)
+    },
+
+    /**
+     * @Author: 黄原寅
+     * @Desc: 移除节点富文本编辑插件
+     */
+    removeRichTextPlugin() {
+      this.mindMap.removePlugin(RichText)
     }
   }
 }

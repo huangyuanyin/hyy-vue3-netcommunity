@@ -113,6 +113,16 @@
           <span class="icon iconfont icongaikuozonglan"></span>
           <span class="text">{{ $t('toolbar.summary') }}</span>
         </div>
+        <div
+          class="toolbarBtn"
+          :class="{
+            disabled: activeNodes.length <= 0 || hasGeneralization
+          }"
+          @click="emit('createAssociativeLine')"
+        >
+          <span class="icon iconfont iconlianjiexian"></span>
+          <span class="text">{{ $t('toolbar.associativeLine') }}</span>
+        </div>
       </div>
       <!-- 通用操作 -->
       <!-- <div class="toolbarBlock">
@@ -467,9 +477,11 @@ export default {
 .toolbarContainer {
   .toolbar {
     position: fixed;
-    // left: 0;
-    // top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     top: 50px;
+    width: max-content;
+    max-width: 100%;
     display: flex;
     padding: 0 20px;
     padding-top: 20px;
@@ -501,6 +513,7 @@ export default {
       flex-direction: column;
       cursor: pointer;
       margin-right: 20px;
+      flex-shrink: 0;
 
       &:last-of-type {
         margin-right: 0;

@@ -40,7 +40,8 @@
               :disabled="checkDisabled('fontSize')"
               @change="update('fontSize')"
             >
-              <el-option v-for="item in fontSizeList" :key="item" :label="item" :value="item"> </el-option>
+              <el-option v-for="item in fontSizeList" :key="item" :label="item" :value="item" :style="{ fontSize: item + 'px' }">
+              </el-option>
             </el-select>
           </div>
           <div class="rowItem">
@@ -61,7 +62,7 @@
           <div class="btnGroup">
             <el-tooltip :content="$t('style.color')" placement="bottom">
               <div>
-                <el-popover placement="bottom" trigger="click" :disabled="checkDisabled('color')">
+                <el-popover placement="bottom" trigger="hover" :disabled="checkDisabled('color')">
                   <template #reference>
                     <div class="styleBtn" :class="{ disabled: checkDisabled('color') }">
                       A
@@ -75,7 +76,10 @@
             <el-tooltip :content="$t('style.addFontWeight')" placement="bottom">
               <div
                 class="styleBtn"
-                :class="{ actived: style.fontWeight === 'bold', disabled: checkDisabled('fontWeight') }"
+                :class="{
+                  actived: style.fontWeight === 'bold',
+                  disabled: checkDisabled('fontWeight')
+                }"
                 @click="toggleFontWeight"
               >
                 B
@@ -84,7 +88,10 @@
             <el-tooltip :content="$t('style.italic')" placement="bottom">
               <div
                 class="styleBtn i"
-                :class="{ actived: style.fontStyle === 'italic', disabled: checkDisabled('fontStyle') }"
+                :class="{
+                  actived: style.fontStyle === 'italic',
+                  disabled: checkDisabled('fontStyle')
+                }"
                 @click="toggleFontStyle"
               >
                 I
@@ -92,11 +99,13 @@
             </el-tooltip>
             <el-tooltip :content="$t('style.textDecoration')" placement="bottom">
               <div>
-                <el-popover placement="bottom" trigger="click" :disabled="checkDisabled('color')">
+                <el-popover placement="bottom" trigger="hover" :disabled="checkDisabled('color')">
                   <template #reference>
                     <div
                       class="styleBtn u"
-                      :style="{ textDecoration: style.textDecoration || 'none' }"
+                      :style="{
+                        textDecoration: style.textDecoration || 'none'
+                      }"
                       :class="{ disabled: checkDisabled('textDecoration') }"
                     >
                       U
@@ -104,7 +113,7 @@
                   </template>
                   <el-radio-group size="small" v-model="style.textDecoration" @change="update('textDecoration')">
                     <el-radio-button label="underline">{{ $t('style.underline') }}</el-radio-button>
-                    <el-radio-button label="line-through">{{ $t('style.lineThrough') }}</el-radio-button>
+                    <el-radio-button label="line-through"> {{ $t('style.lineThrough') }} </el-radio-button>
                     <el-radio-button label="overline">{{ $t('style.overline') }}</el-radio-button>
                   </el-radio-group>
                 </el-popover>
@@ -287,8 +296,8 @@ import Sidebar from './Sidebar'
 import Color from './Color'
 import { fontFamilyList, fontSizeList, borderWidthList, borderDasharrayList, borderRadiusList, lineHeightList, shapeList } from '@/config'
 import { supportActiveStyle } from 'simple-mind-map/src/themes/default'
-import { mapState } from 'vuex'
 import bus from '@/utils/bus.js'
+import { mapState } from 'vuex'
 /**
  * @Author: 黄原寅
  * @Desc: 节点样式设置
@@ -302,11 +311,8 @@ export default {
   data() {
     return {
       supportActiveStyle,
-      // shapeList,
-      // fontFamilyList,
       fontSizeList,
       borderWidthList,
-      // borderDasharrayList,
       borderRadiusList,
       lineHeightList,
       activeNodes: [],
@@ -365,11 +371,11 @@ export default {
      * @Author: 黄原寅
      * @Desc: 监听节点激活事件
      */
-    onNodeActive(args) {
+    onNodeActive(...args) {
       // if (this.$refs.sidebar) this.$refs.sidebar.show = false
       this.$nextTick(() => {
         this.activeTab = 'normal'
-        this.activeNodes = args[1]
+        this.activeNodes = args[0][1]
         // if (this.$refs.sidebar) this.$refs.sidebar.show = this.activeNodes.length > 0
         this.initNodeStyle()
       })
@@ -523,6 +529,7 @@ export default {
     font-size: 100px;
   }
 }
+
 .sidebarContent {
   padding: 20px;
   padding-top: 10px;

@@ -221,6 +221,22 @@ export const backgroundPositionList = [
   }
 ]
 
+// 背景图片大小
+export const backgroundSizeList = [
+  {
+    name: '自动',
+    value: 'auto'
+  },
+  {
+    name: '覆盖',
+    value: 'cover'
+  },
+  {
+    name: '保持',
+    value: 'contain'
+  }
+]
+
 // 数据存储
 export const store = {
   sidebarZIndex: 1 //侧边栏zIndex
@@ -423,5 +439,45 @@ export const sidebarTriggerList = [
     name: '快捷键',
     value: 'shortcutKey',
     icon: 'iconjianpan'
+  }
+]
+
+// 下载类型列表
+export const downTypeList = [
+  {
+    name: '专有文件',
+    type: 'smm',
+    icon: 'iconwenjian',
+    desc: '可用于导入'
+  },
+  {
+    name: 'JSON',
+    type: 'json',
+    icon: 'iconjson',
+    desc: '流行的数据交换格式，可用于导入'
+  },
+  {
+    name: '图片',
+    type: 'png',
+    icon: 'iconPNG',
+    desc: '适合查看分享'
+  },
+  {
+    name: 'SVG',
+    type: 'svg',
+    icon: 'iconSVG',
+    desc: '可缩放矢量图形'
+  },
+  {
+    name: 'PDF',
+    type: 'pdf',
+    icon: 'iconpdf',
+    desc: '适合打印'
+  },
+  {
+    name: 'Markdown',
+    type: 'md',
+    icon: 'iconmarkdown',
+    desc: '便于其他软件打开'
   }
 ]

@@ -9,7 +9,7 @@
     "build:stage": "vue-cli-service build --mode staging",
     "prod": "vue-cli-service serve --mode production",
     "build:prod": "vue-cli-service build --mode production",
-    "build:53":"vue-cli-service build --mode 53",
+    "build:53": "vue-cli-service build --mode 53",
     "format": "prettier --write src/* src/*/* src/*/*/* src/*/*/*/*"
   },
   "dependencies": {
@@ -34,7 +34,7 @@
     "markdown-it": "^13.0.1",
     "mavon-editor": "^3.0.0-beta",
     "mitt": "^3.0.0",
-    "simple-mind-map": "^0.2.16",
+    "simple-mind-map": "^0.5.11",
     "tinymce": "^5.8.0",
     "typescript": "^4.7.3",
     "v-viewer": "^3.0.10",

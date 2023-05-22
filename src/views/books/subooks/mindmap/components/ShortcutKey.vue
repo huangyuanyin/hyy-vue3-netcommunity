@@ -15,11 +15,36 @@
   </Sidebar>
 </template>
 
-<script>
+<!-- <script setup>
 /**
  * @Author: 黄原寅
  * @Desc: 快捷键功能
  */
+import { ref, onMounted, nextTick, computed } from 'vue'
+import Sidebar from './Sidebar'
+import { shortcutKeyList } from '@/config'
+import bus from '@/utils/bus.js'
+import { mapState } from 'vuex'
+
+const sidebar = ref(null) // 声明一个 ref 来存放该元素的引用   必须和模板里的 ref 同名
+
+computed(() => {
+  shortcutKeyList: {
+    return shortcutKeyList[this.$i18n.locale] || shortcutKeyList.zh
+  }
+})
+
+onMounted(() => {
+  bus.on('showShortcutKey', () => {
+    sidebar.value.show = false
+    nextTick(() => {
+      sidebar.value.show = true
+    })
+  })
+})
+</script> -->
+
+<script>
 import Sidebar from './Sidebar'
 import { shortcutKeyList } from '@/config'
 import { mapState } from 'vuex'

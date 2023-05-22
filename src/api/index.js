@@ -6,6 +6,7 @@ import bus from '@/utils/bus.js'
 const SIMPLE_MIND_MAP_DATA = 'SIMPLE_MIND_MAP_DATA'
 const SIMPLE_MIND_MAP_LANG = 'SIMPLE_MIND_MAP_LANG'
 const SIMPLE_MIND_MAP_LOCAL_CONFIG = 'SIMPLE_MIND_MAP_LOCAL_CONFIG'
+
 /**
  * @Author: 黄原寅
  * @Desc: 克隆思维导图数据，去除激活状态
@@ -32,10 +33,14 @@ export const getExampleData = () => {
  */
 export const getData = () => {
   let store = localStorage.getItem(SIMPLE_MIND_MAP_DATA)
-  try {
-    return JSON.parse(store)
-  } catch (error) {
-    return null
+  if (store === null) {
+    return simpleDeepClone(exampleData)
+  } else {
+    try {
+      return JSON.parse(store)
+    } catch (error) {
+      return simpleDeepClone(exampleData)
+    }
   }
 }
 

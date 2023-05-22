@@ -25,6 +25,7 @@
                 }
               "
             ></ImgUpload>
+            <!-- 图片重复方式 -->
             <div class="rowItem">
               <span class="name">{{ $t('baseStyle.imageRepeat') }}</span>
               <el-select
@@ -39,6 +40,40 @@
                 "
               >
                 <el-option v-for="item in backgroundRepeatList" :key="item.value" :label="item.name" :value="item.value"> </el-option>
+              </el-select>
+            </div>
+            <!-- 图片位置 -->
+            <div class="rowItem">
+              <span class="name">{{ $t('baseStyle.imagePosition') }}</span>
+              <el-select
+                size="small"
+                style="width: 120px"
+                v-model="style.backgroundPosition"
+                placeholder=""
+                @change="
+                  value => {
+                    update('backgroundPosition', value)
+                  }
+                "
+              >
+                <el-option v-for="item in backgroundPositionList" :key="item.value" :label="item.name" :value="item.value"> </el-option>
+              </el-select>
+            </div>
+            <!-- 图片大小 -->
+            <div class="rowItem">
+              <span class="name">{{ $t('baseStyle.imageSize') }}</span>
+              <el-select
+                size="small"
+                style="width: 120px"
+                v-model="style.backgroundSize"
+                placeholder=""
+                @change="
+                  value => {
+                    update('backgroundSize', value)
+                  }
+                "
+              >
+                <el-option v-for="item in backgroundSizeList" :key="item.value" :label="item.name" :value="item.value"> </el-option>
               </el-select>
             </div>
           </el-tab-pane>
@@ -132,6 +167,144 @@
           >
             <el-option v-for="item in lineWidthList" :key="item" :label="item" :value="item"> </el-option>
           </el-select>
+        </div>
+      </div>
+      <!-- 关联线 -->
+      <div class="title noTop">{{ $t('baseStyle.associativeLine') }}</div>
+      <div class="row">
+        <div class="rowItem">
+          <span class="name">{{ $t('baseStyle.associativeLineColor') }}</span>
+          <el-popover ref="popover4" placement="bottom" trigger="hover" width="auto">
+            <template #reference>
+              <span class="block" v-popover:popover4 :style="{ backgroundColor: style.associativeLineColor }"></span>
+            </template>
+            <Color
+              :color="style.associativeLineColor"
+              @change="
+                color => {
+                  update('associativeLineColor', color)
+                }
+              "
+            ></Color>
+          </el-popover>
+        </div>
+        <div class="rowItem">
+          <span class="name">{{ $t('baseStyle.associativeLineWidth') }}</span>
+          <el-select
+            size="small"
+            style="width: 80px"
+            v-model="style.associativeLineWidth"
+            placeholder=""
+            @change="
+              value => {
+                update('associativeLineWidth', value)
+              }
+            "
+          >
+            <el-option v-for="item in lineWidthList" :key="item" :label="item" :value="item"></el-option>
+          </el-select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowItem">
+          <span class="name">{{ $t('baseStyle.associativeLineActiveColor') }}</span>
+          <el-popover ref="popover5" placement="bottom" trigger="hover" width="auto">
+            <template #reference>
+              <span class="block" v-popover:popover5 :style="{ backgroundColor: style.associativeLineActiveColor }"></span>
+            </template>
+            <Color
+              :color="style.associativeLineActiveColor"
+              @change="
+                color => {
+                  update('associativeLineActiveColor', color)
+                }
+              "
+            ></Color>
+          </el-popover>
+        </div>
+        <div class="rowItem">
+          <span class="name">{{ $t('baseStyle.associativeLineActiveWidth') }}</span>
+          <el-select
+            size="small"
+            style="width: 80px"
+            v-model="style.associativeLineActiveWidth"
+            placeholder=""
+            @change="
+              value => {
+                update('associativeLineActiveWidth', value)
+              }
+            "
+          >
+            <el-option v-for="item in lineWidthList" :key="item" :label="item" :value="item"> </el-option>
+          </el-select>
+        </div>
+      </div>
+      <!-- 关联线文字 -->
+      <div class="title noTop">关联线文字</div>
+      <div class="row">
+        <div class="rowItem">
+          <span class="name">字体</span>
+          <el-select
+            size="small"
+            v-model="style.associativeLineTextFontFamily"
+            placeholder=""
+            @change="update('associativeLineTextFontFamily', $event)"
+          >
+            <el-option
+              v-for="item in fontFamilyList"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"
+              :style="{ fontFamily: item.value }"
+            >
+            </el-option>
+          </el-select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowItem">
+          <span class="name">颜色</span>
+          <el-popover ref="popover6" placement="bottom" trigger="hover">
+            <template #reference>
+              <span class="block" v-popover:popover6 :style="{ backgroundColor: style.associativeLineTextColor }"></span>
+            </template>
+            <Color
+              :color="style.associativeLineTextColor"
+              @change="
+                color => {
+                  update('associativeLineTextColor', color)
+                }
+              "
+            ></Color>
+          </el-popover>
+        </div>
+        <div class="rowItem">
+          <span class="name">字号</span>
+          <el-select
+            size="small"
+            style="width: 80px"
+            v-model="style.associativeLineTextFontSize"
+            placeholder=""
+            @change="update('associativeLineTextFontSize', $event)"
+          >
+            <el-option v-for="item in fontSizeList" :key="item" :label="item" :value="item" :style="{ fontSize: item + 'px' }"> </el-option>
+          </el-select>
+        </div>
+      </div>
+      <!-- 节点边框风格 -->
+      <div class="title noTop">{{ $t('baseStyle.nodeBorderType') }}</div>
+      <div class="row">
+        <div class="rowItem">
+          <el-checkbox
+            v-model="style.nodeUseLineStyle"
+            @change="
+              value => {
+                update('nodeUseLineStyle', value)
+              }
+            "
+          >
+            {{ $t('baseStyle.nodeUseLineStyle') }}
+          </el-checkbox>
         </div>
       </div>
       <!-- 内边距 -->
@@ -250,6 +423,148 @@
           ></el-slider>
         </div>
       </div>
+      <!-- 水印 -->
+      <div class="title noTop">{{ $t('baseStyle.watermark') }}</div>
+      <div class="row">
+        <!-- 是否显示水印 -->
+        <div class="rowItem">
+          <el-checkbox v-model="watermarkConfig.show" @change="watermarkShowChange">{{ $t('baseStyle.showWatermark') }}</el-checkbox>
+        </div>
+      </div>
+      <template v-if="watermarkConfig.show">
+        <!-- 水印文字 -->
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('baseStyle.watermarkText') }}</span>
+            <el-input v-model="watermarkConfig.text" size="small" @change="updateWatermarkConfig"></el-input>
+          </div>
+        </div>
+        <!-- 水印文字颜色 -->
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('baseStyle.watermarkTextColor') }}</span>
+            <span class="block" v-popover:popover3 :style="{ backgroundColor: watermarkConfig.textStyle.color }"></span>
+            <el-popover ref="popover3" placement="bottom" trigger="click">
+              <Color
+                :color="watermarkConfig.textStyle.color"
+                @change="
+                  value => {
+                    watermarkConfig.textStyle.color = value
+                    updateWatermarkConfig()
+                  }
+                "
+              ></Color>
+            </el-popover>
+          </div>
+        </div>
+        <!-- 水印文字透明度 -->
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('baseStyle.watermarkTextOpacity') }}</span>
+            <el-slider
+              v-model="watermarkConfig.textStyle.opacity"
+              style="width: 170px"
+              :min="0"
+              :max="1"
+              :step="0.1"
+              @change="updateWatermarkConfig"
+            ></el-slider>
+          </div>
+        </div>
+        <!-- 水印文字字号 -->
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('baseStyle.watermarkTextFontSize') }}</span>
+            <el-input-number
+              v-model="watermarkConfig.textStyle.fontSize"
+              size="small"
+              :min="0"
+              :max="50"
+              :step="1"
+              @change="updateWatermarkConfig"
+            ></el-input-number>
+          </div>
+        </div>
+        <!-- 旋转角度 -->
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('baseStyle.watermarkAngle') }}</span>
+            <el-input-number
+              v-model="watermarkConfig.angle"
+              size="small"
+              :min="0"
+              :max="90"
+              :step="10"
+              @change="updateWatermarkConfig"
+            ></el-input-number>
+          </div>
+        </div>
+        <!-- 水印行间距 -->
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('baseStyle.watermarkLineSpacing') }}</span>
+            <el-input-number
+              v-model="watermarkConfig.lineSpacing"
+              size="small"
+              :step="10"
+              @change="updateWatermarkConfig"
+            ></el-input-number>
+          </div>
+        </div>
+        <!-- 水印文字间距 -->
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('baseStyle.watermarkTextSpacing') }}</span>
+            <el-input-number
+              v-model="watermarkConfig.textSpacing"
+              size="small"
+              :step="10"
+              @change="updateWatermarkConfig"
+            ></el-input-number>
+          </div>
+        </div>
+      </template>
+      <!-- 其他配置 -->
+      <div class="title noTop">{{ $t('baseStyle.otherConfig') }}</div>
+      <div class="row">
+        <div class="rowItem">
+          <el-checkbox
+            v-model="config.enableFreeDrag"
+            @change="
+              value => {
+                updateOtherConfig('enableFreeDrag', value)
+              }
+            "
+            >{{ $t('baseStyle.enableFreeDrag') }}</el-checkbox
+          >
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowItem">
+          <el-checkbox v-model="enableNodeRichText" @change="enableNodeRichTextChange">{{
+            this.$t('baseStyle.isEnableNodeRichText')
+          }}</el-checkbox>
+        </div>
+      </div>
+      <div class="row">
+        <div class="rowItem">
+          <span class="name">{{ $t('baseStyle.mousewheelAction') }}</span>
+          <el-select
+            size="small"
+            style="width: 120px"
+            v-model="config.mousewheelAction"
+            placeholder=""
+            @change="
+              value => {
+                updateOtherConfig('mousewheelAction', value)
+              }
+            "
+          >
+            <el-option :label="$t('baseStyle.zoomView')" value="zoom"></el-option>
+            <el-option :label="$t('baseStyle.moveViewUpDown')" value="move"></el-option>
+          </el-select>
+        </div>
+      </div>
     </div>
   </Sidebar>
 </template>
@@ -257,11 +572,19 @@
 <script>
 import Sidebar from './Sidebar'
 import Color from './Color'
-import { lineWidthList, lineStyleList, backgroundRepeatList } from '@/config'
+import {
+  lineWidthList,
+  lineStyleList,
+  backgroundRepeatList,
+  backgroundPositionList,
+  backgroundSizeList,
+  fontFamilyList,
+  fontSizeList
+} from '@/config'
 import ImgUpload from '@/components/ImgUpload'
 import { storeConfig } from '@/api'
-import { mapState } from 'vuex'
 import bus from '@/utils/bus.js'
+import { mapState, mapMutations } from 'vuex'
 /**
  * @Author: 黄原寅
  * @Desc: 基础样式
@@ -285,8 +608,7 @@ export default {
   data() {
     return {
       lineWidthList,
-      // lineStyleList,
-      // backgroundRepeatList,
+      fontSizeList,
       activeTab: 'color',
       marginActiveTab: 'second',
       style: {
@@ -296,6 +618,13 @@ export default {
         lineStyle: '',
         generalizationLineWidth: '',
         generalizationLineColor: '',
+        associativeLineColor: '',
+        associativeLineWidth: 0,
+        associativeLineActiveWidth: 0,
+        associativeLineActiveColor: '',
+        associativeLineTextFontSize: 0,
+        associativeLineTextColor: '',
+        associativeLineTextFontFamily: '',
         paddingX: 0,
         paddingY: 0,
         imgMaxWidth: 0,
@@ -303,18 +632,48 @@ export default {
         iconSize: 0,
         backgroundImage: '',
         backgroundRepeat: 'no-repeat',
+        backgroundPosition: '',
+        backgroundSize: '',
         marginX: 0,
-        marginY: 0
-      }
+        marginY: 0,
+        nodeUseLineStyle: false
+      },
+      config: {
+        enableFreeDrag: false,
+        mousewheelAction: 'zoom'
+      },
+      watermarkConfig: {
+        show: false,
+        text: '',
+        lineSpacing: 100,
+        textSpacing: 100,
+        angle: 30,
+        textStyle: {
+          color: '',
+          opacity: 0,
+          fontSize: 1
+        }
+      },
+      updateWatermarkTimer: null,
+      enableNodeRichText: true
     }
   },
   computed: {
-    ...mapState(['activeSidebar']),
+    ...mapState(['activeSidebar', 'localConfig']),
     lineStyleList() {
       return lineStyleList[this.$i18n.locale] || lineStyleList.zh
     },
     backgroundRepeatList() {
       return backgroundRepeatList[this.$i18n.locale] || backgroundRepeatList.zh
+    },
+    backgroundPositionList() {
+      return backgroundPositionList[this.$i18n.locale] || backgroundPositionList.zh
+    },
+    backgroundSizeList() {
+      return backgroundSizeList[this.$i18n.locale] || backgroundSizeList.zh
+    },
+    fontFamilyList() {
+      return fontFamilyList[this.$i18n.locale] || fontFamilyList.zh
     }
   },
   watch: {
@@ -322,12 +681,19 @@ export default {
       if (val === 'baseStyle') {
         this.$refs.sidebar.show = true
         this.initStyle()
+        this.initConfig()
+        this.initWatermark()
       } else {
         this.$refs.sidebar.show = false
       }
     }
   },
+  created() {
+    this.enableNodeRichText = this.localConfig.openNodeRichText
+    this.mousewheelAction = this.localConfig.mousewheelAction
+  },
   methods: {
+    ...mapMutations(['setLocalConfig']),
     /**
      * @Author: 黄原寅
      * @Desc: 初始样式
@@ -340,13 +706,23 @@ export default {
         'lineColor',
         'generalizationLineWidth',
         'generalizationLineColor',
+        'associativeLineColor',
+        'associativeLineWidth',
+        'associativeLineActiveWidth',
+        'associativeLineActiveColor',
+        'associativeLineTextFontSize',
+        'associativeLineTextColor',
+        'associativeLineTextFontFamily',
         'paddingX',
         'paddingY',
         'imgMaxWidth',
         'imgMaxHeight',
         'iconSize',
         'backgroundImage',
-        'backgroundRepeat'
+        'backgroundRepeat',
+        'backgroundPosition',
+        'backgroundSize',
+        'nodeUseLineStyle'
       ].forEach(key => {
         this.style[key] = this.mindMap.getThemeConfig(key)
         if (key === 'backgroundImage' && this.style[key] === 'none') {
@@ -354,6 +730,23 @@ export default {
         }
       })
       this.initMarginStyle()
+    },
+
+    // 初始化其他配置
+    initConfig() {
+      ;['enableFreeDrag', 'mousewheelAction'].forEach(key => {
+        this.config[key] = this.mindMap.getConfig(key)
+      })
+    },
+
+    // 初始化水印配置
+    initWatermark() {
+      let config = this.mindMap.getConfig('watermarkConfig')
+      ;['text', 'lineSpacing', 'textSpacing', 'angle'].forEach(key => {
+        this.watermarkConfig[key] = config[key]
+      })
+      this.watermarkConfig.show = !!config.text
+      this.watermarkConfig.textStyle = { ...config.textStyle }
     },
 
     /**
@@ -386,6 +779,34 @@ export default {
       })
     },
 
+    // 更新其他配置
+    updateOtherConfig(key, value) {
+      this.mindMap.updateConfig({
+        [key]: value
+      })
+      this.data.config = this.data.config || {}
+      this.data.config[key] = value
+      storeConfig({
+        config: this.data.config
+      })
+    },
+
+    // 更新水印配置
+    updateWatermarkConfig() {
+      clearTimeout(this.updateWatermarkTimer)
+      this.updateWatermarkTimer = setTimeout(() => {
+        let { show, ...config } = this.watermarkConfig
+        this.mindMap.watermark.updateWatermark({
+          ...config
+        })
+        this.data.config = this.data.config || {}
+        this.data.config.watermarkConfig = this.mindMap.getConfig('watermarkConfig')
+        storeConfig({
+          config: this.data.config
+        })
+      }, 300)
+    },
+
     /**
      * @Author: 黄原寅
      * @Desc: 设置margin
@@ -397,6 +818,32 @@ export default {
       }
       this.data.theme.config[this.marginActiveTab][type] = value
       this.mindMap.setThemeConfig(this.data.theme.config)
+    },
+
+    // 切换显示水印与否
+    watermarkShowChange(value) {
+      if (value) {
+        let text = this.watermarkConfig.text || this.$t('baseStyle.watermarkDefaultText')
+        this.watermarkConfig.text = text
+      } else {
+        this.watermarkConfig.text = ''
+      }
+      this.updateWatermarkConfig()
+    },
+
+    // 切换是否开启节点富文本编辑
+    enableNodeRichTextChange(e) {
+      this.setLocalConfig({
+        openNodeRichText: e
+      })
+    },
+
+    // 切换鼠标滚轮的行为
+    mousewheelActionChange(e) {
+      this.setLocalConfig({
+        mousewheelAction: e
+      })
+      this.mindMap.updateConfig
     }
   }
 }
@@ -451,6 +898,7 @@ export default {
       .name {
         font-size: 12px;
         margin-right: 10px;
+        white-space: nowrap;
       }
 
       .block {

@@ -1,20 +1,21 @@
 <template>
   <div class="navigatorContainer">
-    <!-- <div class="item">
+    <div class="item">
       <el-select v-model="lang" size="small" style="width: 100px" @change="onLangChange">
         <el-option v-for="item in langList" :key="item.value" :label="item.name" :value="item.value" />
       </el-select>
-    </div> -->
-    <!-- <div class="item">
-      <el-checkbox v-model="openMiniMap" @change="toggleMiniMap">$t('navigatorToolbar.openMiniMap')</el-checkbox>
-    </div> -->
+    </div>
+    <div class="item">
+      <el-checkbox v-model="openMiniMap" @change="toggleMiniMap">{{ $t('navigatorToolbar.openMiniMap') }}</el-checkbox>
+    </div>
     <div class="item">
       <el-switch
         v-model="isReadonly"
         :active-text="$t('navigatorToolbar.readonly')"
         :inactive-text="$t('navigatorToolbar.edit')"
         @change="readonlyChange"
-      ></el-switch>
+      >
+      </el-switch>
     </div>
     <div class="item">
       <Scale :mindMap="mindMap"></Scale>
@@ -30,12 +31,12 @@
  * @Author: 黄原寅
  * @Desc: 导航器工具栏
  */
-import { ref, onMounted, defineProps, watch, reactive, nextTick } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import Scale from './Scale'
 import Fullscreen from './Fullscreen'
 import bus from '@/utils/bus.js'
 import { langList } from '@/config'
-import i18n from '@/i18n'
+import i18n from '@/i18n.js'
 import { storeLang, getLang } from '@/api'
 import { useStore } from 'vuex'
 
@@ -48,7 +49,7 @@ const props = defineProps({
 const store = useStore()
 const rightPosition = ref(false)
 const isReadonly = ref(false)
-const openMiniMap = ref(true)
+const openMiniMap = ref(false)
 const lang = ref(getLang())
 
 watch(

@@ -1,10 +1,17 @@
 <template>
-  <el-dialog custom-class="nodeDialog" v-model="dialogVisible" :title="$t('import.title')" width="600px">
-    <el-upload ref="upload" action="x" :file-list="fileList" :auto-upload="false" :multiple="false" :on-change="onChange" :limit="1" :on-exceed="onExceed">
-      <el-button slot="trigger" size="small" type="primary">{{ $t('import.selectFile') }}</el-button>
-      <div slot="tip" class="el-upload__tip">
-        {{ $t('import.supportFile') }}
-      </div>
+  <el-dialog custom-class="importNodeDialog" v-model="dialogVisible" :title="$t('import.title')" width="600px">
+    <el-upload
+      ref="upload"
+      action="x"
+      :file-list="fileList"
+      :auto-upload="false"
+      :multiple="false"
+      :on-change="onChange"
+      :limit="1"
+      :on-exceed="onExceed"
+    >
+      <el-button slot="trigger" size="default" type="primary">{{ $t('import.selectFile') }}</el-button>
+      <div slot="tip" class="el-upload__tip">{{ $t('import.supportFile') }}</div>
     </el-upload>
     <template #footer>
       <span class="dialog-footer">
@@ -23,7 +30,9 @@
 import { onMounted, ref, watch } from 'vue'
 import bus from '@/utils/bus.js'
 import { ElMessage } from 'element-plus'
-import MindMap from 'simple-mind-map'
+// import MindMap from 'simple-mind-map'
+import xmind from 'simple-mind-map/src/parse/xmind.js'
+import markdown from 'simple-mind-map/src/parse/markdown.js'
 import { useStore } from 'vuex'
 import { fileToBuffer } from '@/utils'
 import { read, utils } from 'xlsx'
@@ -52,10 +61,10 @@ onMounted(() => {
  * @Desc: 文件选择
  */
 const onChange = file => {
-  let reg = /\.(smm|xmind|json|xlsx)$/
+  let reg = /\.(smm|xmind|json|xlsx|md)$/
   if (!reg.test(file.name)) {
     ElMessage({
-      message: '请选择.smm、.json、.xmind、.xlsx文件',
+      message: '请选择.smm、.json、.xmind、.xlsx、.md文件',
       type: 'error'
     })
     fileList.value = []
@@ -101,11 +110,12 @@ const confirm = () => {
   } else if (/\.xmind$/.test(file.name)) {
     handleXmind(file)
   } else if (/\.xlsx$/.test(file.name)) {
-    this.handleExcel(file)
+    handleExcel(file)
+  } else if (/\.md$/.test(file.name)) {
+    handleMd(file)
   }
   cancel()
 }
-
 /**
  * @Author: 黄原寅
  * @Desc: 处理.smm文件
@@ -134,14 +144,14 @@ const handleSmm = file => {
   }
   cancel()
 }
-
 /**
  * @Author: 黄原寅
- * @Desc: 处理.Xmind文件
+ * @Desc: 处理.xmind文件
  */
 const handleXmind = async file => {
   try {
-    let data = await MindMap.xmind.parseXmindFile(file.raw)
+    // let data = await MindMap.xmind.parseXmindFile(file.raw)
+    let data = await xmind.parseXmindFile(file.raw) // 将xmind解析方法从MindMap类上移除，改为按需引入方式使用
     bus.emit('setData', data)
     ElMessage({
       message: '导入成功',
@@ -155,7 +165,6 @@ const handleXmind = async file => {
     })
   }
 }
-
 /**
  * @Author: 黄原寅
  * @Desc: 处理.xlsx文件
@@ -215,10 +224,34 @@ const handleExcel = async file => {
       }
     }
     bus.emit('setData', layers[0][0])
-    Elmessage.success('导入成功')
+    ElMessage.success('导入成功')
   } catch (error) {
     console.log(error)
-    ELmessage.error('文件解析失败')
+    ElMessage.error('文件解析失败')
+  }
+}
+/**
+ * @Author: 黄原寅
+ * @Desc: 处理markdown文件
+ */
+const handleMd = async file => {
+  let fileReader = new FileReader()
+  fileReader.readAsText(file.raw)
+  fileReader.onload = async evt => {
+    try {
+      let data = await markdown.transformMarkdownTo(evt.target.result)
+      bus.emit('setData', data)
+      ElMessage({
+        message: '导入成功',
+        type: 'success'
+      })
+    } catch (error) {
+      console.log(error)
+      ElMessage({
+        message: '文件解析失败',
+        type: 'error'
+      })
+    }
   }
 }
 </script>
@@ -229,4 +262,8 @@ export default {
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.el-upload__tip {
+  margin: 0 0 0 5px;
+}
+</style>

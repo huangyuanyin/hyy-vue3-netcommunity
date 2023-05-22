@@ -1,6 +1,14 @@
-<template>
-  <el-dialog custom-class="nodeDialog" v-model="dialogVisible" :title="$t('nodeTag.title')">
-    <el-input v-model="tag" @keyup.native.enter="add" :disabled="tagArr.length >= max" :placeholder="$t('nodeTag.addTip')"> </el-input>
+<template
+  >nodeImageDialog
+  <el-dialog custom-class="nodeTagDialog" v-model="dialogVisible" :title="$t('nodeTag.title')">
+    <el-input
+      v-model="tag"
+      @keyup.native.enter="add"
+      @keyup.native.stop
+      :disabled="tagArr.length >= max"
+      :placeholder="$t('nodeTag.addTip')"
+    >
+    </el-input>
     <div class="tagList">
       <div
         class="tagItem"
@@ -103,7 +111,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.nodeDialog {
+.nodeTagDialog {
   .tagList {
     display: flex;
     flex-wrap: wrap;

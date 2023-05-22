@@ -1,5 +1,5 @@
 <template>
-  <el-dialog custom-class="nodeDialog" v-model="dialogVisible" :title="$t('nodeIcon.title')">
+  <el-dialog custom-class="nodeIconDialog" v-model="dialogVisible" :title="$t('nodeIcon.title')">
     <div class="item" v-for="item in nodeIconList" :key="item.name">
       <div class="title">{{ item.name }}</div>
       <div class="list">
@@ -7,7 +7,7 @@
           class="icon"
           v-for="icon in item.list"
           :key="icon.name"
-          v-html="icon.icon"
+          v-html="getHtml(icon.icon)"
           :class="{
             selected: iconList.includes(item.type + '_' + icon.name)
           }"
@@ -20,6 +20,7 @@
 
 <script>
 import { nodeIconList } from 'simple-mind-map/src/svg/icons'
+import icon from '@/config/icon'
 import bus from '@/utils/bus.js'
 /**
  * @Author: 黄原寅
@@ -29,7 +30,7 @@ export default {
   name: 'NodeIcon',
   data() {
     return {
-      nodeIconList,
+      nodeIconList: [...nodeIconList, ...icon],
       dialogVisible: false,
       iconList: [],
       activeNodes: []
@@ -50,6 +51,9 @@ export default {
     })
   },
   methods: {
+    getHtml(icon) {
+      return /^<svg/.test(icon) ? icon : `<img src="${icon}" />`
+    },
     /**
      * @Author: 黄原寅
      * @Desc: 设置icon
@@ -83,8 +87,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.nodeDialog {
-  :deep(.el-dialog__body) {
+.nodeIconDialog {
+  /deep/ .el-dialog__body {
     padding: 0 20px;
   }
 
@@ -111,6 +115,14 @@ export default {
         margin-bottom: 10px;
         cursor: pointer;
         position: relative;
+        /deep/ img {
+          width: 100%;
+          height: 100%;
+        }
+        /deep/ svg {
+          width: 100%;
+          height: 100%;
+        }
 
         &.selected {
           &::after {

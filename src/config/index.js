@@ -14,8 +14,11 @@ import {
   backgroundPositionList as backgroundPositionListZh,
   shortcutKeyList as shortcutKeyListZh,
   shapeList as shapeListZh,
-  sidebarTriggerList as sidebarTriggerListZh
+  sidebarTriggerList as sidebarTriggerListZh,
+  backgroundSizeList as backgroundSizeListZh,
+  downTypeList as downTypeListZh
 } from './zh'
+
 import {
   fontFamilyList as fontFamilyListEn,
   borderDasharrayList as borderDasharrayListEn,
@@ -24,7 +27,9 @@ import {
   backgroundPositionList as backgroundPositionListEn,
   shortcutKeyList as shortcutKeyListEn,
   shapeList as shapeListEn,
-  sidebarTriggerList as sidebarTriggerListEn
+  sidebarTriggerList as sidebarTriggerListEn,
+  backgroundSizeList as backgroundSizeListEn,
+  downTypeList as downTypeListEn
 } from './en'
 
 const fontFamilyList = {
@@ -47,6 +52,10 @@ const backgroundPositionList = {
   zh: backgroundPositionListZh,
   en: backgroundPositionListEn
 }
+const backgroundSizeList = {
+  zh: backgroundSizeListZh,
+  en: backgroundSizeListEn
+}
 const shortcutKeyList = {
   zh: shortcutKeyListZh,
   en: shortcutKeyListEn
@@ -55,9 +64,15 @@ const shapeList = {
   zh: shapeListZh,
   en: shapeListEn
 }
+
 const sidebarTriggerList = {
   zh: sidebarTriggerListZh,
   en: sidebarTriggerListEn
+}
+
+const downTypeList = {
+  zh: downTypeListZh,
+  en: downTypeListEn
 }
 
 export {
@@ -74,7 +89,9 @@ export {
   lineStyleList,
   backgroundRepeatList,
   backgroundPositionList,
+  backgroundSizeList,
   shortcutKeyList,
   shapeList,
-  sidebarTriggerList
+  sidebarTriggerList,
+  downTypeList
 }
