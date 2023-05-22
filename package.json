@@ -9,6 +9,7 @@
     "build:stage": "vue-cli-service build --mode staging",
     "prod": "vue-cli-service serve --mode production",
     "build:prod": "vue-cli-service build --mode production",
+    "build:53":"vue-cli-service build --mode 53",
     "format": "prettier --write src/* src/*/* src/*/*/* src/*/*/*/*"
   },
   "dependencies": {
