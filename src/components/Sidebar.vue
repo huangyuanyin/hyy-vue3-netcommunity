@@ -60,6 +60,7 @@ export default {
   top: 60px;
   bottom: 0;
   overflow-y: scroll;
+  width: 100%;
 }
 .sidebar::-webkit-scrollbar {
   width: 0;

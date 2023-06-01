@@ -55,7 +55,7 @@ const handleMessage = event => {
 
   .frame-iframe {
     height: 100vh;
-    width: calc(100vw - 270px);
+    width: -webkit-fill-available;
     border: none;
   }
 }

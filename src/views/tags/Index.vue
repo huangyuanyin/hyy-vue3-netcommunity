@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="tag_wrap">
     <el-card>
       <template #header>
         <div class="card-header">
@@ -135,7 +135,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.tag_wrap {
+  height: 99vh;
+  .el-card {
+    height: 100%;
+  }
+}
 .card-header {
   display: flex;
   justify-content: space-between;

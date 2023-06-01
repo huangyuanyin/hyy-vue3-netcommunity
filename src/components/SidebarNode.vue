@@ -719,10 +719,11 @@ watch(
   padding-right: 18px;
   overflow: hidden;
   font-family: '思源宋体 Medium';
+  position: relative;
 }
 
 .custom-tree-node:hover .labelStyle {
-  max-width: 146px;
+  max-width: 65%;
 }
 
 .custom-tree-node:hover .buttonStyle {
@@ -736,11 +737,13 @@ watch(
   margin-right: 1px;
 }
 .labelStyle {
-  max-width: 370px;
+  max-width: 72%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block;
+  position: absolute;
+  left: 20px;
 }
 
 .is-Folder {

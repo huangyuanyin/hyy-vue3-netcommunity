@@ -129,7 +129,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.el-card {
+  padding-bottom: 30px;
+}
 .spantop {
   margin-left: 9%;
   font-size: 16px;

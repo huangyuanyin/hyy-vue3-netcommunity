@@ -2,11 +2,11 @@
   <div class="about">
     <v-header />
     <div class="box" ref="box">
-      <div class="box-left" v-if="siderbar">
+      <div class="box-left" v-if="siderbar" style="width:270px">
         <vSidebarNode />
         <div class="resize" v-resizable></div>
       </div>
-      <div class="box-left" v-if="!siderbar">
+      <div class="box-left" v-if="!siderbar" style="width:270px">
         <v-sidebar />
       </div>
       <div class="box-right">
