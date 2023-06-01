@@ -55,7 +55,7 @@ export default {
 <style scoped>
 .sidebar {
   display: block;
-  position: absolute;
+  /* position: absolute; */
   left: 0;
   top: 60px;
   bottom: 0;
@@ -65,7 +65,10 @@ export default {
   width: 0;
 }
 .sidebar-el-menu:not(.el-menu--collapse) {
-  width: 280px;
+  /* width: 280px; */
+}
+.sidebar-el-menu {
+  border-right: none;
 }
 .sidebar > ul {
   height: 100%;

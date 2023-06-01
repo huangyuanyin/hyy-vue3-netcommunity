@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="datalist">
+    <el-table :data="datalist" max-height="70vh">
       <el-table-column label="名称" prop="name">
         <template #default="scope">
           <el-button type="primary" plain @click="handleOpen(scope.row)">{{ scope.row.name }}</el-button>
@@ -17,7 +17,10 @@
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(scope.row)" :disabled="role !== 'admin' && scope.row.public !== '0'">
+          <!-- <el-button size="small" type="danger" @click="handleDelete(scope.row)" :disabled="role !== 'admin' && scope.row.public !== '0'">
+            删除
+          </el-button> -->
+          <el-button size="small" type="danger" @click="handleDelete(scope.row)" :disabled="true">
             删除
           </el-button>
         </template>
@@ -32,7 +35,7 @@ import { reactive, ref, watch, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { deleteCategorys, getCategorys } from '@/api/category.js'
+import { deleteCategorys, getCategorys, updateCategorys } from '@/api/category.js'
 import DialogBook from './dialog.vue'
 import { utc2beijing } from '@/utils/util.js'
 
@@ -54,6 +57,7 @@ const getMyBooks = id => {
   }
   id === 1 ? delete params.author : ''
   getCategorys(params).then(res => {
+    // res.data = res.data.filter(item => item.is_delete === false)
     datalist.value = res.data
   })
 }
@@ -102,7 +106,14 @@ const handleDelete = data => {
     draggable: true
   })
     .then(() => {
-      deleteCategorys(data.id).then(res => {
+      // deleteCategorys(data.id).then(res => {
+      //   if (res.code === 1000) {
+      //     ElMessage.success('删除成功')
+      //     getMyBooks(Number(data.public))
+      //   }
+      // })
+      data.is_delete = true
+      updateCategorys(data.id, data).then(res => {
         if (res.code === 1000) {
           ElMessage.success('删除成功')
           getMyBooks(Number(data.public))

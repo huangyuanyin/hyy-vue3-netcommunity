@@ -470,11 +470,11 @@ export default {
   // bottom: 0;
 
   .mindMapContainer {
-    position: absolute;
+    // position: absolute;
     left: 0px;
     top: 0px;
     width: 100%;
-    height: 100%;
+    height: 98vh;
   }
 }
 </style>

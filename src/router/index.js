@@ -1,11 +1,3 @@
-/*
- * @Description: 路由管理
- * @Author: maxf
- * @Date: 2021-12-05 11:41:32
- * @LastEditors: maxf
- * @LastEditTime: 2022-03-15 11:41:32
- * @FilePath: \vue3-netforum\src\router\index.js
- */
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 
@@ -163,6 +155,10 @@ router.beforeEach((to, from, next) => {
   document.title = `信安知识库`
   // 解决进入知识库后,返回上一页面,左侧导航菜单不变的bug
   if (from.path == '/subbooks' && to.path == '/books') {
+    sessionStorage.setItem('siderbar', '2')
+    store.commit('app/handleSiderbar', false)
+  }
+  if (from.path == '/subbooks' && to.path == '/trash') {
     sessionStorage.setItem('siderbar', '2')
     store.commit('app/handleSiderbar', false)
   }

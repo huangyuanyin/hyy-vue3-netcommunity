@@ -544,7 +544,7 @@ export default {
   :deep(.el-card__header) {
     position: fixed;
     top: 50px;
-    width: 100%;
+    width: -webkit-fill-available;
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-between;

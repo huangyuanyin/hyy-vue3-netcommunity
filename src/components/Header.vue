@@ -165,7 +165,7 @@ const changeDrawer = drawer => {
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  height: 50px;
+  height: 5%;
   color: #fff;
   display: flex;
   justify-content: space-between;

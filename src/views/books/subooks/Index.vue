@@ -1,15 +1,15 @@
 <template>
   <div>
-    <el-card>
+    <el-card class="list-wrap">
       <el-container>
         <el-header height="30px" style="width: 90%; margin-left: 5%">
           <span>{{ node.label }}</span>
-          <el-button text style="float: right" @click="handleRefresh">
+          <el-button text style="float: right" @click="handleRefresh" v-if="!isTrash">
             <el-icon>
               <Refresh />
             </el-icon>
           </el-button>
-          <el-dropdown trigger="click" @command="handleCommand" style="float: right">
+          <el-dropdown trigger="click" @command="handleCommand" style="float: right" v-if="!isTrash">
             <el-button text>
               <el-icon size="large">
                 <CirclePlus />
@@ -32,7 +32,7 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <el-button :icon="Search" style="float: right" @click="drawer = true">筛选</el-button>
+          <el-button :icon="Search" style="float: right" @click="drawer = true" v-if="!isTrash">筛选</el-button>
         </el-header>
         <el-main style="width: 90%; margin-left: 5%">
           <!-- <el-table :data="datalist" fit border stripe v-loading="loading">
@@ -57,8 +57,11 @@
                 <div class="ribbon" v-if="question.type === 'd'">
                   <span>仅预览</span>
                 </div>
-                <div style="padding: 14px">
-                  <h3 @click="handleOpen(question.type, question.id, question)">{{ question.title }}</h3>
+                <div class="title-wrap" style="" @click="handleOpen(question.type, question.id, question)">
+                  <h3 style="margin-bottom: 10px;">
+                    {{ question.title }}
+                  </h3>
+                  <p v-if="question.description">{{ question.description }}</p>
                 </div>
                 <el-row class="subscript">
                   <el-col :span="1">
@@ -156,7 +159,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, reactive, watchEffect, nextTick } from 'vue'
+import { ref, computed, watch, watchEffect, reactive, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
 import SaveDialog from '@/components/SaveDialog.vue'
@@ -180,6 +183,7 @@ const router = useRouter()
 const spaceid = ref(sessionStorage.getItem('spaceid')) // 工作空间标题名
 const shareLink = ref('') // 分享链接
 const treeData = ref([])
+const isTrash = ref(false) // 是否是回收站
 // 等待
 let loadingInstance
 const loading = ref(false)
@@ -250,6 +254,7 @@ const getDataList = () => {
     pagesize: size.value
   }
   getForum(params).then(res => {
+    // res.data = res.data.filter(item => (isTrash.value ? item.is_delete === true : item.is_delete === false))
     datalist.value = res.data
     total.value = res.total
     loading.value = false
@@ -273,6 +278,9 @@ getTagList()
 watchEffect(() => {
   if (route.params.wRefresh || node.value.id) {
     getDataList()
+  }
+  if (route.query && route.query.type) {
+    route.query.type == 'trash' ? (isTrash.value = true) : (isTrash.value = false)
   }
 })
 
@@ -523,9 +531,15 @@ const getNodeList = () => {
     treeData.value = judgeNodeType(res.data)
   })
 }
+
+onMounted(() => {})
+onBeforeUnmount(() => {})
 </script>
 
 <style lang="scss" scoped>
+.list-wrap {
+  min-height: 99vh;
+}
 .is-Folder {
   margin-right: 3px;
 }
@@ -545,6 +559,29 @@ const getNodeList = () => {
 
   li {
     margin: 10px 0 !important;
+  }
+  .title-wrap {
+    cursor: pointer;
+    padding: 14px;
+    padding-bottom: 0px;
+    width: 50%;
+    h3 {
+      margin-bottom: 10px;
+    }
+    p {
+      color: #8a919f;
+      font-size: 13px;
+      line-height: 22px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      // display: -webkit-box; /* 将元素显示为一个弹性盒子 */
+      // -webkit-line-clamp: 2; /* 限制显示的行数为2行 */
+      // -webkit-box-orient: vertical; /* 将元素中的文本竖向排列 */
+      // overflow: hidden; /* 隐藏超出部分 */
+      // text-overflow: ellipsis; /* 超出部分用省略号表示 */
+    }
   }
 
   .itemCard {

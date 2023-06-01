@@ -77,6 +77,7 @@ export default {
   line-height: 22px;
   font-size: 12px;
   display: flex;
+  margin-left: 20px;
 
   .item {
     color: #555;

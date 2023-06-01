@@ -22,15 +22,15 @@ a {
 
 
 .content-box {
-    position: absolute;
-    left: 270px;
-    right: 0;
+    /* position: absolute; */
+    /* left: 270px; */
+    /* right: 0; */
     top: 50px;
     bottom: 0;
     padding-bottom: 0px;
     -webkit-transition: left .3s ease-in-out;
     transition: left .3s ease-in-out;
-    background: #f0f0f0;
+    /* background: #f0f0f0; */
 }
 
 .content::-webkit-scrollbar {

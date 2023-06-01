@@ -91,7 +91,7 @@
               </el-col>
             </el-row>
             <el-row class="topinfo">
-              <el-col :span="23" class="user" style="display:flex">
+              <el-col :span="24" class="user" style="display:flex">
                 <div style="display: flex;align-items: center;">
                   <img src="@/assets/img/img.jpg" />
                   <div style="display: inline;">
@@ -125,7 +125,7 @@
               </el-col>
             </el-row>
           </div>
-          <el-row style="margin-top: 13vh;z-index: 300;">
+          <el-row style="z-index: 300;">
             <Markdown :data="fourumdata.body" @fullScreen="fullScreen" />
           </el-row>
           <!-- <el-row style="margin-top: 13vh;z-index: 300;">
@@ -341,7 +341,7 @@ const deleteApi = () => {
 
 <style lang="scss" scoped>
 .detail-wrap {
-  // margin-bottom: 40px;
+  margin-bottom: 40px;
   :deep(.el-card__body) {
     overflow: -moz-scrollbars-none;
     padding-top: 0px;
@@ -349,12 +349,12 @@ const deleteApi = () => {
 
   .row-title {
     .button-row {
-      position: fixed;
+      // position: fixed;
       top: 50px;
       z-index: 301;
       padding: 20px 0;
       background-color: #fff;
-      width: 80%;
+      // width: 80%;
       // margin-left: -20px;
     }
   }

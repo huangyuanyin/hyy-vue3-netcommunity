@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-card>
+    <el-card class="books_card">
       <el-row>
         <el-col :span="3">
           <span class="title">我的知识库</span>
@@ -78,6 +78,10 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.books_card {
+  min-height: 99vh;
+  overflow: auto;
+}
 .title {
   font-weight: 600;
   font-size: 17px;

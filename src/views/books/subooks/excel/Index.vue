@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="luckysheet_wrap">
     <div id="luckysheet"></div>
     <div class="operate">
       <!-- <el-icon @click="goBack"><ArrowLeftBold /></el-icon> -->
@@ -369,6 +369,10 @@ const toDetail = eid => {
 </script>
 
 <style lang="scss" scoped>
+.luckysheet_wrap {
+  position: relative;
+  height: 98vh;
+}
 #luckysheet {
   margin: 0px;
   padding: 0px;
@@ -414,8 +418,8 @@ const toDetail = eid => {
   // display: none;
 }
 
-/* 
+/*
 .luckysheet canvas {
-  width: 100% !important;  
+  width: 100% !important;
 } */
 </style>

@@ -476,10 +476,8 @@ export default {
 <style lang="less" scoped>
 .toolbarContainer {
   .toolbar {
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 50px;
+    position: absolute;
+    left: 5%;
     width: max-content;
     max-width: 100%;
     display: flex;

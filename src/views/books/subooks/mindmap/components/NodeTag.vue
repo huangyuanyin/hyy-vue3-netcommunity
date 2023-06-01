@@ -1,5 +1,4 @@
-<template
-  >nodeImageDialog
+<template>
   <el-dialog custom-class="nodeTagDialog" v-model="dialogVisible" :title="$t('nodeTag.title')">
     <el-input
       v-model="tag"

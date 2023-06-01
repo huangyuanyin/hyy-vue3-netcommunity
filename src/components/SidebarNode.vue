@@ -1,10 +1,10 @@
 <template>
   <div class="sidebar">
-    <el-row style="margin-top: 10px">
-      <el-col :span="18" :offset="1">
+    <el-row class="sidebar_row">
+      <el-col :span="18" :offset="1" style="margin-left:0px">
         <span class="title">{{ spacename }}</span>
       </el-col>
-      <el-col :span="3">
+      <el-col :span="3" style="text-align:end;max-width: none;">
         <el-dropdown trigger="click" @command="handleCommand">
           <el-button text>
             <el-icon size="large">
@@ -59,10 +59,10 @@
               <svg-icon iconName="icon-ppt" v-if="data.type === 'p'" className="is-Folder"></svg-icon>
               <span class="labelStyle" :title="node.label">{{ node.label }}</span>
             </div>
-            <div class="buttonStyle">
+            <div class="buttonStyle" ref="buttonStyle">
               <!-- +号 -->
               <el-dropdown @command="handleNewInstruction" trigger="hover" @visible-change="showIcon" v-if="data.type === 'l'">
-                <span class="left-button" ref="leftButton">
+                <span class="left-button">
                   <svg-icon iconName="icon-top"></svg-icon>
                 </span>
                 <template #dropdown>
@@ -88,28 +88,26 @@
                 </template>
               </el-dropdown>
               <!-- 更多 -->
-              <div style="display: flex;" @click.stop>
-                <el-dropdown @command="handleRoot" trigger="hover">
-                  <span>
-                    <svg-icon iconName="icon-gengduo"></svg-icon>
-                  </span>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
-                        <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
-                      </el-dropdown-item>
-                      <el-dropdown-item :command="'share' + ',' + data.articleId + ',' + data.type" v-if="data.type !== 'l'">
-                        <div class="copy" :data-clipboard-text="shareLink">
-                          <svg-icon iconName="icon-fenxiang1" className="is-Folder" />分享
-                        </div>
-                      </el-dropdown-item>
-                      <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type">
-                        <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </div>
+              <el-dropdown @command="handleRoot" trigger="hover" @visible-change="showIcon">
+                <span class="left-button_more">
+                  <svg-icon iconName="icon-gengduo"></svg-icon>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
+                      <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'share' + ',' + data.articleId + ',' + data.type" v-if="data.type !== 'l'">
+                      <div class="copy" :data-clipboard-text="shareLink">
+                        <svg-icon iconName="icon-fenxiang1" className="is-Folder" />分享
+                      </div>
+                    </el-dropdown-item>
+                    <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type">
+                      <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </div>
         </template>
@@ -193,7 +191,6 @@ const defaultProps = {
   label: 'label',
   value: 'id'
 }
-const leftButton = ref(null)
 const form = ref({
   name: ''
 })
@@ -413,10 +410,9 @@ const handleNewInstruction = value => {
 // 监听下拉菜单的显示/隐藏
 const showIcon = hidden => {
   if (hidden === true) {
-    leftButton.value.style.display = 'block'
+    // 给document.getElementById('buttonStyle')添加样式
     return
   }
-  leftButton.value.style.display = ''
 }
 
 // 对话框关闭事件
@@ -670,21 +666,30 @@ watch(
 )
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .sidebar {
   display: block;
-  position: absolute;
+  /* position: absolute; */
   left: 0;
-  top: 60px;
+  top: 3%;
   bottom: 0;
   overflow-y: scroll;
-  width: 270px;
+  min-width: 270px;
+  width: 100%;
   background-color: #ffffff;
+  .sidebar_row {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0px 0 10px;
+  }
 }
 
 .title {
   font-weight: 700;
   font-size: 17px;
+  color: #262626;
 }
 
 .filter-tree {
@@ -694,6 +699,14 @@ watch(
 
 .left-button {
   margin-right: 15px;
+  /* display: none; */
+}
+
+.left-button_more {
+  /* display: none; */
+}
+
+.buttonStyle {
   display: none;
 }
 
@@ -712,6 +725,10 @@ watch(
   max-width: 146px;
 }
 
+.custom-tree-node:hover .buttonStyle {
+  display: flex;
+}
+
 .content {
   display: flex;
   align-items: center;
@@ -719,7 +736,7 @@ watch(
   margin-right: 1px;
 }
 .labelStyle {
-  max-width: 170px;
+  max-width: 370px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -739,13 +756,5 @@ watch(
 } */
 .sidebar > ul {
   height: 100%;
-}
-
-.custom-tree-node:hover .left-button {
-  display: block;
-}
-
-.buttonStyle {
-  display: flex;
 }
 </style>
