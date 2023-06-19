@@ -1,10 +1,10 @@
 //  导入插件
 const buttonPlugins =
-  'emoticons preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media code codesample table charmap hr vr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern autosave vertical-line'
+  'emoticons preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media code codesample table charmap hr vr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount textpattern autosave'
 
 // 导入工具栏
 const toolbar =
-  'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor  table image | alignleft aligncenter alignright alignjustify outdent indent |  styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons hr vr pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs | 纵向分割线'
+  'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor  table image | alignleft aligncenter alignright alignjustify outdent indent |  styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons hr vr pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs'
 
 // 初始化配置
 export const init = {

@@ -20,15 +20,14 @@
                 <el-dropdown-item command="documentManage">
                   <svg-icon iconName="icon-shangchuanwenjian" className="is-Folder" />文档管理
                 </el-dropdown-item>
-                <el-dropdown-item command="article"> <svg-icon iconName="icon-word" className="is-Folder" />新建文档 </el-dropdown-item>
+                <!-- <el-dropdown-item command="article"> <svg-icon iconName="icon-word" className="is-Folder" />新建文档 </el-dropdown-item>
                 <el-dropdown-item command="excel"> <svg-icon iconName="icon-excel" className="is-Folder" />新建Excel </el-dropdown-item>
-                <!-- <el-dropdown-item command="word">新建文档(markdown)</el-dropdown-item> -->
                 <el-dropdown-item command="mindmap">
                   <svg-icon iconName="icon-icon__liuchengtu" className="is-Folder" />新建思维导图
                 </el-dropdown-item>
                 <el-dropdown-item command="ppt"> <svg-icon iconName="icon-ppt" className="is-Folder" />新建PPT</el-dropdown-item>
                 <el-dropdown-item command="process" disabled>新建流程图</el-dropdown-item>
-                <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item>
+                <el-dropdown-item command="process" disabled>新建白板</el-dropdown-item> -->
               </el-dropdown-menu>
             </template>
           </el-dropdown>

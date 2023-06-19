@@ -622,7 +622,7 @@ const handleDrop = (draggingNode, dropNode, dropType, ev) => {
   // 当拖拽类型不为inner,说明只是在现有的节点间移动，只需要寻找目标节点的父ID，获取其对象以及所有的子节点,data为目标节点的父节点;
   // 否则，当拖拽类型为inner,说明拖拽节点成为了目标节点的子节点,只需要获取目标节点对象即可
   // 目标节点的ID
-  var dropNodeId = dropNode.level == 1 && dropType != 'inner' ? Number(spaceid.value) : dropNode.data.id
+  var dropNodeId = dropNode.level == 1 || dropType != 'inner' ? Number(spaceid.value) : dropNode.data.id
   // 被拖拽节点的ID
   var draggingNodeId = draggingNode.data.id
   // 被拖拽节点的name
