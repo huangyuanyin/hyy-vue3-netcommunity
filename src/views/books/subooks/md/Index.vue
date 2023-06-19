@@ -539,7 +539,7 @@ export default {
 
 .md-wrap {
   min-height: calc(100vh - 50px);
-  max-width: calc(100vw - 260px);
+  // max-width: calc(100vw - 260px);
   position: relative;
   :deep(.el-card__header) {
     position: fixed;

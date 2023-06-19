@@ -372,6 +372,7 @@ const toDetail = eid => {
 .luckysheet_wrap {
   position: relative;
   height: 98vh;
+  width: -webkit-fill-available;
 }
 #luckysheet {
   margin: 0px;
@@ -381,6 +382,7 @@ const toDetail = eid => {
   left: 0px;
   top: 0px;
   bottom: 30px;
+  width: -webkit-fill-available;
   /* width: 100% !important;    */
 }
 

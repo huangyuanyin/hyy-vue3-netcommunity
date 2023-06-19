@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar">
+  <div class="sidebar" v-if="!props.isFold">
     <el-row class="sidebar_row">
       <el-col :span="18" :offset="1" style="margin-left:0px">
         <span class="title">{{ spacename }}</span>
@@ -152,6 +152,13 @@ import { updateForum, getForumInfo } from '@/api/forum.js'
 // import exampleData from 'simple-mind-map/example/exampleData';
 import bus from '@/utils/bus.js'
 import Clipboard from 'clipboard'
+
+const props = defineProps({
+  isFold: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const reload = inject('reload')
 const store = useStore()
@@ -744,6 +751,7 @@ watch(
   display: inline-block;
   position: absolute;
   left: 20px;
+  line-height: 24px;
 }
 
 .is-Folder {

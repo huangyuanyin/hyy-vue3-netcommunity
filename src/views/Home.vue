@@ -2,9 +2,19 @@
   <div class="about">
     <v-header />
     <div class="box" ref="box">
-      <div class="box-left" v-if="siderbar" style="width:270px">
-        <vSidebarNode />
+      <div class="box-left" v-if="siderbar" :style="{ width: isFold ? '0px' : '270px', 'min-width': isFold ? '0px' : '' }">
+        <vSidebarNode :isFold="isFold" />
         <div class="resize" v-resizable></div>
+        <el-tooltip class="box-item" effect="dark" content="收起" placement="right">
+          <div class="resize-button-left" v-if="!isFold" @click="packUp">
+            <span></span>
+          </div>
+        </el-tooltip>
+        <el-tooltip class="box-item" effect="dark" content="展开" placement="right">
+          <div class="resize-button-right" v-if="isFold" @click="expand">
+            <span></span>
+          </div>
+        </el-tooltip>
       </div>
       <div class="box-left" v-if="!siderbar" style="width:270px">
         <v-sidebar />
@@ -80,11 +90,27 @@ export default {
     const route = useRoute()
     const collapse = computed(() => store.getters.collapse)
     const siderbar = computed(() => store.getters.siderbar)
+    const isFold = ref(false)
+
+    const packUp = () => {
+      isFold.value = !isFold.value
+      const box = document.getElementsByClassName('luckysheet')[0]
+      if (box) {
+        box.style.width = '100vw'
+      }
+    }
+
+    const expand = () => {
+      isFold.value = !isFold.value
+    }
 
     return {
       collapse,
       siderbar,
-      route
+      route,
+      isFold,
+      packUp,
+      expand
     }
   }
 }
@@ -133,5 +159,70 @@ export default {
 .resize::after {
   right: 6px;
   width: 1px;
+}
+
+.resize-button-left {
+  z-index: 3;
+  position: absolute;
+  right: -7px;
+  top: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  width: 14px;
+  background-color: #eff0f0;
+  border: 1px solid #e7e9e8;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  opacity: 1;
+  will-change: top, opacity;
+  transform: translateY(-50%);
+  color: #8a8f8d;
+  span {
+    display: inline-block;
+    border-left: 5px solid #262626;
+    border-top: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    align-self: center;
+    transform: rotate(180deg);
+    margin-left: -5px;
+    color: #262626;
+  }
+}
+
+.resize-button-right {
+  z-index: 3;
+  position: absolute;
+  left: 0px;
+  top: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  width: 14px;
+  background-color: #eff0f0;
+  border: 1px solid #e7e9e8;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  opacity: 1;
+  will-change: top, opacity;
+  transform: translateY(-50%);
+  transition: all 0.3s ease 0.5s;
+  color: #8a8f8d;
+  span {
+    display: inline-block;
+    border-left: 5px solid #262626;
+    border-top: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    align-self: center;
+    transform: rotate(360deg);
+    margin-right: -5px;
+    color: #262626;
+  }
 }
 </style>
