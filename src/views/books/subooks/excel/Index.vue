@@ -420,8 +420,7 @@ const toDetail = eid => {
   // display: none;
 }
 
-/*
 .luckysheet canvas {
   width: 100% !important;
-} */
+}
 </style>

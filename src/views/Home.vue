@@ -2,16 +2,22 @@
   <div class="about">
     <v-header />
     <div class="box" ref="box">
-      <div class="box-left" v-if="siderbar" :style="{ width: isFold ? '0px' : '270px', 'min-width': isFold ? '0px' : '' }">
+      <div
+        class="box-left"
+        @mouseenter="isShowResizeButton = true"
+        @mouseleave="isShowResizeButton = false"
+        v-if="siderbar"
+        :style="{ width: isFold ? '0px' : '270px', 'min-width': isFold ? '0px' : '' }"
+      >
         <vSidebarNode :isFold="isFold" />
-        <div class="resize" v-resizable></div>
+        <div v-if="!isFold" class="resize" v-resizable></div>
         <el-tooltip class="box-item" effect="dark" content="收起" placement="right">
-          <div class="resize-button-left" v-if="!isFold" @click="packUp">
+          <div class="resize-button-left" v-if="!isFold && isShowResizeButton" @click.stop="packUp">
             <span></span>
           </div>
         </el-tooltip>
         <el-tooltip class="box-item" effect="dark" content="展开" placement="right">
-          <div class="resize-button-right" v-if="isFold" @click="expand">
+          <div class="resize-button-right" v-if="isFold" @click.stop="expand">
             <span></span>
           </div>
         </el-tooltip>
@@ -91,17 +97,31 @@ export default {
     const collapse = computed(() => store.getters.collapse)
     const siderbar = computed(() => store.getters.siderbar)
     const isFold = ref(false)
+    const isShowResizeButton = ref(false)
 
     const packUp = () => {
       isFold.value = !isFold.value
-      const box = document.getElementsByClassName('luckysheet')[0]
-      if (box) {
-        box.style.width = '100vw'
-      }
+      resizeExcel('packUp')
     }
 
     const expand = () => {
       isFold.value = !isFold.value
+      resizeExcel('expand')
+    }
+
+    const resizeExcel = type => {
+      const box = document.getElementsByClassName('luckysheet-grid-container')[0]
+      const box2 = document.getElementsByClassName('luckysheet-work-area')[0]
+      const box3 = document.getElementById('luckysheetTableContent')
+      if (type === 'packUp') {
+        box.style.width = '100vw'
+        box2.style.width = '100vw'
+        box3.style.width = '100vw'
+      } else {
+        box.style.width = '100%'
+        box2.style.width = '100%'
+        box3.style.width = '100%'
+      }
     }
 
     return {
@@ -110,7 +130,9 @@ export default {
       route,
       isFold,
       packUp,
-      expand
+      expand,
+      isShowResizeButton,
+      resizeExcel
     }
   }
 }
@@ -164,13 +186,13 @@ export default {
 .resize-button-left {
   z-index: 3;
   position: absolute;
-  right: -7px;
+  right: -11px;
   top: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 44px;
-  width: 14px;
+  width: 18px;
   background-color: #eff0f0;
   border: 1px solid #e7e9e8;
   border-radius: 8px;
@@ -182,13 +204,13 @@ export default {
   color: #8a8f8d;
   span {
     display: inline-block;
-    border-left: 5px solid #262626;
-    border-top: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid transparent;
+    border-left: 6px solid #262626;
+    border-top: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid transparent;
     align-self: center;
     transform: rotate(180deg);
-    margin-left: -5px;
+    margin-left: -6px;
     color: #262626;
   }
 }
@@ -202,7 +224,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 44px;
-  width: 14px;
+  width: 18px;
   background-color: #eff0f0;
   border: 1px solid #e7e9e8;
   border-radius: 8px;
@@ -215,13 +237,13 @@ export default {
   color: #8a8f8d;
   span {
     display: inline-block;
-    border-left: 5px solid #262626;
-    border-top: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid transparent;
+    border-left: 6px solid #262626;
+    border-top: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid transparent;
     align-self: center;
     transform: rotate(360deg);
-    margin-right: -5px;
+    margin-right: -6px;
     color: #262626;
   }
 }
