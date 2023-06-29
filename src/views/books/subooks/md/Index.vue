@@ -53,7 +53,7 @@
         <el-form-item label="上传附件">
           <el-tag type="info">暂不支持</el-tag>
         </el-form-item>
-        <el-form-item prop="body" style="height: 70vh;" v-if="editorType === 'Markdown'">
+        <el-form-item prop="body" style="height: 60vh;" v-if="editorType === 'Markdown'">
           <markdown-com style="z-index: 99999;" :data="md" @input="getMd" @fullScreen="fullScreen"></markdown-com>
         </el-form-item>
         <el-form-item prop="body" v-if="editorType === 'tiny'">
@@ -548,7 +548,7 @@ export default {
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-between;
-    max-width: calc(100vw - 260px);
+    // max-width: calc(100vw - 260px);
     overflow: hidden;
     padding-right: 40px;
     padding-left: 40px;

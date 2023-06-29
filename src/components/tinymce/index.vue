@@ -32,7 +32,7 @@ export default {
     style: {
       type: Object,
       default: () => {
-        return { width: '100%', heigth: '70vh' }
+        return { width: '100%', heigth: '60vh' }
       }
     },
     // 图片上传服务器地址
