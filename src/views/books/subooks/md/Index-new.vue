@@ -2,9 +2,15 @@
   <div class="md-wrap">
     <el-card>
       <template #header>
-        <el-button type="danger" @click="goBack">
+        <div>
+          <span>{{ form.title }}</span>
+          <el-button type="danger" @click="goBack" style="margin-left: 10px;">
+            {{ editorType }}
+          </el-button>
+        </div>
+        <!-- <el-button type="danger" @click="goBack">
           返回
-        </el-button>
+        </el-button> -->
         <div style="display: flex;justify-content: center;align-items: center;">
           <el-button type="primary" @click="saveHandle">更新</el-button>
           <svg
@@ -38,35 +44,35 @@
             <el-cascader :options="taglist" v-model="form.tags" :props="{ value: 'id', label: 'name' }"> </el-cascader>
           </el-space>
         </el-form-item>
-        <el-form-item label="文章标题" prop="title">
+        <!-- <el-form-item label="文章标题" prop="title">
           <el-input v-model="form.title" show-word-limit maxlength="200" placeholder="请输入标题" type="text"></el-input>
-        </el-form-item>
-        <el-form-item label="文章描述" prop="description" v-if="isRight === 'right' || categoryId === ''">
+        </el-form-item> -->
+        <!-- <el-form-item label="文章描述" prop="description" v-if="isRight === 'right' || categoryId === ''">
           <el-input v-model="form.description" show-word-limit maxlength="200" placeholder="请输入文章描述" type="text"></el-input>
-        </el-form-item>
-        <el-form-item label="编辑器风格" prop="editorType">
+        </el-form-item> -->
+        <!-- <el-form-item label="编辑器风格" prop="editorType">
           <el-radio-group v-model="editorType" class="ml-4" :disabled="editorDisabled">
             <el-radio label="tiny" size="large">富文本</el-radio>
             <el-radio label="Markdown" size="large">Markdown</el-radio>
           </el-radio-group>
-        </el-form-item>
-        <el-form-item label="word解析" v-if="editorType === 'tiny'">
+        </el-form-item> -->
+        <!-- <el-form-item label="word解析" v-if="editorType === 'tiny'">
           <div>
             <label for="fileInput" class="customUploadButton">上传文件</label>
             <span>{{ fileName }}</span>
           </div>
           <input type="file" accept=".docx" id="fileInput" @change="loadWord" class="uploadInput" />
-        </el-form-item>
-        <el-form-item label="文件解析" v-if="editorType === 'Markdown'">
+        </el-form-item> -->
+        <!-- <el-form-item label="文件解析" v-if="editorType === 'Markdown'">
           <div>
             <label for="fileInput" class="customUploadButton">上传文件</label>
             <span>{{ fileName }}</span>
           </div>
           <input type="file" accept=".docx,.md" id="fileInput" @change="loadMd" class="uploadInput" />
-        </el-form-item>
-        <el-form-item label="上传附件">
+        </el-form-item> -->
+        <!-- <el-form-item label="上传附件">
           <el-tag type="info">暂不支持</el-tag>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item prop="body" style="height: 60vh;" v-if="editorType === 'Markdown'">
           <markdown-com style="z-index: 99999;" :data="md" @input="getMd" @fullScreen="fullScreen"></markdown-com>
         </el-form-item>
