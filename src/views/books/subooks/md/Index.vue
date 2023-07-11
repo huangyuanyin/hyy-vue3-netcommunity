@@ -7,7 +7,13 @@
         </el-button>
         <div>
           <el-button type="info" disabled>保存草稿</el-button>
-          <el-button type="primary" @click="saveHandle">发布文章</el-button>
+          <el-button
+            type="primary"
+            v-loading.fullscreen.lock="fullscreenLoading"
+            element-loading-text="文章更新中，请稍后..."
+            @click="saveHandle"
+            >发布文章</el-button
+          >
         </div>
       </template>
       <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
@@ -144,6 +150,7 @@ export default {
       title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
       body: [{ required: true, message: '内容不能为空', trigger: 'blur' }]
     })
+    const fullscreenLoading = ref(false)
 
     // 获取节点数据
     const getNodeList = () => {
@@ -395,7 +402,9 @@ export default {
           // 判断编辑的文章是否为节点 right - 否
           getUpdateForumApi(route.query.mid || route.query.tid, form)
         } else {
+          fullscreenLoading.value = true
           updateForum(route.query.mid || route.query.tid, form).then(res => {
+            fullscreenLoading.value = false
             if (res.code === 1000) {
               getUpdateCategorysApi()
             }
@@ -434,7 +443,9 @@ export default {
 
     // 新增文章 API
     const getSaveApi = form => {
+      fullscreenLoading.value = true
       addForum(form).then(res => {
+        fullscreenLoading.value = false
         ElMessage({
           message: '新增成功',
           type: 'success'
@@ -460,17 +471,19 @@ export default {
         public: sessionStorage.getItem('spacePublic')
       }
       // 新增节点
+      fullscreenLoading.value = true
       addCategorys(params).then(res => {
         if (res.code == 1000) {
           form.category = res.data
           store.commit('changeCurTreeId', res.data) // 定位
           // 新增markdown
           addForum(form).then(res => {
-            ElMessage({
-              message: '新增成功',
-              type: 'success'
-            })
+            fullscreenLoading.value = false
             if (res.code === 1000) {
+              ElMessage({
+                message: '新增成功',
+                type: 'success'
+              })
               handleClose()
               reload()
               toDetail(res.data)
@@ -525,7 +538,8 @@ export default {
       MarkdownIt,
       uploadFile,
       // CKEditorInput,
-      beforeUnloadHandler
+      beforeUnloadHandler,
+      fullscreenLoading
     }
   }
 }

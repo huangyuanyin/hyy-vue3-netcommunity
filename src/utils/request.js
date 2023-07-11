@@ -7,8 +7,8 @@ const service = axios.create({
   // baseURL: 'http://10.4.150.27:8013',
   // baseURL: 'http://10.4.150.55:8013', // url = base url + request url 打包线上
   // baseURL: 'http://172.16.71.179:8013', // 华耀 打包线上
-  baseURL: process.env.VUE_APP_BASE_URL
-  // timeout: 200000
+  baseURL: process.env.VUE_APP_BASE_URL,
+  timeout: 200000
 })
 
 service.interceptors.request.use(
