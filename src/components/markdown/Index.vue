@@ -9,7 +9,23 @@
       @fullScreen="fullScreen"
       ref="mavonEditorRef"
       @imgAdd="imgAdd"
-    ></mavon-editor>
+    >
+      <template v-slot:left-toolbar-before>
+        <el-button type="default" link @click="changeEditor">切换富文本编辑器</el-button>
+        <el-button type="default" link @click="fileParseDialog = true">文件解析</el-button>
+      </template>
+    </mavon-editor>
+    <el-dialog v-model="fileParseDialog" custom-class="fileParseDialog" title="world文件解析" width="40%">
+      <el-upload class="upload-demo" drag action="" multiple :on-change="handleFileParse">
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">拖拽文件至此处 或 <em>点击此处上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip">
+            注：解析成功后，解析结果将会替换已有内容！
+          </div>
+        </template>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
@@ -23,11 +39,12 @@ import { uploadMdImageApi } from '@/api/upload'
 const props = defineProps({
   data: String
 })
-const emit = defineEmits(['input'])
+const emit = defineEmits(['input', 'changeEditor'])
 
 const route = useRoute()
 const mavonEditorRef = ref() // 获取编辑器Vue实例子
 const handbook = ref('')
+const fileParseDialog = ref(false)
 const toolbars = reactive({
   bold: true, // 粗体
   italic: true, // 斜体
@@ -80,6 +97,22 @@ const fullScreen = () => {
   emit('fullScreen', true)
 }
 
+const changeEditor = () => {
+  emit('changeEditor', 'tiny')
+}
+
+const handleFileParse = (uploadFile, uploadFiles) => {
+  console.log(uploadFile, uploadFiles)
+  if (uploadFile) {
+    const reader = new FileReader()
+    reader.readAsText(uploadFile.raw, 'UTF-8')
+    reader.onload = evt => {
+      handbook.value = evt.target.result
+      console.log(`output->`, evt.target.result)
+    }
+  }
+}
+
 const imgAdd = async (name, $file) => {
   // 第一步.将图片上传到服务器.
   var formdata = new FormData()
@@ -123,6 +156,27 @@ const imgAdd = async (name, $file) => {
     box-sizing: content-box;
     padding-left: 25px;
     overflow: hidden;
+  }
+  .v-note-wrapper {
+    border-radius: 0%;
+    border: none;
+    border-top: 1px solid #f2f6fc;
+    :deep(.v-note-op .v-left-item) {
+      padding-left: 10%;
+      .changeEditor {
+        width: max-content;
+      }
+    }
+  }
+}
+.fileParseDialog {
+  .upload-demo {
+    :deep(.el-upload) {
+      width: 100% !important;
+    }
+  }
+  :deep(.el-dialog__body) {
+    padding-top: 0px !important;
   }
 }
 </style>

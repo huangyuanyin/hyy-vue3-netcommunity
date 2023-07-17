@@ -1,36 +1,49 @@
 <template>
-  <div class="md-wrap">
+  <div class="md-wrap ignore_md_wrap">
     <el-card>
-      <template #header>
-        <div>
-          <span>{{ form.title }}</span>
-          <el-button type="danger" @click="goBack" style="margin-left: 10px;">
-            {{ editorType }}
-          </el-button>
+      <template #header style="height:52px">
+        <div class="titleInput">
+          <span v-if="flag" @click="edit()">{{ form.title }}</span>
+          <el-input autofocus v-model="form.title" v-else @change="input()" @blur="editDocTitle" minlength="1" maxlength="30" />
         </div>
-        <!-- <el-button type="danger" @click="goBack">
-          返回
-        </el-button> -->
-        <div style="display: flex;justify-content: center;align-items: center;">
-          <el-button type="primary" @click="saveHandle">更新</el-button>
-          <svg
-            style="margin-left: 10px;"
-            width="1em"
-            height="1em"
-            viewBox="0 0 256 256"
-            xmlns="http://www.w3.org/2000/svg"
-            class="larkui-icon larkui-icon-rightboard icon-svg style-module_iconEditMode_55y65 index-module_size_wVASz"
-            data-name="Rightboard"
-          >
-            <path
-              d="M209 28c16.569 0 30 13.431 30 30v140c0 16.569-13.431 30-30 30H47c-16.569 0-30-13.431-30-30V58c0-16.569 13.431-30 30-30Zm-80 20H47c-5.523 0-10 4.477-10 10v140c0 5.523 4.477 10 10 10h82V48Zm80 0h-60v160h60c5.43 0 9.848-4.327 9.996-9.72L219 198V58c0-5.523-4.477-10-10-10Zm-15 114c5.523 0 10 4.477 10 10s-4.477 10-10 10h-20c-5.523 0-10-4.477-10-10s4.477-10 10-10h20Zm0-44c5.523 0 10 4.477 10 10s-4.477 10-10 10h-20c-5.523 0-10-4.477-10-10s4.477-10 10-10h20Zm0-44c5.523 0 10 4.477 10 10s-4.477 10-10 10h-20c-5.523 0-10-4.477-10-10s4.477-10 10-10h20Z"
-              fill="currentColor"
-              fill-rule="nonzero"
-            ></path>
-          </svg>
+        <div class="md_button">
+          <div data-testid="doc-action-collaborate" data-aspm-click="d225876" class="xiezuo-icon">
+            <svg
+              style="cursor: pointer;"
+              width="20"
+              height="20"
+              viewBox="0 0 256 256"
+              xmlns="http://www.w3.org/2000/svg"
+              class="larkui-icon larkui-icon-nav-invite"
+            >
+              <path
+                d="M128 129c5.523 0 10 4.477 10 10s-4.477 10-10 10c-24.125 0-45.174 6.043-60.525 16.179-12.362 8.162-19.354 18.06-19.54 25.146l-.007.911-.001.397.005.747c.034 2.031.212 3.378.664 4.658.4 1.136.947 1.914 1.804 2.514l.203.135.294.186.28.207c.604.443 1.371.869 2.296 1.275l.475.201.501.198.527.195.274.096.565.19.591.187.305.092.628.181.654.178.678.175.703.171.726.168.751.164.775.16 1.207.235 1.26.226.869.147.891.142.915.14.937.134 1.447.196.993.126 1.015.122 1.563.176 1.61.167 1.101.107 1.69.153 1.153.096 1.173.093 1.798.132 1.842.122 1.888.113 1.93.104 1.312.064 1.33.06 2.031.082 2.073.073 1.886.057 2.338.061 3.948.08 1.803.027 3.794.04 3.624.02 5.876.008 9.344-.013L128 207c5.523 0 10 4.477 10 10 0 5.43-4.327 9.848-9.72 9.996l-.453.004-11.598.014-6.434-.014-3.11-.02-3.85-.043-2.294-.037-1.806-.036-2.476-.06-2.515-.07-2.478-.082-1.62-.061-1.598-.065-1.574-.071-1.55-.076-1.526-.08-2.244-.133-1.467-.095-1.444-.1-2.122-.163-1.386-.115-1.362-.122-1.34-.129-1.316-.134-1.293-.142-1.271-.148-1.248-.155-1.226-.162-1.202-.169-1.18-.176-1.159-.184-1.135-.19-1.114-.2c-.367-.067-.731-.136-1.091-.206l-1.07-.214a89.329 89.329 0 0 1-2.072-.453l-1.004-.238c-.33-.081-.658-.164-.981-.247l-.96-.256c-.317-.086-.63-.175-.94-.264l-.916-.273a55.46 55.46 0 0 1-2.623-.872l-.832-.309c-2.875-1.098-5.363-2.368-7.478-3.835l-.338-.238-.13-.084c-4.586-3.038-7.72-7.229-9.547-12.126l-.172-.476c-1.443-4.088-1.807-7.435-1.809-11.98l.004-1.096c0-14.848 10.912-30.497 28.525-42.126C75.15 136.145 100.04 129 128 129Zm58-12c5.523 0 10 4.477 10 10v35h35c5.523 0 10 4.477 10 10s-4.477 10-10 10h-35v35c0 5.523-4.477 10-10 10s-10-4.477-10-10v-35h-35c-5.523 0-10-4.477-10-10s4.477-10 10-10h35v-35c0-5.523 4.477-10 10-10Zm-58-93c25.405 0 46 20.595 46 46s-20.595 46-46 46-46-20.595-46-46 20.595-46 46-46Zm0 20c-14.36 0-26 11.64-26 26s11.64 26 26 26 26-11.64 26-26-11.64-26-26-26Z"
+                fill="currentColor"
+                fill-rule="nonzero"
+              ></path>
+            </svg>
+          </div>
+          <el-button type="default" @click="saveHandle">更新</el-button>
+          <div class="more-icon" @click="openMoreDrawer">
+            <svg
+              style="cursor: pointer;"
+              width="1em"
+              height="1em"
+              viewBox="0 0 256 256"
+              xmlns="http://www.w3.org/2000/svg"
+              class="larkui-icon-rightboard icon-svg style-module_iconEditMode_55y65 index-module_size_wVASz"
+              data-name="Rightboard"
+            >
+              <path
+                d="M209 28c16.569 0 30 13.431 30 30v140c0 16.569-13.431 30-30 30H47c-16.569 0-30-13.431-30-30V58c0-16.569 13.431-30 30-30Zm-80 20H47c-5.523 0-10 4.477-10 10v140c0 5.523 4.477 10 10 10h82V48Zm80 0h-60v160h60c5.43 0 9.848-4.327 9.996-9.72L219 198V58c0-5.523-4.477-10-10-10Zm-15 114c5.523 0 10 4.477 10 10s-4.477 10-10 10h-20c-5.523 0-10-4.477-10-10s4.477-10 10-10h20Zm0-44c5.523 0 10 4.477 10 10s-4.477 10-10 10h-20c-5.523 0-10-4.477-10-10s4.477-10 10-10h20Zm0-44c5.523 0 10 4.477 10 10s-4.477 10-10 10h-20c-5.523 0-10-4.477-10-10s4.477-10 10-10h20Z"
+                fill="currentColor"
+                fill-rule="nonzero"
+              ></path>
+            </svg>
+          </div>
         </div>
       </template>
-      <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="100px">
+      <el-form :model="form" ref="formRef" :rules="formRules" size="large" label-width="0px">
         <el-form-item label="分类" prop="category" v-if="isRight === 'right' || categoryId === ''">
           <el-space>
             <el-cascader
@@ -73,11 +86,20 @@
         <!-- <el-form-item label="上传附件">
           <el-tag type="info">暂不支持</el-tag>
         </el-form-item> -->
-        <el-form-item prop="body" style="height: 60vh;" v-if="editorType === 'Markdown'">
-          <markdown-com style="z-index: 99999;" :data="md" @input="getMd" @fullScreen="fullScreen"></markdown-com>
+        <el-form-item class="markdown-wrap" prop="body" style="max-height: 89vh;" v-if="editorType === 'Markdown'">
+          <markdown-com
+            style="z-index: 99999;"
+            :data="md"
+            @input="getMd"
+            @fullScreen="fullScreen"
+            @changeEditor="changeEditor"
+          ></markdown-com>
+          <MoreDrawer :moreDrawer="moreDrawer" :id="node.id" />
         </el-form-item>
-        <el-form-item prop="body" v-if="editorType === 'tiny'">
-          <tinymce-com v-model="tinyValue" placeholder="请输入帖子详情内容(不少于10个字)"> </tinymce-com>
+        <el-form-item class="tiny-wrap" prop="body" v-if="editorType === 'tiny'">
+          <tinymce-com v-model="tinyValue" @changeEditor="changeEditor"></tinymce-com>
+          <MoreDrawer :moreDrawer="moreDrawer" :id="node.id" />
+          <!-- <WangEdtior :value="tinyValue" @changeEditorMenuClick="changeEditorMenuClick" /> -->
         </el-form-item>
         <!-- <el-form-item prop="body" v-if="editorType === 'tiny'">
           <CKEditor5-com :data="tinyValue" @input="CKEditorInput" />
@@ -101,6 +123,10 @@ import 'mavon-editor/dist/css/index.css'
 import Tinymce from '@/components/tinymce'
 // import CKEditor5 from '@/components/CKEditor5/index.vue'
 
+import WangEdtior from '@/components/WangEdtior/index.vue'
+
+import MoreDrawer from './components/MoreDrawer.vue'
+
 import { ref, computed, reactive, watch, onMounted, onUnmounted, nextTick, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute, NavigationGuardNext } from 'vue-router'
@@ -118,7 +144,9 @@ export default {
   components: {
     mavonEditor,
     'markdown-com': markdown,
-    'tinymce-com': Tinymce
+    'tinymce-com': Tinymce,
+    WangEdtior,
+    MoreDrawer
     // 'CKEditor5-com': CKEditor5
   },
   setup() {
@@ -146,13 +174,16 @@ export default {
     const editorType = ref('tiny')
     const editorDisabled = ref(false)
     const fileName = ref('暂无文件')
+    const flag = ref(true)
+    const moreDrawer = ref(false)
+    const moreDrawerTab = ref('first')
     const formRef = ref(null)
     // 路由传参
     const categoryId = ref('')
     // 表单
     const form = reactive({
       category: '',
-      title: '',
+      title: '无标题文档',
       description: '',
       tags: [],
       type: '',
@@ -177,6 +208,29 @@ export default {
       getTag().then(res => {
         taglist.value = res.data
       })
+    }
+
+    const edit = () => {
+      flag.value = false
+    }
+
+    const input = () => {
+      flag.value = true
+      if (form.title === '') {
+        form.title = '无标题'
+      }
+      console.log(`output->formform`, form, editorType.value)
+      judgeEditor()
+      updateForum(route.query.mid || route.query.tid, form).then(res => {
+        if (res.code === 1000) {
+          getUpdateCategorysApi()
+        }
+        reload()
+      })
+    }
+
+    const editDocTitle = () => {
+      flag.value = true
     }
 
     // 获取帖子数据
@@ -312,6 +366,13 @@ export default {
       }
     }
 
+    const changeEditorMenuClick = () => {
+      editorType.value = 'Markdown'
+    }
+    const changeEditor = val => {
+      editorType.value = val
+    }
+
     const fullScreen = val => {
       console.log(`output->`)
     }
@@ -390,6 +451,13 @@ export default {
       }
     }
 
+    const openMoreDrawer = () => {
+      moreDrawer.value = !moreDrawer.value
+      if (!moreDrawer.value) {
+        moreDrawerTab.value = 'first'
+      }
+    }
+
     // 新增文章 流程
     const addApi = () => {
       form.author = sessionStorage.getItem('username')
@@ -446,7 +514,7 @@ export default {
       updateCategorys(form.category, title).then(res => {
         store.commit('changeCurTreeId', res.data) // 定位
         ElMessage({
-          message: '编辑成功！',
+          message: '更新成功！',
           type: 'success'
         })
       })
@@ -545,18 +613,22 @@ export default {
       MarkdownIt,
       uploadFile,
       // CKEditorInput,
-      beforeUnloadHandler
+      beforeUnloadHandler,
+      flag,
+      edit,
+      input,
+      editDocTitle,
+      changeEditorMenuClick,
+      changeEditor,
+      moreDrawer,
+      openMoreDrawer,
+      moreDrawerTab
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.my-tinymce {
-  margin-bottom: 30px;
-  width: 100%;
-}
-
 .md-wrap {
   min-height: calc(100vh - 50px);
   // max-width: calc(100vw - 260px);
@@ -573,14 +645,17 @@ export default {
     padding-right: 40px;
     padding-left: 40px;
     z-index: 2;
-  }
-  :deep(.el-card__body) {
-    position: relative;
-    margin-top: 60px;
+    .titleInput {
+      width: max-content;
+      span {
+        cursor: pointer;
+      }
+    }
   }
   :deep(.el-card) {
     min-height: 100vh;
   }
+
   .customUploadButton {
     display: inline-block;
     background-color: #ecf5ff;
@@ -599,10 +674,209 @@ export default {
     display: none;
   }
 }
+
+.ignore_md_wrap {
+  :deep(.el-card__header) {
+    height: 52px;
+    padding: 0 32px 0 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: none;
+  }
+  :deep(.el-card__body) {
+    margin-top: 52px;
+    padding: 0px;
+  }
+  .md_button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .el-button {
+      margin: 0 16px;
+    }
+  }
+}
+.xiezuo-icon,
+.more-icon {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
+.markdown-wrap,
+.tiny-wrap {
+  position: relative;
+  :deep(.moreDrawer-modal) {
+    position: absolute !important;
+    z-index: auto !important;
+  }
+  :deep(.moreDrawer) {
+    z-index: 2013 !important;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+  }
+}
+:deep(.my-tinymce) {
+  z-index: 2013 !important;
+}
 </style>
 
 <style lang="scss">
 .v-note-help-wrapper {
   z-index: 99999 !important;
+}
+.moreDrawer {
+  .el-drawer__body {
+    padding: 0 !important;
+    .moreDrawerTab {
+      .el-tabs__nav-scroll {
+        width: 100%;
+      }
+      .el-tabs__header {
+        margin-bottom: 0px;
+      }
+      .el-tabs__nav {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        .el-tabs__item {
+          padding-left: 0;
+          padding-right: 0;
+          display: flex;
+          align-items: center;
+          svg {
+            width: 20px !important;
+            height: 20px !important;
+          }
+        }
+      }
+      .detail-tab {
+        padding: 12px 20px 0 20px;
+        .detail-tab-items {
+          margin-top: 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          height: 20px;
+          font-size: 15px;
+          font-family: Consolas;
+          color: #262626;
+          svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 12px;
+          }
+          .item-left {
+            display: flex;
+            align-items: center;
+          }
+        }
+        .hr {
+          height: 1px;
+          background: rgba(0, 0, 0, 0.04);
+          margin: 20px 0;
+        }
+      }
+      .operate-tab {
+        padding: 12px 20px 0 20px;
+        .style-item {
+          box-sizing: border-box;
+          margin-top: 20px;
+          height: 70px !important;
+          padding: 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: #fafafa;
+          border-radius: 8px;
+          cursor: pointer;
+          svg {
+            width: 18px !important;
+            height: 24px !important;
+          }
+          .item {
+            margin-left: 12px;
+            .title {
+              line-height: 22px;
+            }
+            .tip {
+              font-size: 10px;
+              line-height: 17px;
+              color: #8a8f8d;
+            }
+          }
+        }
+        .setting-item {
+          margin-top: 8px;
+          background-color: #fafafa;
+          border-radius: 8px;
+          padding: 8px;
+          .item-top {
+            display: flex;
+            align-items: center;
+            height: 36px !important;
+            line-height: 36px !important;
+            padding: 10px 8px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            cursor: pointer;
+            svg {
+              width: 18px;
+              height: 18px;
+            }
+            div {
+              font-size: 14px;
+              color: #262626;
+              margin-left: 8px;
+            }
+            &:hover {
+              background-color: #eff0f0;
+            }
+          }
+          .hr {
+            height: 1px;
+            margin: 4px 8px;
+            background-color: #eff0f0;
+          }
+          .item-list {
+            .item {
+              display: flex;
+              align-items: center;
+              height: 36px !important;
+              padding: 10px 8px !important;
+              border-radius: 6px;
+              cursor: pointer;
+              svg {
+                width: 18px;
+                height: 18px;
+              }
+              div {
+                font-size: 14px;
+                color: #262626;
+                margin-left: 8px;
+                height: 16px;
+                line-height: 16px;
+              }
+              &:hover {
+                background-color: #eff0f0;
+              }
+            }
+            .delete {
+              color: #df2a3f !important;
+              div {
+                color: #df2a3f !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </style>

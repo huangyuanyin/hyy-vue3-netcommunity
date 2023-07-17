@@ -89,7 +89,7 @@ const routes = [
         meta: {
           title: 'markdown编辑器'
         },
-        component: () => import(/* webpackChunkName: "monitor" */ '../views/books/subooks/md/Index.vue')
+        component: () => import(/* webpackChunkName: "monitor" */ '../views/books/subooks/md/Index-new.vue')
       },
       {
         path: '/detail',

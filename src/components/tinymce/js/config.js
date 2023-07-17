@@ -4,7 +4,7 @@ const buttonPlugins =
 
 // 导入工具栏
 const toolbar =
-  'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor  table image | alignleft aligncenter alignright alignjustify outdent indent |  styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons hr vr pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs'
+  'styleselect formatselect fontselect fontsizeselect  fullscreen undo redo restoredraft cut copy paste pastetext  forecolor backcolor bold italic underline strikethrough link anchor  table image alignleft aligncenter alignright alignjustify outdent indent  bullist numlist  blockquote subscript superscript removeformat  media charmap emoticons hr vr pagebreak insertdatetime print preview  code selectall searchreplace visualblocks  indent2em lineheight formatpainter axupimgs changeEditor fileParse'
 
 // 初始化配置
 export const init = {

@@ -155,7 +155,7 @@ export default {
 }
 .box-right {
   flex: 1;
-  max-height: 100vh;
+  // max-height: 100vh;
   overflow-y: auto;
 }
 

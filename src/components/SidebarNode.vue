@@ -46,6 +46,8 @@
         :props="defaultProps"
         :default-expanded-keys="defaultExpandIds"
         :current-node-key="curTreeId"
+        v-loading="loadTreeData"
+        element-loading-text="数据加载中..."
       >
         <template #default="{ node, data }">
           <div class="custom-tree-node">
@@ -129,7 +131,7 @@
     <el-dialog title="编辑分组/子分组" v-model="dialogEdit" draggable width="600px">
       <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
         <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" maxlength="10" placeholder="分组名称" show-word-limit type="text" />
+          <el-input v-model="form.name" maxlength="30" placeholder="分组名称" show-word-limit type="text" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -148,7 +150,7 @@ import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import { getCategorysInfo, addCategorys, updateCategorys, deleteCategorys } from '@/api/category.js'
-import { updateForum, getForumInfo } from '@/api/forum.js'
+import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 // import exampleData from 'simple-mind-map/example/exampleData';
 import bus from '@/utils/bus.js'
 import Clipboard from 'clipboard'
@@ -168,6 +170,7 @@ const loadingInstance = ref('')
 const shareLink = ref('') // 分享链接
 const spacename = computed(() => sessionStorage.getItem('spacename'))
 const spaceid = computed(() => sessionStorage.getItem('spaceid'))
+const spacePublic = computed(() => sessionStorage.getItem('spacePublic'))
 // const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
 const defaultExpandIds = computed(() => {
   // 这里存放 要默认展开的节点 id
@@ -181,6 +184,7 @@ const curTreeId = computed(() => {
 const curTreeData = ref({}) // 存放 已点击的节点ID
 // 对话框
 const dialogNode = ref(false)
+const loadTreeData = ref(false)
 // 对话框 编辑
 const dialogEdit = ref(false)
 // 节点数据 - 全部
@@ -234,7 +238,9 @@ const exampleData = {
 
 // 获取节点数据
 const getNodeList = async () => {
+  loadTreeData.value = true
   let res = await getCategorysInfo(spaceid.value)
+  loadTreeData.value = false
   if (res.code === 1000) {
     res.data.forEach(item => {
       item.isFolder = true
@@ -360,58 +366,91 @@ const handleRoot = command => {
 
 // 新建指令 => +号按钮
 const handleNewInstruction = value => {
-  let tmp = value.split(',')
-  if (tmp[0] === 'add') {
+  let [type, categoryId] = value.split(',')
+  if (type === 'add') {
     form.value.name = ''
-    parent_id.value = tmp[1]
+    parent_id.value = categoryId
     dialogNode.value = true
   }
-  if (tmp[0] == 'article') {
-    router.push({
-      path: '/md',
-      query: {
-        category: tmp[1],
-        isAdd: 'add'
-      }
-    })
+  if (type == 'article') {
+    addDoc(categoryId) // 新建文档操作
   }
-  if (tmp[0] == 'excel') {
+  if (type == 'excel') {
     router.push({
       path: '/excel',
       query: {
-        category: tmp[1],
+        category: categoryId,
         isAdd: 'add'
       }
     })
   }
-  if (tmp[0] == 'word') {
+  if (type == 'word') {
     router.push({
       path: '/md',
       query: {
-        category: tmp[1],
+        category: categoryId,
         isAdd: 'add'
       }
     })
   }
-  if (tmp[0] == 'mindmap') {
+  if (type == 'mindmap') {
     bus.emit('setData', exampleData) // 初始化思维导图数据
     router.push({
       path: '/mindMap',
       query: {
-        category: tmp[1],
+        category: categoryId,
         isAdd: 'add'
       }
     })
   }
-  if (tmp[0] == 'ppt') {
+  if (type == 'ppt') {
     router.push({
       path: '/ppt',
       query: {
-        category: tmp[1],
+        category: categoryId,
         isAdd: 'add'
       }
     })
   }
+}
+
+const addDoc = categoryId => {
+  let params = {
+    name: '无标题文档',
+    parent_category: categoryId,
+    type: 'a',
+    description: '',
+    author: sessionStorage.getItem('username'),
+    public: spacePublic.value
+  }
+  // 新增节点
+  addCategorys(params).then(res => {
+    if (res.code == 1000) {
+      store.commit('changeCurTreeId', res.data) // 定位
+      reload()
+      // 新增文档
+      const docForm = {
+        category: res.data,
+        title: '无标题文档',
+        description: '',
+        tags: [],
+        type: 'a',
+        body: ''
+      }
+      addForum(docForm).then(res => {
+        if (res.code === 1000) {
+          router.push({
+            path: '/md',
+            query: {
+              category: categoryId,
+              isAdd: 'add',
+              tid: res.data
+            }
+          })
+        }
+      })
+    }
+  })
 }
 
 // 监听下拉菜单的显示/隐藏
@@ -473,12 +512,13 @@ const judegeGetCategory = () => {
   } else {
     getForumInfo(nodeData.value.articleId).then(res => {
       if (res.code === 1000) {
-        let nodeForm = {}
-        nodeForm.type = nodeData.value.type
-        nodeForm.title = form.value.name
-        nodeForm.category = res.data.category
-        nodeForm.tags = res.data.tags
-        nodeForm.body = res.data.body
+        const nodeForm = {
+          type: nodeData.value.type,
+          title: form.value.name,
+          category: res.data.category,
+          tags: res.data.tags,
+          body: res.data.body
+        }
         updateForum(nodeData.value.articleId, nodeForm).then(res => {
           if (res.code === 1000) {
             dialogClose()
@@ -727,6 +767,7 @@ watch(
   overflow: hidden;
   font-family: '思源宋体 Medium';
   position: relative;
+  height: 100%;
 }
 
 .custom-tree-node:hover .labelStyle {

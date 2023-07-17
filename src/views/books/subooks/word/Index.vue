@@ -324,6 +324,7 @@ const deleteApi = () => {
         })
       } else {
         // 删除分类
+        console.log(`output->`, fourumdata.value.category)
         deleteTopics(fourumdata.value.category).then(res => {
           ElMessage.success('删除成功')
           router.push({ name: 'subbooks', params: { wRefresh: false, notGetNodeList: true } })
