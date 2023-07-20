@@ -22,6 +22,7 @@ import { onMounted, reactive, toRefs, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { UploadFilled } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
 import { upload } from '@/api/common.js'
 import Editor from '@tinymce/tinymce-vue' // 引入tinymce编辑器
 import tinymce from 'tinymce/tinymce' // tinymce默认hidden，不引入则不显示编辑器
@@ -91,7 +92,8 @@ export default {
       () => route.query,
       () => {
         if (route.query && route.query.isAdd) {
-          state.contentValue = ''
+          state.contentValue = '  '
+          emit('update:modelValue', state.contentValue)
         }
       }
     )
@@ -110,7 +112,19 @@ export default {
           text: '<span>切换MD编辑器</span>',
           tooltip: '切换MD编辑器',
           onAction: () => {
-            emit('changeEditor', 'Markdown')
+            if (state.contentValue) {
+              ElMessageBox.confirm('切换编辑器可能会清空内容！！！', '警告', {
+                confirmButtonText: '继续',
+                cancelButtonText: '取消',
+                type: 'warning'
+              })
+                .then(() => {
+                  emit('changeEditor', ['Markdown', state.contentValue])
+                })
+                .catch(() => {})
+            } else {
+              emit('changeEditor', ['Markdown', state.contentValue])
+            }
           }
         })
         editor.ui.registry.addButton('fileParse', {
@@ -224,6 +238,8 @@ export default {
   :deep(.tox-editor-header) {
     display: flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
     box-shadow: none !important;
   }

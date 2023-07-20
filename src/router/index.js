@@ -97,7 +97,7 @@ const routes = [
         meta: {
           title: '知识库详情'
         },
-        component: () => import(/* webpackChunkName: "monitor" */ '../views/books/subooks/word/Index.vue')
+        component: () => import(/* webpackChunkName: "monitor" */ '../views/books/subooks/word/Index-new.vue')
       },
       {
         path: '/search',

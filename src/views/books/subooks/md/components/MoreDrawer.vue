@@ -99,7 +99,7 @@
             </div>
             <div class="hr"></div>
             <div class="item-list">
-              <div class="item">
+              <div class="item" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -116,7 +116,7 @@
                 </svg>
                 <div>另存为模板</div>
               </div>
-              <div class="item">
+              <div class="item" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -139,7 +139,7 @@
                 </svg>
                 <div>查看历史版本</div>
               </div>
-              <div class="item">
+              <div class="item" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -162,7 +162,7 @@
                 </svg>
                 <div>导出...</div>
               </div>
-              <div class="item">
+              <div class="item" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -182,7 +182,7 @@
                 </svg>
                 <div>复制...</div>
               </div>
-              <div class="item">
+              <div class="item" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -434,6 +434,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { deleteTopics } from '@/api/forum.js'
+import { resetSetItem } from '@/utils/session.js'
 
 const props = defineProps({
   moreDrawer: {
@@ -444,10 +445,13 @@ const props = defineProps({
   id: {
     type: Number,
     default: null
+  },
+  title: {
+    type: String,
+    default: ''
   }
 })
 
-const reload = inject('reload')
 const route = useRoute()
 const router = useRouter()
 const store = useStore()
@@ -456,18 +460,18 @@ const arctileId = ref(route.query.tid || route.query.mid || null) // 文章id
 const categoryId = ref(route.query.category || null) // 父节点id
 
 const handleDelete = () => {
-  ElMessageBox.confirm('确认删除 无标题文档12？', '', {
+  ElMessageBox.confirm(`确认删除 ${props.title} ？`, '', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   })
     .then(() => {
-      console.log(`output->1`, 1)
-      deleteTopics(props.id).then(res => {
+      deleteTopics(props.id).then(async res => {
         if (res.code === 1000) {
           ElMessage.success('删除成功!')
-          router.push({ name: 'subbooks', params: { wRefresh: true, notGetNodeList: false } })
-          // reload()
+          await store.commit('books/SET_REFRESH', true)
+          sessionStorage.setItem('deleteNode', JSON.stringify(res.data))
+          router.push({ name: 'subbooks', params: { wRefresh: true } })
         }
       })
     })
@@ -477,6 +481,10 @@ const handleDelete = () => {
 }
 
 const handleClick = () => {}
+
+const noUse = () => {
+  ElMessage.info('暂未开放')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -491,6 +499,161 @@ const handleClick = () => {}
         margin-bottom: 0px;
       }
       .el-tabs__nav {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        .el-tabs__item {
+          padding-left: 0;
+          padding-right: 0;
+          display: flex;
+          align-items: center;
+          svg {
+            width: 20px !important;
+            height: 20px !important;
+          }
+        }
+      }
+      .detail-tab {
+        padding: 12px 20px 0 20px;
+        .detail-tab-items {
+          margin-top: 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          height: 20px;
+          font-size: 15px;
+          font-family: Consolas;
+          color: #262626;
+          svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 12px;
+          }
+          .item-left {
+            display: flex;
+            align-items: center;
+          }
+        }
+        .hr {
+          height: 1px;
+          background: rgba(0, 0, 0, 0.04);
+          margin: 20px 0;
+        }
+      }
+      .operate-tab {
+        padding: 12px 20px 0 20px;
+        .style-item {
+          box-sizing: border-box;
+          margin-top: 20px;
+          height: 70px !important;
+          padding: 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: #fafafa;
+          border-radius: 8px;
+          cursor: pointer;
+          svg {
+            width: 18px !important;
+            height: 24px !important;
+          }
+          .item {
+            margin-left: 12px;
+            .title {
+              line-height: 22px;
+            }
+            .tip {
+              font-size: 10px;
+              line-height: 17px;
+              color: #8a8f8d;
+            }
+          }
+        }
+        .setting-item {
+          margin-top: 8px;
+          background-color: #fafafa;
+          border-radius: 8px;
+          padding: 8px;
+          .item-top {
+            display: flex;
+            align-items: center;
+            height: 36px !important;
+            line-height: 36px !important;
+            padding: 10px 8px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            cursor: pointer;
+            svg {
+              width: 18px;
+              height: 18px;
+            }
+            div {
+              font-size: 14px;
+              color: #262626;
+              margin-left: 8px;
+            }
+            &:hover {
+              background-color: #eff0f0;
+            }
+          }
+          .hr {
+            height: 1px;
+            margin: 4px 8px;
+            background-color: #eff0f0;
+          }
+          .item-list {
+            .item {
+              display: flex;
+              align-items: center;
+              height: 36px !important;
+              padding: 10px 8px !important;
+              border-radius: 6px;
+              cursor: pointer;
+              svg {
+                width: 18px;
+                height: 18px;
+              }
+              div {
+                font-size: 14px;
+                color: #262626;
+                margin-left: 8px;
+                height: 16px;
+                line-height: 16px;
+              }
+              &:hover {
+                background-color: #eff0f0;
+              }
+            }
+            .delete {
+              color: #df2a3f !important;
+              div {
+                color: #df2a3f !important;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.moreDrawer {
+  position: fixed !important;
+  top: 105px !important;
+  right: 18px !important;
+  .el-drawer__body {
+    padding: 0 !important;
+    .moreDrawerTab {
+      .el-tabs__nav-scroll {
+        width: 100%;
+      }
+      .el-tabs__header {
+        margin-bottom: 0px;
+      }
+      .el-tabs__nav {
+        height: 44px !important;
         width: 100%;
         display: flex;
         justify-content: space-around;

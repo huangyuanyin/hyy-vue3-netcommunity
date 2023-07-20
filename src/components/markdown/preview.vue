@@ -10,6 +10,7 @@
       :ishljs="true"
       :previewBackground="'#FFFFFF'"
       @fullScreen="fullScreen"
+      :navigation="showNavigation"
     ></mavon-editor>
   </div>
 </template>
@@ -61,6 +62,8 @@ const toolbars = reactive({
   preview: false // 预览
 })
 
+const showNavigation = ref(true) // 添加这一行
+
 watch(
   () => props.data,
   () => {
@@ -74,11 +77,19 @@ const fullScreen = val => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #editor {
   margin: auto;
   width: 100%;
   height: 100%;
+  :deep(.v-note-op) {
+    display: none;
+  }
+  :deep(.v-note-navigation-title) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
 
 :deep(.markdown-body table) {

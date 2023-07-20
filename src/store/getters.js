@@ -15,5 +15,7 @@ export default {
   role: state => state.user.role,
   spaces: state => state.app.spaces,
   tag: state => state.forum.tag,
-  node: state => state.books.node
+  node: state => state.books.node,
+  isRefresh: state => state.books.isRefresh,
+  docTitle: state => state.books.docTitle
 }

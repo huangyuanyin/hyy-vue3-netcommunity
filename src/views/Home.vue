@@ -139,9 +139,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.v-note-show) {
-  height: 100vh;
-}
 .box {
   display: flex;
 }
@@ -184,7 +181,7 @@ export default {
 }
 
 .resize-button-left {
-  z-index: 3;
+  z-index: 2200;
   position: absolute;
   right: -11px;
   top: 220px;
@@ -216,7 +213,7 @@ export default {
 }
 
 .resize-button-right {
-  z-index: 3;
+  z-index: 2200;
   position: absolute;
   left: 0px;
   top: 220px;

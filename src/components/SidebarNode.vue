@@ -145,7 +145,7 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, watch, inject, nextTick } from 'vue'
+import { ref, computed, reactive, onMounted, watch, inject, nextTick, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
@@ -171,6 +171,7 @@ const shareLink = ref('') // 分享链接
 const spacename = computed(() => sessionStorage.getItem('spacename'))
 const spaceid = computed(() => sessionStorage.getItem('spaceid'))
 const spacePublic = computed(() => sessionStorage.getItem('spacePublic'))
+const isRefresh = computed(() => store.getters.isRefresh)
 // const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
 const defaultExpandIds = computed(() => {
   // 这里存放 要默认展开的节点 id
@@ -282,6 +283,22 @@ watch(
     })
   }
 )
+
+watchEffect(() => {
+  if (isRefresh.value) {
+    getNodeList()
+    store.commit('books/SET_REFRESH', false)
+    let deleteNode = JSON.parse(sessionStorage.getItem('deleteNode'))
+    store.commit('changeCurTreeId', deleteNode)
+    store.state.defaultExpandIds = []
+    // 保存当前展开的节点
+    store.state.defaultExpandIds.push(deleteNode.id)
+    handleNodeClick({
+      label: deleteNode.label,
+      id: deleteNode.id
+    })
+  }
+})
 
 // 根据参数判断是否调用获取节点数据API
 const judgeGetNodeList = () => {
@@ -533,18 +550,17 @@ const judegeGetCategory = () => {
 
 // 调用 更新节点API
 const getUpdateCategorysApi = (id, name) => {
-  updateCategorys(id, name).then(res => {
+  updateCategorys(id, name).then(async res => {
+    await store.commit('books/SET_DOC_TITLE', name.name)
     ElMessage({
-      message: '编辑成功！',
+      message: '更新成功！',
       type: 'success'
     })
     dialogClose()
     getNodeList()
     curTreeId.value = curTreeData.value.id
     store.commit('changeCurTreeId', curTreeData.value.id)
-    console.log('dddd', curTreeData.value.id, id)
     if (curTreeData.value.id == id) {
-      console.log('name', name.name)
       // reload() 刷新页面用来更新title，此处需优化
       if (['a', 'w', 'p'].includes(curTreeData.value.type)) {
         reload()
@@ -572,15 +588,25 @@ const deleteApi = id => {
         if (res.code === 1000) {
           ElMessage.success('删除成功')
           getNodeList()
-          store.commit('changeCurTreeId', res.data)
-          store.state.defaultExpandIds = []
-          // 保存当前展开的节点
-          store.state.defaultExpandIds.push(res.data.id)
-          router.push({ name: 'subbooks', params: { wRefresh: true } })
-          handleNodeClick({
-            label: res.data.label,
-            id: res.data.id
-          })
+          if (id == curTreeData.value.id) {
+            store.commit('changeCurTreeId', res.data)
+            store.state.defaultExpandIds = []
+            // 保存当前展开的节点
+            store.state.defaultExpandIds.push(res.data.id)
+            router.push({ name: 'subbooks', params: { wRefresh: true } })
+            handleNodeClick({
+              label: res.data.label,
+              id: res.data.id
+            })
+          } else {
+            store.commit('changeCurTreeId', { label: curTreeData.value.label, id: curTreeData.value.id })
+            store.state.defaultExpandIds = []
+            store.state.defaultExpandIds.push(curTreeData.value.id)
+            handleNodeClick({
+              label: curTreeData.value.label,
+              id: curTreeData.value.id
+            })
+          }
         }
       })
     })

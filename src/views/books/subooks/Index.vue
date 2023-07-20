@@ -457,7 +457,7 @@ const getPreview = async id => {
   await getForumInfo(id).then(res => {
     // let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
     let url = 'http://10.4.150.55:8013' + '/' + res.data.body
-    window.open('http://10.4.150.55:8020/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)))
+    window.open('http://192.168.94.89:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)))
   })
 }
 

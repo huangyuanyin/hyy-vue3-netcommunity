@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="AnswerList-wrap">
     <el-row>
-      <el-col :span="22" :offset="1" class="pagination">
+      <el-col :span="24" class="pagination">
         <!-- <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
             {{ commandData }}<el-icon><arrow-down /></el-icon>
@@ -26,20 +26,21 @@
       </el-col>
     </el-row>
     <!-- 回复列表 -->
-    <el-row>
-      <el-col>
-        <el-divider></el-divider>
+    <el-row style="justify-content: center;">
+      <el-col :span="14">
+        <div class="allAnswer" v-if="answersTotal">{{ `所有评论（${answersTotal}）` }}</div>
+        <el-divider class="line" v-if="answersTotal"></el-divider>
         <div v-for="(answer, index) in answers" :key="index">
           <el-row>
-            <el-col :span="2">
+            <el-col :span="1">
               <div class="answer-user">
                 <img src="@/assets/img/img.jpg" />
               </div>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="21" style="display: flex;align-items: center;">
               <span class="answer-author">{{ answer.author }} 回复于 {{ answer.last_mod_time }}</span>
             </el-col>
-            <el-col :span="2" :offset="14" class="answer-chat">
+            <el-col :span="2" class="answer-chat">
               <el-space>
                 <el-tooltip effect="dark" content="查看评论" placement="top">
                   <el-button type="text" @click="commentHandle(answer.id)">
@@ -55,30 +56,28 @@
                     <img src="@/assets/img/like.png" />
                   </el-button>
                 </el-tooltip>
-                <el-tooltip effect="light" content="更多操作" placement="bottom">
-                  <el-dropdown @command="answerHandleMore" trigger="click">
-                    <el-button type="text">
-                      <el-icon color="#000000">
-                        <more-filled />
-                      </el-icon>
-                    </el-button>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item :command="'delete' + ',' + answer.id">
-                          <el-icon> <delete /> </el-icon>删除
-                        </el-dropdown-item>
-                        <el-dropdown-item :command="'update' + ',' + answer.id">
-                          <el-icon> <edit /> </el-icon>编辑
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                </el-tooltip>
+                <el-dropdown @command="answerHandleMore" trigger="hover">
+                  <el-button type="text">
+                    <el-icon color="#000000">
+                      <more-filled />
+                    </el-icon>
+                  </el-button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item :command="'delete' + ',' + answer.id">
+                        <el-icon> <delete /></el-icon>删除
+                      </el-dropdown-item>
+                      <el-dropdown-item :command="'update' + ',' + answer.id">
+                        <el-icon> <edit /> </el-icon>编辑
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </el-space>
             </el-col>
           </el-row>
-          <el-row style="margin-top: 30px">
-            <el-col :span="16" :offset="2">
+          <el-row style="margin-top: 30px" class="answerBody">
+            <el-col :span="16" :offset="1">
               <div v-html="answer.body"></div>
             </el-col>
           </el-row>
@@ -87,11 +86,28 @@
       </el-col>
     </el-row>
     <!-- 回复提交 -->
-    <el-row>
-      <el-col>
-        <tinymce-com v-model="value" placeholder="请输入回复信息(不少于10个字)"></tinymce-com>
-        <el-button class="confirm" round color="#000000" @click="confirmHandle">发表</el-button>
+    <el-row class="answerSubmit" style="justify-content: center;">
+      <el-col :span="1">
+        <div class="answer-user">
+          <img src="@/assets/img/img.jpg" />
+        </div>
       </el-col>
+      <el-col :span="13" style="height: 100%;">
+        <!-- <tinymce-com v-model="value" placeholder="请输入回复信息(不少于10个字)"></tinymce-com> -->
+        <markdown-com
+          style="z-index: 99999;"
+          :data="value"
+          @input="getMd"
+          @fullScreen="fullScreen"
+          :toolbars="toolbars"
+          :noSlot="false"
+          :subfield="false"
+        ></markdown-com>
+      </el-col>
+    </el-row>
+    <el-row style="justify-content: center;margin-top: 20px;">
+      <el-col :span="1"></el-col>
+      <el-col :span="13"><el-button class="confirm" round color="#000000" @click="confirmHandle">发表</el-button></el-col>
     </el-row>
     <!-- 回复评论 -->
     <comment-list-com :show="commentDialog" :id="answerid" @input="getComment"></comment-list-com>
@@ -103,6 +119,7 @@ import { ref, reactive, toRefs, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import 'mavon-editor/dist/css/index.css'
+import markdown from '@/components/markdown/Index.vue'
 import { getComments, addComment, deleteComment } from '@/api/comment.js'
 import commentlist from './subAnswer/CommentList.vue'
 import Tinymce from '@/components/tinymce'
@@ -113,7 +130,8 @@ export default {
   name: 'editor',
   components: {
     'comment-list-com': commentlist,
-    'tinymce-com': Tinymce
+    'tinymce-com': Tinymce,
+    'markdown-com': markdown
   },
   setup(props, ctx) {
     const route = useRoute()
@@ -133,7 +151,43 @@ export default {
     // 菜单
     const commandData = ref('最新回复')
     const state = reactive({
-      value: ''
+      value: '',
+      answersTotal: 0
+    })
+    const toolbars = ref({
+      bold: true, // 粗体
+      italic: true, // 斜体
+      header: true, // 标题
+      underline: true, // 下划线
+      strikethrough: true, // 中划线
+      mark: true, // 标记
+      superscript: false, // 上角标
+      subscript: false, // 下角标
+      quote: true, // 引用
+      ol: true, // 有序列表
+      ul: true, // 无序列表
+      link: true, // 链接
+      imagelink: false, // 图片链接
+      code: true, // code
+      table: true, // 表格
+      fullscreen: true, // 全屏编辑
+      readmodel: false, // 沉浸式阅读
+      htmlcode: true, // 展示html源码
+      help: true, // 帮助
+      /* 1.3.5 */
+      undo: true, // 上一步
+      redo: true, // 下一步
+      trash: true, // 清空
+      save: false, // 保存（触发events中的save事件）
+      /* 1.4.2 */
+      navigation: false, // 导航目录
+      /* 2.1.8 */
+      alignleft: true, // 左对齐
+      aligncenter: true, // 居中
+      alignright: true, // 右对齐
+      /* 2.2.1 */
+      subfield: false, // 单双栏模式
+      preview: true // 预览
     })
 
     // 监听
@@ -159,7 +213,15 @@ export default {
       }
       getComments(params).then(res => {
         answers.value = res.data
+        state.answersTotal = res.data.length || 0
       })
+    }
+
+    // 获取md数据
+    const getMd = evt => {
+      if (typeof evt == 'string') {
+        state.value = evt
+      }
     }
 
     getAnswerList()
@@ -219,10 +281,11 @@ export default {
       }
       addComment(params).then(res => {
         ElMessage({
-          message: '发布成功',
+          message: '评论成功',
           type: 'success'
         })
         getAnswerList()
+        state.value = ''
       })
     }
 
@@ -241,8 +304,8 @@ export default {
     const deleteApi = id => {
       // 二次确认删除
       ElMessageBox.confirm('确定要删除吗？', '提示', {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
         type: 'warning',
         draggable: true
       })
@@ -250,7 +313,7 @@ export default {
           deleteComment(id).then(res => {
             ElMessage.success('删除成功')
             getAnswerList()
-            router.push({ name: 'subbooks', params: { wRefresh: true } })
+            // router.push({ name: 'subbooks', params: { wRefresh: true } })
           })
         })
         .catch(() => {
@@ -278,13 +341,18 @@ export default {
       handleCommand,
       confirmHandle,
       answerHandleMore,
-      router
+      router,
+      toolbars,
+      getMd
     }
   }
 }
 </script>
 
 <style scoped>
+.AnswerList-wrap {
+  width: calc(100% - 300px);
+}
 .bottom {
   /* margin-top: 30px; */
   display: flex;
@@ -294,7 +362,7 @@ export default {
 
 .pagination {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -307,14 +375,13 @@ export default {
 
 .answer-user img {
   display: block;
-  margin-left: 10px;
   width: 35px;
   height: 35px;
   border-radius: 50%;
 }
 
 .answer-author {
-  /* margin-left: 5px; */
+  margin-left: 12px;
   font-size: 14px;
   line-height: 20px;
   font-weight: 500;
@@ -332,7 +399,41 @@ export default {
 
 .confirm {
   color: white;
-  float: right;
   margin-top: 20px;
+}
+
+.allAnswer {
+  color: #262626;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.answerBody {
+  margin-left: 12px;
+}
+
+.answerSubmit {
+  height: 300px;
+  min-height: 300px;
+}
+
+:deep(.v-left-item) {
+  padding-left: 0px !important;
+}
+
+:deep(.el-divider--horizontal) {
+  border-top: 1px solid hsla(0, 0%, 0%, 0.04);
+}
+
+:deep(#editor .v-note-wrapper) {
+  border: 1px solid #e7e9e8;
+}
+
+:deep(.v-note-wrapper .v-note-panel) {
+  min-height: auto !important;
+}
+
+:deep(.v-right-item) {
+  max-width: 24% !important;
 }
 </style>
