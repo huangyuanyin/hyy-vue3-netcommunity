@@ -186,7 +186,7 @@ const imgAdd = async (name, $file) => {
     border: none;
     border-top: 1px solid #f2f6fc;
     :deep(.v-note-op .v-left-item) {
-      padding-left: 10%;
+      padding-left: 8%;
       height: 40px;
       box-sizing: border-box;
       flex: none !important;

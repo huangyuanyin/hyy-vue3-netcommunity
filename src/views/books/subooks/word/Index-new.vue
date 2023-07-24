@@ -75,7 +75,7 @@
       </el-row>
       <div class="docInfo">
         <el-row style="justify-content: center;">
-          <el-col :span="14">
+          <el-col :span="16">
             <div class="info">
               <el-tooltip class="box-item" effect="dark" :content="`作者：${fourumdata.author}`" placement="top">
                 <div class="ignore-item">
@@ -418,6 +418,7 @@ const handleCooperation = () => {
   :deep(.el-card__header) {
     height: 52px;
     padding: 0 32px 0 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
     display: flex;
     align-items: center;
     border-bottom: none;
@@ -434,6 +435,7 @@ const handleCooperation = () => {
     .xiezuo-icon {
       width: 26px;
       height: 26px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -448,6 +450,7 @@ const handleCooperation = () => {
     }
     .more-icon {
       margin-left: 16px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -671,6 +674,9 @@ const handleCooperation = () => {
 }
 :deep(.v-show-content) {
   width: calc(100% - 250px) !important;
+}
+:deep(.md) {
+  border-top: none !important;
 }
 </style>
 <style lang="scss">

@@ -27,7 +27,7 @@
     </el-row>
     <!-- 回复列表 -->
     <el-row style="justify-content: center;">
-      <el-col :span="14">
+      <el-col :span="16">
         <div class="allAnswer" v-if="answersTotal">{{ `所有评论（${answersTotal}）` }}</div>
         <el-divider class="line" v-if="answersTotal"></el-divider>
         <div v-for="(answer, index) in answers" :key="index">
@@ -37,10 +37,10 @@
                 <img src="@/assets/img/img.jpg" />
               </div>
             </el-col>
-            <el-col :span="21" style="display: flex;align-items: center;">
+            <el-col :span="20" style="display: flex;align-items: center;">
               <span class="answer-author">{{ answer.author }} 回复于 {{ answer.last_mod_time }}</span>
             </el-col>
-            <el-col :span="2" class="answer-chat">
+            <el-col :span="3" class="answer-chat">
               <el-space>
                 <el-tooltip effect="dark" content="查看评论" placement="top">
                   <el-button type="text" @click="commentHandle(answer.id)">
@@ -92,7 +92,7 @@
           <img src="@/assets/img/img.jpg" />
         </div>
       </el-col>
-      <el-col :span="13" style="height: 100%;">
+      <el-col :span="15" style="height: 100%;">
         <!-- <tinymce-com v-model="value" placeholder="请输入回复信息(不少于10个字)"></tinymce-com> -->
         <markdown-com
           style="z-index: 99999;"
@@ -107,7 +107,7 @@
     </el-row>
     <el-row style="justify-content: center;margin-top: 20px;">
       <el-col :span="1"></el-col>
-      <el-col :span="13"><el-button class="confirm" round color="#000000" @click="confirmHandle">发表</el-button></el-col>
+      <el-col :span="15"><el-button class="confirm" round color="#000000" @click="confirmHandle">发表</el-button></el-col>
     </el-row>
     <!-- 回复评论 -->
     <comment-list-com :show="commentDialog" :id="answerid" @input="getComment"></comment-list-com>
@@ -158,9 +158,9 @@ export default {
       bold: true, // 粗体
       italic: true, // 斜体
       header: true, // 标题
-      underline: true, // 下划线
-      strikethrough: true, // 中划线
-      mark: true, // 标记
+      // underline: true, // 下划线
+      // strikethrough: true, // 中划线
+      mark: false, // 标记
       superscript: false, // 上角标
       subscript: false, // 下角标
       quote: true, // 引用
@@ -172,7 +172,7 @@ export default {
       table: true, // 表格
       fullscreen: true, // 全屏编辑
       readmodel: false, // 沉浸式阅读
-      htmlcode: true, // 展示html源码
+      // htmlcode: true, // 展示html源码
       help: true, // 帮助
       /* 1.3.5 */
       undo: true, // 上一步
@@ -365,6 +365,9 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.answer-chat {
+  text-align: end;
+}
 
 .answer-chat img {
   display: block;
@@ -427,6 +430,7 @@ export default {
 
 :deep(#editor .v-note-wrapper) {
   border: 1px solid #e7e9e8;
+  min-height: auto;
 }
 
 :deep(.v-note-wrapper .v-note-panel) {

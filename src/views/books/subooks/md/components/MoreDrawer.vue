@@ -434,7 +434,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { deleteTopics } from '@/api/forum.js'
-import { resetSetItem } from '@/utils/session.js'
 
 const props = defineProps({
   moreDrawer: {

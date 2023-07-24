@@ -8,7 +8,7 @@
         </div>
         <div class="md_button">
           <el-tooltip class="box-item" effect="dark" content="协作" placement="bottom">
-            <div data-testid="doc-action-collaborate" data-aspm-click="d225876" class="xiezuo-icon" @click="handleCooperation">
+            <div data-testid="doc-action-collaborate" data-aspm-click="d225876" class="ignore-xiezuo-icon" @click="handleCooperation">
               <svg
                 style="cursor: pointer;"
                 width="20"
@@ -26,7 +26,7 @@
             </div>
           </el-tooltip>
           <el-button type="default" @click="saveHandle">更新</el-button>
-          <div class="more-icon" :class="{ isMoreActive: moreDrawer }" @click="openMoreDrawer">
+          <div class="ignore-more-icon" :class="{ isMoreActive: moreDrawer }" @click="openMoreDrawer">
             <svg
               style="cursor: pointer;"
               width="1em"
@@ -732,8 +732,8 @@ export default {
     }
   }
 }
-.xiezuo-icon,
-.more-icon {
+.ignore-xiezuo-icon,
+.ignore-more-icon {
   width: 26px;
   height: 26px;
   display: flex;
