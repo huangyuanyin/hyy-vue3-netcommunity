@@ -545,7 +545,7 @@ const handleCooperation = () => {
     padding-left: 40px;
     z-index: 2;
     .titleInput {
-      width: max-content;
+      width: 300px;
       span {
         cursor: pointer;
       }

@@ -4,8 +4,9 @@ const buttonPlugins =
 
 // 导入工具栏
 const toolbar =
+  // 标题 formatselect
   // 'fullscreen undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor  table image | alignleft aligncenter alignright alignjustify outdent indent |  styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | media charmap emoticons hr vr pagebreak insertdatetime print preview | code selectall searchreplace visualblocks | indent2em lineheight formatpainter axupimgs'
-  'fullscreen undo redo  forecolor backcolor bold italic underline strikethrough link hr  anchor  table image alignleft aligncenter alignright alignjustify outdent indent bullist numlist  searchreplace |   styleselect formatselect fontselect fontsizeselect | blockquote subscript superscript removeformat  media charmap emoticons  pagebreak insertdatetime print preview  code selectall  visualblocks  indent2em lineheight formatpainter axupimgs  changeEditor fileParse'
+  'fullscreen undo redo styleselect  fontselect fontsizeselect  forecolor backcolor bold italic underline  hr  table image  bullist numlist alignleft aligncenter alignright  | |  strikethrough link anchor  outdent indent     alignjustify | blockquote subscript superscript removeformat  media charmap emoticons  pagebreak insertdatetime print preview  code selectall  visualblocks  indent2em lineheight formatpainter axupimgs  changeEditor fileParse'
 
 // 初始化配置
 export const init = {

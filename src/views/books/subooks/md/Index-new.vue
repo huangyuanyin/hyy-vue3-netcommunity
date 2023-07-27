@@ -685,7 +685,7 @@ export default {
     .titleInput {
       display: flex;
       align-items: center;
-      width: max-content;
+      width: 300px;
       span {
         cursor: pointer;
       }
@@ -766,6 +766,10 @@ export default {
 }
 :deep(.my-tinymce) {
   // z-index: 2013 !important;
+}
+
+:deep(.tox-toolbar__group) {
+  padding: 0px !important;
 }
 </style>
 
