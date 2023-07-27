@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-wrap ignore_detail_wrap">
+  <div class="detail-wrap ignore_detail_wrap" v-loading.fullscreen.lock="fullscreenLoading">
     <el-card :style="{ 'min-height': minHeight }">
       <template #header style="height:52px">
         <div class="titleInput">
@@ -183,6 +183,7 @@ import AnswerList from './subdetail/AnswerList.vue'
 import { utc2beijing } from '@/utils/util.js'
 import Clipboard from 'clipboard'
 import { useStore } from 'vuex'
+import { ElLoading } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
@@ -198,6 +199,7 @@ const node = computed(() => store.getters.node)
 const moreDrawer = ref(false)
 const moreDrawerTab = ref('first')
 const flag = ref(true)
+const fullscreenLoading = ref(false)
 
 // 最小高度
 const minHeight = computed(() => {
@@ -231,7 +233,13 @@ const handleShare = () => {
 
 // 获取帖子数据
 const getForumData = () => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: '精彩内容加载中，请耐心等待一下呢......',
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
   getForumInfo(route.query.wid).then(res => {
+    loading.close()
     fourumdata.value = res.data
   })
 }
@@ -248,6 +256,31 @@ watch(
   () => {
     if (route.query.wid) {
       getForumData()
+      const editor = document.getElementById('editor')
+      // 在内容加载完成后，获取子元素
+      if (editor && editor.childNodes.length > 0) {
+        // 使用setTimeout在DOM更新后获取元素并判断是否含有子元素
+        setTimeout(() => {
+          const noteNavigationContent = document.querySelector('.v-note-navigation-content')
+          const noteNavigationWrapper = document.querySelector('.v-note-navigation-wrapper')
+          if (noteNavigationContent && noteNavigationContent.innerHTML.trim().length > 0) {
+            const hasHeaderElement = Array.from(noteNavigationContent.children).some(child => {
+              return child.nodeName.toLowerCase().startsWith('h') // 检查子元素是否是标题元素
+            })
+            if (hasHeaderElement) {
+              noteNavigationWrapper.style.display = 'flex'
+            } else {
+              if (noteNavigationWrapper) {
+                noteNavigationWrapper.style.display = 'none'
+              }
+            }
+          } else {
+            if (noteNavigationWrapper) {
+              noteNavigationWrapper.style.display = 'none'
+            }
+          }
+        }, 500) // 1秒后获取元素
+      }
     }
     if (route.query.aricleName) {
       fourumdata.value.title = route.query.aricleName
@@ -265,6 +298,31 @@ onMounted(() => {
   //     })
   //   }
   // }, 100)
+  const editor = document.getElementById('editor')
+  // 在内容加载完成后，获取子元素
+  if (editor && editor.childNodes.length > 0) {
+    // 使用setTimeout在DOM更新后获取元素并判断是否含有子元素
+    setTimeout(() => {
+      const noteNavigationContent = document.querySelector('.v-note-navigation-content')
+      const noteNavigationWrapper = document.querySelector('.v-note-navigation-wrapper')
+      if (noteNavigationContent && noteNavigationContent.innerHTML.trim().length > 0) {
+        const hasHeaderElement = Array.from(noteNavigationContent.children).some(child => {
+          return child.nodeName.toLowerCase().startsWith('h') // 检查子元素是否是标题元素
+        })
+        if (hasHeaderElement) {
+          noteNavigationWrapper.style.display = 'flex'
+        } else {
+          if (noteNavigationWrapper) {
+            noteNavigationWrapper.style.display = 'none'
+          }
+        }
+      } else {
+        if (noteNavigationWrapper) {
+          noteNavigationWrapper.style.display = 'none'
+        }
+      }
+    }, 500) // 1秒后获取元素
+  }
 })
 
 // 点赞事件
@@ -668,14 +726,81 @@ const handleCooperation = () => {
   position: fixed !important;
   top: 105px !important;
   right: 18px !important;
+  height: auto !important;
 }
 :deep(.v-note-navigation-close) {
   display: none !important;
 }
 :deep(.v-show-content) {
   width: calc(100% - 250px) !important;
+  &::-webkit-scrollbar {
+    width: 0px !important;
+  }
+}
+:deep(.v-note-navigation-content) {
+  &::-webkit-scrollbar {
+    width: 0px !important;
+  }
+  h1 {
+    color: #585a5a !important;
+    font-size: 16px !important;
+    line-height: 26px !important;
+    padding-left: 12px !important;
+    span {
+      font-size: 16px !important;
+    }
+  }
+  h2 {
+    color: #585a5a !important;
+    font-size: 16px !important;
+    line-height: 26px !important;
+    padding-left: 34px !important;
+    span {
+      font-size: 16px !important;
+    }
+  }
+  h3 {
+    color: #585a5a !important;
+    font-size: 14px !important;
+    line-height: 26px !important;
+    padding-left: 56px !important;
+    span {
+      font-size: 14px !important;
+    }
+  }
+  h4 {
+    color: #585a5a !important;
+    font-size: 14px !important;
+    line-height: 26px !important;
+    padding-left: 68px !important;
+    span {
+      font-size: 14px !important;
+    }
+  }
+  h5 {
+    color: #585a5a !important;
+    font-size: 12px !important;
+    line-height: 26px !important;
+    padding-left: 80px !important;
+    span {
+      font-size: 12px !important;
+    }
+  }
+  h1:hover,
+  h2:hover,
+  h3:hover,
+  h4:hover,
+  h5:hover {
+    font-weight: bold !important;
+    color: #262626 !important;
+  }
+}
+:deep(.v-note-navigation-title) {
+  padding: 0 12px 0 12px !important;
 }
 :deep(.md) {
+  max-height: 100vh;
+  height: 100%;
   border-top: none !important;
 }
 </style>

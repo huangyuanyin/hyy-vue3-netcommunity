@@ -5,6 +5,10 @@
         <div class="titleInput">
           <span v-if="flag" @click="edit()">{{ form.title }}</span>
           <el-input autofocus v-model="form.title" v-else @change="input()" @blur="editDocTitle" minlength="1" maxlength="30" />
+          <!-- <el-icon style="width:14px;height:14px"><Unlock /></el-icon>
+          <el-icon><Lock /></el-icon>
+          <span>已加载最新版本</span>
+          <el-icon><MostlyCloudy /></el-icon> -->
         </div>
         <div class="md_button">
           <el-tooltip class="box-item" effect="dark" content="协作" placement="bottom">
@@ -132,7 +136,8 @@ import MoreDrawer from './components/MoreDrawer.vue'
 import { ref, computed, reactive, watch, onMounted, onUnmounted, nextTick, inject, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute, NavigationGuardNext } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, Action } from 'element-plus'
+import { Unlock } from '@element-plus/icons-vue'
 import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getTag } from '@/api/tag.js'
@@ -345,22 +350,18 @@ export default {
     const checkUnsavedContent = callback => {
       if (rawData.value !== tinyValue.value || rawData.value !== md.value) {
         ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
+          distinguishCancelAndClose: true,
           confirmButtonText: '去保存',
-          cancelButtonText: '直接离开',
-          type: 'warning'
+          cancelButtonText: '直接离开'
         })
-          .then(() => {
-            // saveHandle()
-            // rawData.value = ''
-            // tinyValue.value = ''
-            // md.value = ''
-            // callback()
-          })
-          .catch(() => {
-            rawData.value = ''
-            tinyValue.value = ''
-            md.value = ''
-            callback()
+          .then(() => {})
+          .catch(action => {
+            if (action === 'cancel') {
+              rawData.value = ''
+              tinyValue.value = ''
+              md.value = ''
+              callback()
+            }
           })
       } else {
         callback()
@@ -682,6 +683,8 @@ export default {
     padding-left: 40px;
     z-index: 2;
     .titleInput {
+      display: flex;
+      align-items: center;
       width: max-content;
       span {
         cursor: pointer;

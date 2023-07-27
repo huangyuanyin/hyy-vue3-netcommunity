@@ -28,7 +28,7 @@
           </svg>
         </template>
         <div class="operate-tab">
-          <div class="style-item">
+          <div class="style-item noUse">
             <svg
               width="1em"
               height="1em"
@@ -77,7 +77,7 @@
             </svg>
           </div>
           <div class="setting-item">
-            <div class="item-top">
+            <div class="item-top noUse">
               <svg
                 width="1em"
                 height="1em"
@@ -99,7 +99,7 @@
             </div>
             <div class="hr"></div>
             <div class="item-list">
-              <div class="item" @click="noUse">
+              <div class="item noUse" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -116,7 +116,7 @@
                 </svg>
                 <div>另存为模板</div>
               </div>
-              <div class="item" @click="noUse">
+              <div class="item noUse" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -139,7 +139,7 @@
                 </svg>
                 <div>查看历史版本</div>
               </div>
-              <div class="item" @click="noUse">
+              <div class="item " @click="handleExport">
                 <svg
                   width="1em"
                   height="1em"
@@ -162,7 +162,7 @@
                 </svg>
                 <div>导出...</div>
               </div>
-              <div class="item" @click="noUse">
+              <div class="item noUse" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -182,7 +182,7 @@
                 </svg>
                 <div>复制...</div>
               </div>
-              <div class="item" @click="noUse">
+              <div class="item noUse" @click="noUse">
                 <svg
                   width="1em"
                   height="1em"
@@ -433,6 +433,7 @@ import { ref, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { downloadFile } from '@/utils/file.js'
 import { deleteTopics } from '@/api/forum.js'
 
 const props = defineProps({
@@ -459,7 +460,7 @@ const arctileId = ref(route.query.tid || route.query.mid || null) // 文章id
 const categoryId = ref(route.query.category || null) // 父节点id
 
 const handleDelete = () => {
-  ElMessageBox.confirm(`确认删除 ${props.title} ？`, '', {
+  ElMessageBox.confirm(`确认删除 【${props.title}】 ？`, '', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
@@ -477,6 +478,25 @@ const handleDelete = () => {
     .catch(() => {
       ElMessage.info('取消操作')
     })
+}
+
+const handleExport = () => {
+  ElMessageBox.confirm(`确认导出 【${props.title}】 ？`, '', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'success'
+  })
+    .then(() => {
+      handleDownload(route.query.wid)
+    })
+    .catch(() => {
+      ElMessage.info('取消操作')
+    })
+}
+
+// 下载预览文件
+const handleDownload = async id => {
+  downloadFile.judgeType(id)
 }
 
 const handleClick = () => {}
@@ -541,6 +561,15 @@ const noUse = () => {
       }
       .operate-tab {
         padding: 12px 20px 0 20px;
+        .noUse {
+          cursor: not-allowed !important;
+          div {
+            color: #c0c4cc !important;
+          }
+          svg {
+            color: #c0c4cc !important;
+          }
+        }
         .style-item {
           box-sizing: border-box;
           margin-top: 20px;
@@ -573,6 +602,15 @@ const noUse = () => {
           background-color: #fafafa;
           border-radius: 8px;
           padding: 8px;
+          .noUse {
+            cursor: not-allowed !important;
+            div {
+              color: #c0c4cc !important;
+            }
+            svg {
+              color: #c0c4cc !important;
+            }
+          }
           .item-top {
             display: flex;
             align-items: center;
@@ -601,6 +639,15 @@ const noUse = () => {
             background-color: #eff0f0;
           }
           .item-list {
+            .noUse {
+              cursor: not-allowed !important;
+              div {
+                color: #c0c4cc !important;
+              }
+              svg {
+                color: #c0c4cc !important;
+              }
+            }
             .item {
               display: flex;
               align-items: center;
@@ -713,6 +760,7 @@ const noUse = () => {
           }
           .item {
             margin-left: 12px;
+
             .title {
               line-height: 22px;
             }
