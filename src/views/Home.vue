@@ -95,7 +95,7 @@ export default {
     const store = useStore()
     const route = useRoute()
     const collapse = computed(() => store.getters.collapse)
-    const siderbar = computed(() => store.getters.siderbar)
+    const siderbar = computed(() => (route.query.spaceid ? '1' : store.getters.siderbar))
     const isFold = ref(false)
     const isShowResizeButton = ref(false)
 

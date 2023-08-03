@@ -83,7 +83,14 @@ const handleOpen = book => {
   sessionStorage.setItem('spacePublic', Number(book.public))
   // store.commit("app/SET_SPACES", book);
   store.commit('changeCurTreeId', 0)
-  router.push('/subbooks')
+  // router.push('/subbooks')
+  router.push({
+    path: '/subbooks',
+    query: {
+      spaceid: book.id,
+      spacename: book.name
+    }
+  })
 }
 
 // 知识库编辑

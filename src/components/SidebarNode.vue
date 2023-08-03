@@ -168,8 +168,8 @@ const route = useRoute()
 const router = useRouter()
 const loadingInstance = ref('')
 const shareLink = ref('') // 分享链接
-const spacename = computed(() => sessionStorage.getItem('spacename'))
-const spaceid = computed(() => sessionStorage.getItem('spaceid'))
+const spacename = computed(() => route.query.spacename || sessionStorage.getItem('spacename'))
+const spaceid = computed(() => route.query.spaceid || sessionStorage.getItem('spaceid'))
 const spacePublic = computed(() => sessionStorage.getItem('spacePublic'))
 const isRefresh = computed(() => store.getters.isRefresh)
 // const defaultExpandIds = ref([]) // 这里存放 要默认展开的节点 id
@@ -287,6 +287,12 @@ watch(
 watchEffect(() => {
   if (isRefresh.value) {
     getNodeList()
+    const params = {
+      public: 1
+    }
+    getCategorys(params).then(res => {
+      id === 0 ? (mybooks.value = res.data) : (pubooks.value = res.data)
+    })
     store.commit('books/SET_REFRESH', false)
     let deleteNode = JSON.parse(sessionStorage.getItem('deleteNode'))
     store.commit('changeCurTreeId', deleteNode)
@@ -297,6 +303,34 @@ watchEffect(() => {
       label: deleteNode.label,
       id: deleteNode.id
     })
+  }
+})
+
+watchEffect(async () => {
+  const forumId = ref(route.query.wid || route.query.eid || route.query.mid || route.query.pid)
+  const groupid = ref(route.query.groupid)
+  if (forumId.value && !route.params.isNoClick) {
+    await sessionStorage.setItem('spaceid', route.query.spaceid)
+    await sessionStorage.setItem('spacename', route.query.spacename)
+    let res = await getForumInfo(forumId.value)
+    if (res.code === 1000) {
+      await sessionStorage.setItem('category', res.data.category)
+      await store.commit('changeCurTreeId', res.data.category)
+      await handleNodeClick({
+        label: res.data.title,
+        id: res.data.category
+      })
+      await getNodeList()
+    }
+  } else if (groupid.value && !route.params.isNoClick) {
+    await sessionStorage.setItem('spaceid', route.query.spaceid)
+    await sessionStorage.setItem('spacename', route.query.spacename)
+    await store.commit('changeCurTreeId', groupid.value)
+    await handleNodeClick({
+      label: route.query.groupname,
+      id: groupid.value
+    })
+    await getNodeList()
   }
 })
 
@@ -338,27 +372,32 @@ const handleRoot = command => {
     switch (tmp[2]) {
       case 'w':
         nextTick(() => {
-          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/detail?wid=' + tmp[1]
+          shareLink.value =
+            process.env.VUE_APP_SHARE_URL + '/#/detail?spaceid=' + spaceid.value + '&spacename=' + spacename.value + '&wid=' + tmp[1]
         })
         break
       case 'e':
         nextTick(() => {
-          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/excel?eid=' + tmp[1]
+          shareLink.value =
+            process.env.VUE_APP_SHARE_URL + '/#/excel?spaceid=' + spaceid.value + '&spacename=' + spacename.value + '&eid=' + tmp[1]
         })
         break
       case 'a':
         nextTick(() => {
-          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/detail?wid=' + tmp[1]
+          shareLink.value =
+            process.env.VUE_APP_SHARE_URL + '/#/detail?spaceid=' + spaceid.value + '&spacename=' + spacename.value + '&wid=' + tmp[1]
         })
         break
       case 'm':
         nextTick(() => {
-          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/mindMap?mid=' + tmp[1]
+          shareLink.value =
+            process.env.VUE_APP_SHARE_URL + '/#/mindMap?spaceid=' + spaceid.value + '&spacename=' + spacename.value + '&mid=' + tmp[1]
         })
         break
       case 'p':
         nextTick(() => {
-          shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/FramePPT?pid=' + tmp[1]
+          shareLink.value =
+            process.env.VUE_APP_SHARE_URL + '/#/FramePPT?spaceid=' + spaceid.value + '&spacename=' + spacename.value + '&pid=' + tmp[1]
         })
         break
     }
@@ -620,6 +659,7 @@ const deleteApi = id => {
 
 // 节点点击事件
 const handleNodeClick = async node => {
+  console.log(`output->node`, node)
   curTreeData.value = node
   let nodedata = {
     label: node.label,
@@ -634,16 +674,32 @@ const handleNodeClick = async node => {
   // 判断节点类型,跳转不同路径 ('a', '文章'),('w', 'Word'), ('e', 'Excel'),('m', '思维导图'), ('f', '流程图'), ('p', 'PPT'),('l', '分组'),
   switch (node.type) {
     case 'l':
-      router.push({ name: 'subbooks', params: { wRefresh: true } })
+      router.push({
+        name: 'subbooks',
+        query: { spaceid: spaceid.value, spacename: spacename.value, groupid: node.id, groupname: node.label },
+        params: { wRefresh: true, isNoClick: true }
+      })
       break
     case 'w':
-      router.push({ name: 'detail', query: { wid: node.articleId } })
+      router.push({
+        name: 'detail',
+        query: { spaceid: spaceid.value, spacename: spacename.value, wid: node.articleId },
+        params: { isNoClick: true }
+      })
       break
     case 'e':
-      router.push({ path: '/excel', query: { eid: node.articleId } })
+      router.push({
+        path: '/excel',
+        query: { spaceid: spaceid.value, spacename: spacename.value, eid: node.articleId },
+        params: { isNoClick: true }
+      })
       break
     case 'a':
-      router.push({ name: 'detail', query: { wid: node.articleId } })
+      router.push({
+        name: 'detail',
+        query: { spaceid: spaceid.value, spacename: spacename.value, wid: node.articleId },
+        params: { isNoClick: true }
+      })
       break
     case 'm':
       if (node.articleId == route.query.mid) {
@@ -656,10 +712,18 @@ const handleNodeClick = async node => {
         background: 'rgba(0, 0, 0, 0.7)'
       })
       await getMindMapDataApi(node.articleId)
-      router.push({ name: 'mindMap', query: { mid: node.articleId } })
+      router.push({
+        name: 'mindMap',
+        query: { spaceid: spaceid.value, spacename: spacename.value, mid: node.articleId },
+        params: { isNoClick: true }
+      })
       break
     case 'p':
-      router.push({ name: 'FramePPT', query: { pid: node.articleId } })
+      router.push({
+        name: 'FramePPT',
+        query: { spaceid: spaceid.value, spacename: spacename.value, pid: node.articleId },
+        params: { isNoClick: true }
+      })
       break
   }
 }

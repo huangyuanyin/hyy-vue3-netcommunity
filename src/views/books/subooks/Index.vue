@@ -3,7 +3,7 @@
     <el-card class="list-wrap">
       <el-container>
         <el-header height="30px" style="width: 90%; margin-left: 5%">
-          <span>{{ node.label }}</span>
+          <span>{{ route.query.groupname || node.label }}</span>
           <el-button text style="float: right" @click="handleRefresh" v-if="!isTrash">
             <el-icon>
               <Refresh />
@@ -179,7 +179,8 @@ import Clipboard from 'clipboard'
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
-const spaceid = ref(sessionStorage.getItem('spaceid')) // 工作空间标题名
+const spaceid = ref(route.query.spaceid || sessionStorage.getItem('spaceid')) // 工作空间标题名
+const spacename = ref(route.query.spacename || sessionStorage.getItem('spacename'))
 const shareLink = ref('') // 分享链接
 const treeData = ref([])
 const isTrash = ref(false) // 是否是回收站
@@ -283,6 +284,25 @@ watchEffect(() => {
   }
 })
 
+watchEffect(() => {
+  if (route.query.groupid) {
+    let params = {
+      category: route.query.groupid,
+      tags: '',
+      title: '',
+      body: '',
+      page: page.value,
+      pagesize: size.value
+    }
+    getForum(params).then(res => {
+      // res.data = res.data.filter(item => (isTrash.value ? item.is_delete === true : item.is_delete === false))
+      datalist.value = res.data
+      total.value = res.total
+      loading.value = false
+    })
+  }
+})
+
 const handleRefresh = () => {
   getDataList()
 }
@@ -343,6 +363,7 @@ const handleCommand = value => {
 // 分享链接
 const handleShare = async (type, id) => {
   let clipboard = await new Clipboard('.copy')
+  let suffix = `&spaceid=${spaceid.value}&spacename=${spacename.value}&isRight=right`
   if (type == 'd') {
     await getForumInfo(id).then(async res => {
       if (res.code === 1000) {
@@ -352,19 +373,19 @@ const handleShare = async (type, id) => {
     })
   }
   if (type === 'w') {
-    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/detail?wid=' + id + '&isRight=right'
+    shareLink.value = process.env.VUE_APP_SHARE_URL + '/#/detail?wid=' + id + suffix
   }
   if (type === 'e') {
-    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/excel?eid=' + id + '&isRight=right'
+    shareLink.value = process.env.VUE_APP_SHARE_URL + '/#/excel?eid=' + id + suffix
   }
   if (type === 'a') {
-    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/detail?wid=' + id + '&isRight=right'
+    shareLink.value = process.env.VUE_APP_SHARE_URL + '/#/detail?wid=' + id + suffix
   }
   if (type === 'm') {
-    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/mindMap?mid=' + id + '&isRight=right'
+    shareLink.value = process.env.VUE_APP_SHARE_URL + '/#/mindMap?mid=' + id + suffix
   }
   if (type === 'p') {
-    shareLink.value = process.env.VUE_APP_CONSOLE_URL + '/#/FramePPT?pid=' + id + '&isRight=right'
+    shareLink.value = process.env.VUE_APP_SHARE_URL + '/#/FramePPT?pid=' + id + '&isRight=right'
   }
   nextTick(() => {
     clipboard.on('success', e => {
@@ -384,10 +405,10 @@ const handleShare = async (type, id) => {
 // 跳转至文章详情页
 const handleOpen = async (type, id) => {
   if (type == 'a' || type == 'w') {
-    router.push({ name: 'detail', query: { wid: id, isRight: 'right' } })
+    router.push({ name: 'detail', query: { wid: id, spaceid: spaceid.value, spacename: spacename.value, isRight: 'right' } })
   }
   if (type == 'e') {
-    router.push({ name: 'excel', query: { eid: id, isRight: 'right' } })
+    router.push({ name: 'excel', query: { eid: id, spaceid: spaceid.value, spacename: spacename.value, isRight: 'right' } })
   }
   if (type == 'm') {
     loadingInstance = ElLoading.service({
@@ -397,10 +418,10 @@ const handleOpen = async (type, id) => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
     await getMindMapDataApi(id)
-    router.push({ name: 'mindMap', query: { mid: id, isRight: 'right' } })
+    router.push({ name: 'mindMap', query: { mid: id, spaceid: spaceid.value, spacename: spacename.value, isRight: 'right' } })
   }
   if (type == 'p') {
-    router.push({ path: 'ppt', query: { pid: id, isRight: 'right' } })
+    router.push({ path: 'ppt', query: { pid: id, spaceid: spaceid.value, spacename: spacename.value, isRight: 'right' } })
   }
   if (type == 'd') {
     getPreview(id)
@@ -526,7 +547,7 @@ watch(
 
 // 获取分类列表
 const getNodeList = () => {
-  getCategorysInfo(sessionStorage.getItem('spaceid')).then(res => {
+  getCategorysInfo(spaceid.value).then(res => {
     treeData.value = judgeNodeType(res.data)
   })
 }
@@ -555,6 +576,11 @@ onBeforeUnmount(() => {})
   padding: 0;
   margin: 0;
   list-style: none;
+  max-height: 80vh;
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
 
   li {
     margin: 10px 0 !important;

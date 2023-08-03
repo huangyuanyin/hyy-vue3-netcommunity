@@ -29,27 +29,18 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-export default {
-  setup() {
-    const route = useRoute()
 
-    const onRoutes = computed(() => {
-      return route.path
-    })
+const route = useRoute()
+const store = useStore()
 
-    const store = useStore()
-    const collapse = computed(() => store.getters.collapse)
-
-    return {
-      onRoutes,
-      collapse
-    }
-  }
-}
+const onRoutes = computed(() => {
+  return route.path
+})
+const collapse = computed(() => store.getters.collapse)
 </script>
 
 <style scoped>
