@@ -176,6 +176,8 @@ import { getCategorysInfo } from '@/api/category.js'
 import { judgeNodeType } from '@/utils/methods.js'
 import Clipboard from 'clipboard'
 
+const clipboard = ref(null) // 创建一个ref来存储Clipboard实例
+
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
@@ -276,9 +278,9 @@ getTagList()
 
 // 监听是否刷新
 watchEffect(() => {
-  if (route.params.wRefresh || node.value.id) {
-    getDataList()
-  }
+  // if (route.params.wRefresh || node.value.id) {
+  //   getDataList()
+  // }
   if (route.query && route.query.type) {
     route.query.type == 'trash' ? (isTrash.value = true) : (isTrash.value = false)
   }
@@ -362,13 +364,13 @@ const handleCommand = value => {
 
 // 分享链接
 const handleShare = async (type, id) => {
-  let clipboard = await new Clipboard('.copy')
   let suffix = `&spaceid=${spaceid.value}&spacename=${spacename.value}&isRight=right`
+
   if (type == 'd') {
     await getForumInfo(id).then(async res => {
       if (res.code === 1000) {
         let url = 'http://10.4.150.55:8013' + '/' + res.data.body
-        shareLink.value = 'http://10.4.150.55:8020/onlinePreview?url=' + encodeURIComponent(Base64.encode(url))
+        shareLink.value = 'http://192.168.94.89:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url))
       }
     })
   }
@@ -387,17 +389,20 @@ const handleShare = async (type, id) => {
   if (type === 'p') {
     shareLink.value = process.env.VUE_APP_SHARE_URL + '/#/FramePPT?pid=' + id + '&isRight=right'
   }
-  nextTick(() => {
-    clipboard.on('success', e => {
+
+  // 在nextTick内创建Clipboard对象和绑定事件
+  await nextTick(() => {
+    if (clipboard.value) {
+      clipboard.value.destroy() // 销毁之前的Clipboard对象
+    }
+    clipboard.value = new Clipboard('.copy')
+    clipboard.value.on('success', e => {
       ElMessage.success('分享链接已复制到剪贴板')
-      // 释放内存
-      clipboard.destroy()
+      clipboard.value.destroy() // 在事件处理之后销毁Clipboard对象
     })
-    clipboard.on('error', e => {
-      // 不支持复制
+    clipboard.value.on('error', e => {
       ElMessage.error('该浏览器不支持自动复制')
-      // 释放内存
-      clipboard.destroy()
+      clipboard.value.destroy() // 在事件处理之后销毁Clipboard对象
     })
   })
 }

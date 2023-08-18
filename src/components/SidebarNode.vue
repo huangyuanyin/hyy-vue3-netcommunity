@@ -118,7 +118,7 @@
     <el-dialog title="新建分组/子分组" v-model="dialogNode" draggable width="600px">
       <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
         <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" maxlength="30" placeholder="分组名称" show-word-limit type="text" />
+          <el-input v-model="form.name" maxlength="200" placeholder="分组名称" show-word-limit type="text" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -131,7 +131,7 @@
     <el-dialog title="编辑分组/子分组" v-model="dialogEdit" draggable width="600px">
       <el-form :model="form" ref="formRef" :rules="formRules" label-width="80px">
         <el-form-item label="名称" prop="name">
-          <el-input v-model="form.name" maxlength="30" placeholder="分组名称" show-word-limit type="text" />
+          <el-input v-model="form.name" maxlength="200" placeholder="分组名称" show-word-limit type="text" />
         </el-form-item>
       </el-form>
       <template #footer>

@@ -211,6 +211,7 @@ const beforeUnloadHandler = e => {
 
 const loadExcelForServer = () => {
   getForumInfo(route.query.eid).then(res => {
+    form.author = res.data.author
     form.category = res.data.category
     // editCategory.value = res.data.category
     luckysheet.create({
@@ -241,6 +242,10 @@ const handleClose = () => {
 }
 
 const handleSave = () => {
+  // if (form.author && form.author !== sessionStorage.getItem('username')) {
+  //   ElMessage.warning('您没有权限修改该文档')
+  //   return
+  // }
   formRef.value.validate(valid => {
     if (!valid) return false
     if (route.query.eid) {
@@ -361,9 +366,9 @@ const save = () => {
 const toDetail = eid => {
   // router.replace({ name: 'excel', query: { eid: eid } })
   if (route.query && route.query.isRight) {
-    router.replace({ name: 'excel', query: { eid: eid, isRight: 'right' } })
+    router.replace({ name: 'excel', query: { eid: eid, isRight: 'right' }, params: { isNoClick: true } })
   } else {
-    router.replace({ name: 'excel', query: { eid: eid } })
+    router.replace({ name: 'excel', query: { eid: eid }, params: { isNoClick: true } })
   }
 }
 </script>

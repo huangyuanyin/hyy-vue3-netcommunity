@@ -4,7 +4,7 @@
       <template #header style="height:52px">
         <div class="titleInput">
           <span v-if="flag" @click="edit()">{{ fourumdata.title }}</span>
-          <el-input autofocus v-model="fourumdata.title" v-else @change="input()" @blur="editDocTitle" minlength="1" maxlength="30" />
+          <el-input autofocus v-model="fourumdata.title" v-else @change="input()" @blur="editDocTitle" minlength="1" maxlength="200" />
         </div>
         <div class="md_button">
           <el-tooltip class="box-item" effect="dark" content="收藏" placement="bottom">
@@ -343,15 +343,18 @@ const collectHandle = () => {
 
 // 编辑按钮
 const handleEdit = () => {
+  // if (fourumdata.value.author !== sessionStorage.getItem('username')) return ElMessage.warning('您没有权限编辑该文档')
   if (fourumdata.value.type == 'a') {
     router.push({
       name: 'md',
-      query: { tid: route.query.wid, category: fourumdata.value.category, type: 'edit', isRight: route.query.isRight, typeof: 'a' }
+      query: { tid: route.query.wid, category: fourumdata.value.category, type: 'edit', isRight: route.query.isRight, typeof: 'a' },
+      params: { isNoClick: true }
     })
   } else {
     router.push({
       name: 'md',
-      query: { mid: route.query.wid, category: fourumdata.value.category, type: 'edit', isRight: route.query.isRight, typeof: 'w' }
+      query: { mid: route.query.wid, category: fourumdata.value.category, type: 'edit', isRight: route.query.isRight, typeof: 'w' },
+      params: { isNoClick: true }
     })
   }
 }
@@ -545,7 +548,7 @@ const handleCooperation = () => {
     padding-left: 40px;
     z-index: 2;
     .titleInput {
-      width: 300px;
+      width: 60vw;
       span {
         cursor: pointer;
       }

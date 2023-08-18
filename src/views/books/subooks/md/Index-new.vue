@@ -4,7 +4,7 @@
       <template #header style="height:52px">
         <div class="titleInput">
           <span v-if="flag" @click="edit()">{{ form.title }}</span>
-          <el-input autofocus v-model="form.title" v-else @change="input()" @blur="editDocTitle" minlength="1" maxlength="30" />
+          <el-input autofocus v-model="form.title" v-else @change="input()" @blur="editDocTitle" minlength="1" maxlength="200" />
           <!-- <el-icon style="width:14px;height:14px"><Unlock /></el-icon>
           <el-icon><Lock /></el-icon>
           <span>已加载最新版本</span>
@@ -170,6 +170,7 @@ export default {
     })
     // 工作空间标题名
     const spaceid = ref(sessionStorage.getItem('spaceid'))
+    const spacename = ref(sessionStorage.getItem('spacename'))
     const docTitle = computed(() => store.getters.docTitle)
     // 节点数据
     const node = computed(() => store.getters.node)
@@ -600,9 +601,17 @@ export default {
     // 跳转到详情页
     const toDetail = wid => {
       if (route.query && route.query.isRight) {
-        router.replace({ name: 'detail', query: { wid: wid, isRight: 'right' } })
+        router.replace({
+          name: 'detail',
+          query: { wid: wid, isRight: 'right', spaceid: spaceid.value, spacename: spacename.value },
+          params: { isNoClick: true }
+        })
       } else {
-        router.replace({ name: 'detail', query: { wid: wid } })
+        router.replace({
+          name: 'detail',
+          query: { wid: wid, spaceid: spaceid.value, spacename: spacename.value },
+          params: { isNoClick: true }
+        })
       }
     }
 
@@ -659,7 +668,9 @@ export default {
       moreDrawerTab,
       handleCooperation,
       tinymce,
-      isTinymce
+      isTinymce,
+      spaceid,
+      spacename
     }
   }
 }
@@ -685,7 +696,7 @@ export default {
     .titleInput {
       display: flex;
       align-items: center;
-      width: 300px;
+      width: 60vw;
       span {
         cursor: pointer;
       }

@@ -3,16 +3,20 @@
     <el-form :model="saveForm" ref="saveFormRef" :rules="saveFormRules" label-width="80px">
       <el-form-item label="分类" prop="category" v-if="isRight == 'right'">
         <el-space>
-          <el-cascader :options="treeData" v-model="saveForm.category" @change="handleChange"
-            :props="{ value: 'id', checkStrictly: true }" clearable :show-all-levels="false" />
+          <el-cascader
+            :options="treeData"
+            v-model="saveForm.category"
+            @change="handleChange"
+            :props="{ value: 'id', checkStrictly: true }"
+            clearable
+            :show-all-levels="false"
+          />
           <span style="margin-left: 30px">标签</span>
-          <el-cascader :options="taglist" v-model="saveForm.tags" :props="{ value: 'id', label: 'name' }">
-          </el-cascader>
+          <el-cascader :options="taglist" v-model="saveForm.tags" :props="{ value: 'id', label: 'name' }"> </el-cascader>
         </el-space>
       </el-form-item>
       <el-form-item label="文档名称" prop="title">
-        <el-input v-model="saveForm.title" show-word-limit maxlength="200" placeholder="请输入文档名称" type="text">
-        </el-input>
+        <el-input v-model="saveForm.title" show-word-limit maxlength="200" placeholder="请输入文档名称" type="text"> </el-input>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -25,13 +29,13 @@
 </template>
 
 <script setup>
-import bus from '@/utils/bus';
-import { ref, reactive, onMounted, nextTick, inject, computed, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useStore } from 'vuex';
-import { ElMessage } from "element-plus";
-import { getData } from '@/api';
-import { getTag } from "@/api/tag.js"
+import bus from '@/utils/bus'
+import { ref, reactive, onMounted, nextTick, inject, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { ElMessage } from 'element-plus'
+import { getData } from '@/api'
+import { getTag } from '@/api/tag.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 import { getCategorysInfo, addCategorys, updateCategorys } from '@/api/category.js'
 import { judgeNodeType } from '@/utils/methods.js'
@@ -42,9 +46,9 @@ const store = useStore()
 const _reload = inject('reload')
 const reload = () => {
   setTimeout(_reload, 100)
-  store.commit("changeCurTreeId", saveForm.category)
+  store.commit('changeCurTreeId', saveForm.category)
 }
-const node = computed(() => store.getters.node);
+const node = computed(() => store.getters.node)
 const isShowDialog = ref(false)
 const isRight = ref('')
 const treeData = ref([])
@@ -59,7 +63,7 @@ const saveForm = reactive({
   body: '',
   author: sessionStorage.getItem('username')
 })
-const saveFormRef = ref(null);
+const saveFormRef = ref(null)
 // 表单校验
 const saveFormRules = reactive({
   category: [{ required: true, message: '请选择所属分类', trigger: 'change' }],
@@ -72,9 +76,10 @@ const closeSaveDialog = () => {
 
 // 保存流程
 const handleSave = () => {
-  saveFormRef.value.validate((valid) => {
+  saveFormRef.value.validate(valid => {
     if (!valid) return false
     if (route.query.mid) {
+      // if (saveForm.author !== sessionStorage.getItem('username')) return ElMessage.warning('您没有权限编辑该文档')
       updateMindMap()
       isShowDialog.value = false
     } else {
@@ -87,7 +92,7 @@ const handleSave = () => {
 // 新增mindMap
 const addMindMap = () => {
   saveForm.body = JSON.stringify(getData())
-  if (route.query.isRight == "right") {
+  if (route.query.isRight == 'right') {
     getRightSaveApi(saveForm)
   } else {
     getSave() // 新增为节点
@@ -95,12 +100,12 @@ const addMindMap = () => {
 }
 
 // 新增mindMap api
-const getRightSaveApi = (saveForm) => {
+const getRightSaveApi = saveForm => {
   addForum(saveForm).then(res => {
     ElMessage({
-      message: "新增成功",
-      type: "success",
-    });
+      message: '新增成功',
+      type: 'success'
+    })
     if (res.code === 1000) {
       handleClose()
       reload()
@@ -119,16 +124,16 @@ const getSave = () => {
     public: sessionStorage.getItem('spacePublic')
   }
   // 新增节点
-  addCategorys(params).then((res) => {
+  addCategorys(params).then(res => {
     if (res.code == 1000) {
       saveForm.category = res.data
-      store.commit("changeCurTreeId", res.data)
+      store.commit('changeCurTreeId', res.data)
       // 调用新增mindMap节点
       addForum(saveForm).then(res => {
         ElMessage({
-          message: "新增成功",
-          type: "success",
-        });
+          message: '新增成功',
+          type: 'success'
+        })
         if (res.code === 1000) {
           handleClose()
           reload()
@@ -160,9 +165,9 @@ const updateMindMap = () => {
 const getUpdateForumApi = (id, form) => {
   updateForum(id, form).then(res => {
     ElMessage({
-      message: "编辑成功！",
-      type: "success",
-    });
+      message: '编辑成功！',
+      type: 'success'
+    })
     handleClose()
     reload()
     toDetail(res.data)
@@ -172,16 +177,17 @@ const getUpdateForumApi = (id, form) => {
 // 更新节点 API
 const getUpdateCategorysApi = () => {
   const title = { name: saveForm.title }
-  updateCategorys(saveForm.category, title).then((res) => {
+  updateCategorys(saveForm.category, title).then(res => {
     ElMessage({
       message: '编辑成功！',
-      type: 'success',
+      type: 'success'
     })
   })
 }
 
 const loadMindMap = () => {
   getForumInfo(route.query.mid).then(res => {
+    saveForm.author = res.data.author
     saveForm.category = res.data.category
     saveForm.title = res.data.title || ''
     saveForm.tags = res.data.tags
@@ -189,35 +195,41 @@ const loadMindMap = () => {
   })
 }
 
-watch(() => route.query, () => {
-  if (route.query.mid) {
-    loadMindMap()
+watch(
+  () => route.query,
+  () => {
+    if (route.query.mid) {
+      loadMindMap()
+    }
+    if (route.query.isRight) {
+      isRight.value = route.query.isRight
+      spaceid.value = sessionStorage.getItem('spaceid')
+      getTagList()
+      getNodeList()
+    } else {
+      isRight.value = ''
+    }
   }
-  if (route.query.isRight) {
-    isRight.value = route.query.isRight
-    spaceid.value = sessionStorage.getItem('spaceid')
-    getTagList()
-    getNodeList()
-  } else {
-    isRight.value = ''
-  }
-})
+)
 
-watch(() => isShowDialog.value, () => {
-  if (isShowDialog.value == true) {
-    store.commit('setActiveSidebar', '')
-    bus.emit('startTextEdit');
-  } else {
-    bus.emit('endTextEdit')
+watch(
+  () => isShowDialog.value,
+  () => {
+    if (isShowDialog.value == true) {
+      store.commit('setActiveSidebar', '')
+      bus.emit('startTextEdit')
+    } else {
+      bus.emit('endTextEdit')
+    }
   }
-})
+)
 
 onMounted(() => {
   if (route.query.isRight) {
     getNodeList()
     getTagList()
   }
-  bus.on("showSaveDialog", () => {
+  bus.on('showSaveDialog', () => {
     saveForm.title = ''
     isRight.value = route.query.isRight || ''
     if (route.query.mid) {
@@ -226,14 +238,14 @@ onMounted(() => {
       saveForm.category = node.value.id
     }
     nextTick(() => {
-      isShowDialog.value = true;
-    });
-  });
+      isShowDialog.value = true
+    })
+  })
 })
 
 // 获取节点数据
 const getNodeList = () => {
-  getCategorysInfo(spaceid.value).then((res) => {
+  getCategorysInfo(spaceid.value).then(res => {
     treeData.value = judgeNodeType(res.data)
   })
 }
@@ -246,8 +258,8 @@ const getTagList = () => {
 }
 
 // 选择分类ID
-const handleChange = (id) => {
-  console.log("id", id);
+const handleChange = id => {
+  console.log('id', id)
   if (id != null) {
     var len = id.length
     saveForm.category = id[len - 1]
@@ -260,22 +272,19 @@ const handleClose = () => {
 }
 
 // 跳转到详情页
-const toDetail = (mid) => {
+const toDetail = mid => {
   if (route.query && route.query.isRight) {
-    router.replace({ name: 'mindMap', query: { mid: mid, isRight: 'right' } })
+    router.replace({ name: 'mindMap', query: { mid: mid, isRight: 'right' }, params: { isNoClick: true } })
   } else {
-    router.replace({ name: 'mindMap', query: { mid: mid } })
+    router.replace({ name: 'mindMap', query: { mid: mid }, params: { isNoClick: true } })
   }
 }
-
 </script>
 
 <script>
 export default {
-  name: "SaveDataDialog",
+  name: 'SaveDataDialog'
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
