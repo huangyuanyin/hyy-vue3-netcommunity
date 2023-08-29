@@ -140,7 +140,7 @@ const handleFileParse = (uploadFile, uploadFiles) => {
 const imgAdd = async (name, $file) => {
   // 第一步.将图片上传到服务器.
   var formdata = new FormData()
-  formdata.append('id', route.query.mid)
+  formdata.append('id', route.query.mid || route.query.tid)
   formdata.append('file', $file)
   let res = await uploadMdImageApi(formdata)
   if (res.code === 1000) {
