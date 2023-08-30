@@ -309,7 +309,7 @@ watchEffect(() => {
 watchEffect(async () => {
   const forumId = ref(route.query.wid || route.query.eid || route.query.mid || route.query.pid)
   const groupid = ref(route.query.groupid)
-  if (forumId.value && !route.params.isNoClick) {
+  if (forumId.value && !route.params.isNoClick && !route.query.isRight) {
     await sessionStorage.setItem('spaceid', route.query.spaceid)
     await sessionStorage.setItem('spacename', route.query.spacename)
     let res = await getForumInfo(forumId.value)
@@ -322,7 +322,7 @@ watchEffect(async () => {
       })
       await getNodeList()
     }
-  } else if (groupid.value && !route.params.isNoClick) {
+  } else if (groupid.value && !route.params.isNoClick && !route.query.isRight) {
     await sessionStorage.setItem('spaceid', route.query.spaceid)
     await sessionStorage.setItem('spacename', route.query.spacename)
     await store.commit('changeCurTreeId', groupid.value)
