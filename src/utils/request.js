@@ -21,6 +21,15 @@ service.interceptors.request.use(
       case 'NetDevOps':
         config.url = process.env.VUE_APP_DRAWER_URL + config.url
         break
+      case 'NEWBASE':
+        config.url = process.env.VUE_APP_NEWBASE_URL + config.url
+        break
+      case 'BASEUSER':
+        config.url = process.env.VUE_APP_USER_URL + config.url
+        break
+      case 'LOGIN':
+        config.url = process.env.VUE_APP_LOGIN_URL + config.url
+        break
     }
     return config
   },

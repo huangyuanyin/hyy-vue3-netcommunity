@@ -107,7 +107,8 @@ const addApi = () => {
 const updateApi = () => {
   formRef.value.validate(valid => {
     if (!valid) return
-    form.value.author = sessionStorage.getItem('username')
+    delete form.value.author
+    form.value.modifier = sessionStorage.getItem('username')
     updateCategorys(prop.edit.value.id, form.value).then(res => {
       if (res.code === 1000) {
         ElMessage({

@@ -371,6 +371,25 @@ const toDetail = eid => {
     router.replace({ name: 'excel', query: { eid: eid }, params: { isNoClick: true } })
   }
 }
+
+router.beforeEach((to, from, next) => {
+  console.log(`output->to,from,next`, to, from, next)
+  if (from.name === 'excel' && luckysheet && luckysheet.getAllSheets && luckysheet.getAllSheets().length > 0) {
+    ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+      .then(() => {
+        next()
+      })
+      .catch(() => {
+        // next()
+      })
+  } else {
+    next()
+  }
+})
 </script>
 
 <style lang="scss" scoped>

@@ -26,24 +26,7 @@
               </svg>
             </div>
           </el-tooltip>
-          <el-tooltip class="box-item" effect="dark" content="协作" placement="bottom">
-            <div data-testid="doc-action-collaborate" data-aspm-click="d225876" class="xiezuo-icon" @click="handleCooperation">
-              <svg
-                style="cursor: pointer;"
-                width="20"
-                height="20"
-                viewBox="0 0 256 256"
-                xmlns="http://www.w3.org/2000/svg"
-                class="larkui-icon larkui-icon-nav-invite"
-              >
-                <path
-                  d="M128 129c5.523 0 10 4.477 10 10s-4.477 10-10 10c-24.125 0-45.174 6.043-60.525 16.179-12.362 8.162-19.354 18.06-19.54 25.146l-.007.911-.001.397.005.747c.034 2.031.212 3.378.664 4.658.4 1.136.947 1.914 1.804 2.514l.203.135.294.186.28.207c.604.443 1.371.869 2.296 1.275l.475.201.501.198.527.195.274.096.565.19.591.187.305.092.628.181.654.178.678.175.703.171.726.168.751.164.775.16 1.207.235 1.26.226.869.147.891.142.915.14.937.134 1.447.196.993.126 1.015.122 1.563.176 1.61.167 1.101.107 1.69.153 1.153.096 1.173.093 1.798.132 1.842.122 1.888.113 1.93.104 1.312.064 1.33.06 2.031.082 2.073.073 1.886.057 2.338.061 3.948.08 1.803.027 3.794.04 3.624.02 5.876.008 9.344-.013L128 207c5.523 0 10 4.477 10 10 0 5.43-4.327 9.848-9.72 9.996l-.453.004-11.598.014-6.434-.014-3.11-.02-3.85-.043-2.294-.037-1.806-.036-2.476-.06-2.515-.07-2.478-.082-1.62-.061-1.598-.065-1.574-.071-1.55-.076-1.526-.08-2.244-.133-1.467-.095-1.444-.1-2.122-.163-1.386-.115-1.362-.122-1.34-.129-1.316-.134-1.293-.142-1.271-.148-1.248-.155-1.226-.162-1.202-.169-1.18-.176-1.159-.184-1.135-.19-1.114-.2c-.367-.067-.731-.136-1.091-.206l-1.07-.214a89.329 89.329 0 0 1-2.072-.453l-1.004-.238c-.33-.081-.658-.164-.981-.247l-.96-.256c-.317-.086-.63-.175-.94-.264l-.916-.273a55.46 55.46 0 0 1-2.623-.872l-.832-.309c-2.875-1.098-5.363-2.368-7.478-3.835l-.338-.238-.13-.084c-4.586-3.038-7.72-7.229-9.547-12.126l-.172-.476c-1.443-4.088-1.807-7.435-1.809-11.98l.004-1.096c0-14.848 10.912-30.497 28.525-42.126C75.15 136.145 100.04 129 128 129Zm58-12c5.523 0 10 4.477 10 10v35h35c5.523 0 10 4.477 10 10s-4.477 10-10 10h-35v35c0 5.523-4.477 10-10 10s-10-4.477-10-10v-35h-35c-5.523 0-10-4.477-10-10s4.477-10 10-10h35v-35c0-5.523 4.477-10 10-10Zm-58-93c25.405 0 46 20.595 46 46s-20.595 46-46 46-46-20.595-46-46 20.595-46 46-46Zm0 20c-14.36 0-26 11.64-26 26s11.64 26 26 26 26-11.64 26-26-11.64-26-26-26Z"
-                  fill="currentColor"
-                  fill-rule="nonzero"
-                ></path>
-              </svg>
-            </div>
-          </el-tooltip>
+          <CooperatePopver :isDisabled="fourumdata.author === username ? false : true" />
           <div class="copy" :data-clipboard-text="shareLink">
             <el-button type="default" @click="handleShare">分享</el-button>
           </div>
@@ -70,7 +53,7 @@
       <el-row>
         <el-col>
           <Markdown :data="fourumdata.body" @fullScreen="fullScreen" />
-          <MoreDrawer :moreDrawer="moreDrawer" :id="node.id" :title="fourumdata.title" />
+          <MoreDrawer :moreDrawer="moreDrawer" :id="node.id" :title="fourumdata.title" :author="fourumdata.author" />
         </el-col>
       </el-row>
       <div class="docInfo">
@@ -184,6 +167,8 @@ import { utc2beijing } from '@/utils/util.js'
 import Clipboard from 'clipboard'
 import { useStore } from 'vuex'
 import { ElLoading } from 'element-plus'
+import CooperatePopver from '@/components/Popver/CooperatePopver.vue'
+import { getPermissionsApi } from '@/api/base'
 
 const router = useRouter()
 const route = useRoute()
@@ -200,6 +185,7 @@ const moreDrawer = ref(false)
 const moreDrawerTab = ref('first')
 const flag = ref(true)
 const fullscreenLoading = ref(false)
+const username = sessionStorage.getItem('username')
 
 // 最小高度
 const minHeight = computed(() => {
@@ -341,8 +327,33 @@ const collectHandle = () => {
   })
 }
 
+const isPer = ref(false)
+const getPermissions = async () => {
+  if (fourumdata.value.author === sessionStorage.getItem('username')) {
+    return (isPer.value = true)
+  } else {
+    const params = {
+      article: route.query.wid || ''
+    }
+    let res = await getPermissionsApi(params)
+    if (res.code === 1000) {
+      // 循环res.data. 判断每一项中的permusername是否与sessionStorage.getItem('username')相等
+      res.data.map((item, index) => {
+        if (item.permusername === sessionStorage.getItem('username')) {
+          isPer.value = true
+        }
+      })
+    }
+    return isPer.value
+  }
+}
+
 // 编辑按钮
-const handleEdit = () => {
+const handleEdit = async () => {
+  await getPermissions()
+  if (!isPer.value) {
+    return ElMessage.warning('您没有权限编辑该文档')
+  }
   // if (fourumdata.value.author !== sessionStorage.getItem('username')) return ElMessage.warning('您没有权限编辑该文档')
   if (fourumdata.value.type == 'a') {
     router.push({
@@ -357,6 +368,7 @@ const handleEdit = () => {
       params: { isNoClick: true }
     })
   }
+  sessionStorage.setItem('userAuthor', fourumdata.value.author)
 }
 
 // 返回
@@ -429,6 +441,9 @@ const openMoreDrawer = () => {
 }
 
 const edit = () => {
+  if (fourumdata.value.author !== sessionStorage.getItem('username')) {
+    return ElMessage.error('非作者本人无修改标题权限')
+  }
   flag.value = false
 }
 
@@ -494,13 +509,14 @@ const handleCooperation = () => {
     justify-content: space-between;
     height: 100%;
     .xiezuo-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-left: 16px;
+      margin-right: 8px;
       cursor: pointer;
       &:hover {
         background-color: #eff0f0;

@@ -2,9 +2,10 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: 'forum/login/',
+    url: '/forum/login/',
     method: 'post',
-    data
+    data,
+    urlType: 'LOGIN'
   })
 }
 

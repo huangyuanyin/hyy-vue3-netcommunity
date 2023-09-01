@@ -24,7 +24,7 @@
     "clipboard": "^2.0.11",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.7",
-    "element-plus": "^2.2.6",
+    "element-plus": "^2.3.9",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
     "hyy-ckeditor5": "0.0.2",

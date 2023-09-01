@@ -96,7 +96,9 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId">
+                    <el-dropdown-item
+                      :command="'edit' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId + ',' + data.author"
+                    >
                       <svg-icon iconName="icon-bianpinghuatubiaosheji-" className="is-Folder" />编辑
                     </el-dropdown-item>
                     <el-dropdown-item :command="'share' + ',' + data.articleId + ',' + data.type" v-if="data.type !== 'l'">
@@ -104,7 +106,7 @@
                         <svg-icon iconName="icon-fenxiang1" className="is-Folder" />分享
                       </div>
                     </el-dropdown-item>
-                    <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type">
+                    <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type + ',' + data.author">
                       <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -360,6 +362,9 @@ const handleRoot = command => {
     dialogNode.value = true
   }
   if (tmp[0] === 'edit') {
+    if (tmp[3] !== 'l' && tmp[5] !== sessionStorage.getItem('username')) {
+      return ElMessage.error('非作者本人无修改权限')
+    }
     edit_id.value = tmp[1]
     form.value.name = tmp[2]
     nodeData.value = {
@@ -415,6 +420,10 @@ const handleRoot = command => {
     })
   }
   if (tmp[0] === 'remove') {
+    console.log(`output->tmp`, tmp)
+    if (tmp[2] !== 'l' && tmp[3] !== sessionStorage.getItem('username')) {
+      return ElMessage.error('非作者本人无删除权限')
+    }
     nodeData.value = tmp[2]
     deleteApi(tmp[1])
   }
@@ -479,6 +488,7 @@ const addDoc = categoryId => {
     author: sessionStorage.getItem('username'),
     public: spacePublic.value
   }
+  sessionStorage.setItem('userAuthor', sessionStorage.getItem('username'))
   // 新增节点
   addCategorys(params).then(res => {
     if (res.code == 1000) {
@@ -491,7 +501,8 @@ const addDoc = categoryId => {
         description: '',
         tags: [],
         type: 'a',
-        body: ''
+        body: '',
+        author: sessionStorage.getItem('username')
       }
       addForum(docForm).then(res => {
         if (res.code === 1000) {
@@ -573,7 +584,8 @@ const judegeGetCategory = () => {
           title: form.value.name,
           category: res.data.category,
           tags: res.data.tags,
-          body: res.data.body
+          body: res.data.body,
+          modifier: sessionStorage.getItem('username')
         }
         updateForum(nodeData.value.articleId, nodeForm).then(res => {
           if (res.code === 1000) {

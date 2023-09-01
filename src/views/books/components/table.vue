@@ -20,7 +20,7 @@
           <!-- <el-button size="small" type="danger" @click="handleDelete(scope.row)" :disabled="role !== 'admin' && scope.row.public !== '0'">
             删除
           </el-button> -->
-          <el-button size="small" type="danger" @click="handleDelete(scope.row)" :disabled="true">
+          <el-button size="small" type="danger" @click="handleDelete(scope.row)">
             删除
           </el-button>
         </template>
@@ -49,6 +49,7 @@ const role = computed(() => store.getters.role)
 const dialog = ref(false) // 对话框
 const datalist = ref([]) // 数据列表
 const editForm = reactive({}) // 待编辑表单
+const username = sessionStorage.getItem('username')
 
 const getMyBooks = id => {
   const params = {
@@ -95,6 +96,9 @@ const handleOpen = book => {
 
 // 知识库编辑
 const handleEdit = value => {
+  if (value.author !== username) {
+    return ElMessage.error('非作者无编辑权限')
+  }
   editForm.value = value
   dialog.value = true
 }
@@ -106,6 +110,9 @@ const getDialog = msg => {
 
 // 删除
 const handleDelete = data => {
+  if (data.author !== username) {
+    return ElMessage.error('非作者无删除权限')
+  }
   ElMessageBox.confirm('确定要删除吗？', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
@@ -113,19 +120,19 @@ const handleDelete = data => {
     draggable: true
   })
     .then(() => {
-      // deleteCategorys(data.id).then(res => {
-      //   if (res.code === 1000) {
-      //     ElMessage.success('删除成功')
-      //     getMyBooks(Number(data.public))
-      //   }
-      // })
-      data.is_delete = true
-      updateCategorys(data.id, data).then(res => {
+      deleteCategorys(data.id).then(res => {
         if (res.code === 1000) {
           ElMessage.success('删除成功')
           getMyBooks(Number(data.public))
         }
       })
+      data.is_delete = true
+      // updateCategorys(data.id, data).then(res => {
+      //   if (res.code === 1000) {
+      //     ElMessage.success('删除成功')
+      //     getMyBooks(Number(data.public))
+      //   }
+      // })
     })
     .catch(() => {
       ElMessage({

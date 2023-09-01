@@ -449,6 +449,10 @@ const props = defineProps({
   title: {
     type: String,
     default: ''
+  },
+  author: {
+    type: String,
+    default: ''
   }
 })
 
@@ -460,6 +464,9 @@ const arctileId = ref(route.query.tid || route.query.mid || null) // 文章id
 const categoryId = ref(route.query.category || null) // 父节点id
 
 const handleDelete = () => {
+  if (props.author !== sessionStorage.getItem('username')) {
+    return ElMessage.error('非作者暂无删除文章权限')
+  }
   ElMessageBox.confirm(`确认删除 【${props.title}】 ？`, '', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
