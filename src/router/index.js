@@ -57,7 +57,7 @@ const routes = [
         meta: {
           title: '思维导图'
         },
-        component: () => import(/* webpackChunkName: "monitor" */ '../views/books/subooks/mindMap/Index.vue')
+        component: () => import(/* webpackChunkName: "monitor" */ '../views/books/subooks/mindmap/Index.vue')
       },
       {
         path: '/ppt',
