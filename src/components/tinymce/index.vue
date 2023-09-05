@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, toRefs, watch } from 'vue'
+import { onMounted, reactive, toRefs, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { UploadFilled } from '@element-plus/icons-vue'
@@ -97,6 +97,12 @@ export default {
         }
       }
     )
+    watchEffect(() => {
+      if (route.query.isAdd) {
+        state.contentValue = '  '
+        emit('update:modelValue', state.contentValue)
+      }
+    })
 
     function debounce(fn, wait = 400) {
       // console.log('进到了防抖', wait)

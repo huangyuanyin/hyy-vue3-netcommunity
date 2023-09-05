@@ -4,7 +4,16 @@
       <template #header style="height:52px">
         <div class="titleInput">
           <span v-if="flag" @click="edit()">{{ form.title }}</span>
-          <el-input autofocus v-model="form.title" v-else @change="input()" @blur="editDocTitle" minlength="1" maxlength="200" />
+          <el-input
+            autofocus
+            v-model="form.title"
+            v-else
+            @change="input()"
+            @blur="editDocTitle"
+            @focus="focus($event)"
+            minlength="1"
+            maxlength="200"
+          />
           <!-- <el-icon style="width:14px;height:14px"><Unlock /></el-icon>
           <el-icon><Lock /></el-icon>
           <span>已加载最新版本</span>
@@ -86,7 +95,7 @@
           <MoreDrawer :moreDrawer="moreDrawer" :id="node.id" :title="form.title" />
         </el-form-item>
         <el-form-item class="tiny-wrap" v-if="editorType === 'tiny'">
-          <tinymce-com v-if="isTinymce" ref="tinymce" v-model="tinyValue" @changeEditor="changeEditor"></tinymce-com>
+          <tinymce-com v-if="isTinymce" ref="tinymce" v-model="tinyValue" @changeEditor="changeEditor" :key="componentKey"></tinymce-com>
           <MoreDrawer :moreDrawer="moreDrawer" :id="node.id" :title="form.title" :author="form.author" />
           <!-- <WangEdtior :value="tinyValue" @changeEditorMenuClick="changeEditorMenuClick" /> -->
         </el-form-item>
@@ -147,6 +156,7 @@ export default {
     const route = useRoute()
     const store = useStore()
     const isTinymce = ref(true)
+    const componentKey = ref(0)
     const username = sessionStorage.getItem('username')
     // 是否显示分类
     const isRight = ref('')
@@ -241,6 +251,9 @@ export default {
         reload()
       })
     }
+    const focus = event => {
+      event.currentTarget.select()
+    }
 
     const editDocTitle = () => {
       flag.value = true
@@ -316,6 +329,28 @@ export default {
       if (docTitle.value) {
         form.title = docTitle.value
         store.commit('books/SET_DOC_TITLE', '')
+      }
+    })
+
+    watchEffect(() => {
+      if (route.query.isAdd) {
+        nextTick(() => {
+          componentKey.value += 1
+          form.title = '无标题文档'
+          form.body = ''
+          tinyValue.value = ''
+          form.category = categoryId.value = route.query.category || ''
+          isRight.value = route.query.isRight || ''
+          route.query.typeof === 'w'
+            ? (editorType.value = 'Markdown') && (editorDisabled.value = true)
+            : (editorType.value = 'tiny') && (editorDisabled.value = true)
+          rawData.value = ''
+          md.value = ''
+          if (route.query && route.query.isAdd) {
+            editorType.value = 'tiny'
+            editorDisabled.value = false
+          }
+        })
       }
     })
 
@@ -677,7 +712,9 @@ export default {
       spaceid,
       spacename,
       commonLibraryData,
-      username
+      username,
+      componentKey,
+      focus
     }
   }
 }

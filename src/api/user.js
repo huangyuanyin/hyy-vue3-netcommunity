@@ -2,7 +2,8 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/forum/login/',
+    // url: '/forum/login/',
+    url: '/user/login/',
     method: 'post',
     data,
     urlType: 'LOGIN'

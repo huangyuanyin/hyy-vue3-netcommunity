@@ -4,7 +4,16 @@
       <template #header style="height:52px">
         <div class="titleInput">
           <span v-if="flag" @click="edit()">{{ fourumdata.title }}</span>
-          <el-input autofocus v-model="fourumdata.title" v-else @change="input()" @blur="editDocTitle" minlength="1" maxlength="200" />
+          <el-input
+            autofocus
+            v-model="fourumdata.title"
+            v-else
+            @change="input()"
+            @blur="editDocTitle"
+            @focus="focus($event)"
+            minlength="1"
+            maxlength="200"
+          />
         </div>
         <div class="md_button">
           <el-tooltip class="box-item" effect="dark" content="收藏" placement="bottom">
@@ -445,6 +454,10 @@ const edit = () => {
     return ElMessage.error('非作者本人无修改标题权限')
   }
   flag.value = false
+}
+
+const focus = event => {
+  event.currentTarget.select()
 }
 
 const input = () => {
