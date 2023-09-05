@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUnmounted, watch, computed, inject } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch, computed, inject, onBeforeUnmount } from 'vue'
 import { exportExcel } from '@/utils/export'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useStore } from 'vuex'
@@ -371,9 +371,9 @@ const toDetail = eid => {
     router.replace({ name: 'excel', query: { eid: eid }, params: { isNoClick: true } })
   }
 }
-
-router.beforeEach((to, from, next) => {
-  console.log(`output->to,from,next`, to, from, next)
+const unbindGuardRef = ref(null)
+unbindGuardRef.value = router.beforeEach((to, from, next) => {
+  console.log(`output->to, from, next`, to, from, next)
   if (from.name === 'excel' && luckysheet && luckysheet.getAllSheets && luckysheet.getAllSheets().length > 0) {
     ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
       confirmButtonText: '确定',
@@ -384,10 +384,15 @@ router.beforeEach((to, from, next) => {
         next()
       })
       .catch(() => {
-        // next()
+        next(false)
       })
   } else {
     next()
+  }
+})
+onBeforeUnmount(() => {
+  if (unbindGuardRef.value) {
+    unbindGuardRef.value()
   }
 })
 </script>
