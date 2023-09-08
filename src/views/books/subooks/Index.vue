@@ -370,7 +370,7 @@ const handleShare = async (type, id) => {
     await getForumInfo(id).then(async res => {
       if (res.code === 1000) {
         let url = 'http://10.4.150.55:8027' + '/' + res.data.body
-        shareLink.value = 'http://192.168.94.89:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url))
+        shareLink.value = 'http://10.4.150.56:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url))
       }
     })
   }
@@ -483,7 +483,7 @@ const getPreview = async id => {
   await getForumInfo(id).then(res => {
     // let url = sessionStorage.getItem('COMMUNITY_URL') + '/' + res.data.body
     let url = 'http://10.4.150.55:8027' + '/' + res.data.body
-    window.open('http://192.168.94.89:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)))
+    window.open('http://10.4.150.56:8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url)))
   })
 }
 
