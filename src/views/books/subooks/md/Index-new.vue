@@ -95,7 +95,7 @@
           <MoreDrawer :moreDrawer="moreDrawer" :id="node.id" :title="form.title" />
         </el-form-item>
         <el-form-item class="tiny-wrap" v-if="editorType === 'tiny'">
-          <tinymce-com v-if="isTinymce" ref="tinymce" v-model="tinyValue" @changeEditor="changeEditor" :key="componentKey"></tinymce-com>
+          <tinymce-com v-if="isTinymce" ref="tinymce" v-model="tinyValue" @changeEditor="changeEditor"></tinymce-com>
           <MoreDrawer :moreDrawer="moreDrawer" :id="node.id" :title="form.title" :author="form.author" />
           <!-- <WangEdtior :value="tinyValue" @changeEditorMenuClick="changeEditorMenuClick" /> -->
         </el-form-item>
@@ -156,7 +156,6 @@ export default {
     const route = useRoute()
     const store = useStore()
     const isTinymce = ref(true)
-    const componentKey = ref(0)
     const username = sessionStorage.getItem('username')
     // 是否显示分类
     const isRight = ref('')
@@ -335,7 +334,6 @@ export default {
     watchEffect(() => {
       if (route.query.isAdd) {
         nextTick(() => {
-          componentKey.value += 1
           form.title = '无标题文档'
           form.body = ''
           tinyValue.value = ''
@@ -379,39 +377,61 @@ export default {
       tinyValue.value = ''
       md.value = ''
       form.body = ''
-    })
-
-    const beforeUnloadHandler = e => {
-      e.returnValue = '离开此页面？'
-    }
-
-    const checkUnsavedContent = callback => {
-      if (rawData.value !== tinyValue.value || rawData.value !== md.value) {
-        ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
-          distinguishCancelAndClose: true,
-          confirmButtonText: '去保存',
-          cancelButtonText: '直接离开'
-        })
-          .then(() => {})
-          .catch(action => {
-            if (action === 'cancel') {
-              rawData.value = ''
-              tinyValue.value = ''
-              md.value = ''
-              callback()
-            }
-          })
-      } else {
-        callback()
+      if (unbindGuardRef.value) {
+        unbindGuardRef.value()
       }
-    }
-
-    // 使用路由守卫，在离开页面时，判断是否有未保存的内容
-    router.beforeEach((to, from, next) => {
-      checkUnsavedContent(() => {
-        next()
-      })
     })
+
+    const unbindGuardRef = ref(null)
+    // unbindGuardRef.value = router.beforeEach((to, from, next) => {
+    //   if (rawData.value !== tinyValue.value || rawData.value !== md.value) {
+    //     ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
+    //       distinguishCancelAndClose: true,
+    //       confirmButtonText: '去保存',
+    //       cancelButtonText: '直接离开',
+    //       type: 'warning'
+    //     })
+    //       .then(() => {})
+    //       .catch(action => {
+    //         if (action === 'cancel') {
+    //           rawData.value = ''
+    //           tinyValue.value = ''
+    //           md.value = ''
+    //           next()
+    //         }
+    //       })
+    //   } else {
+    //     next()
+    //   }
+    // })
+
+    // const checkUnsavedContent = callback => {
+    //   if (rawData.value !== tinyValue.value || rawData.value !== md.value) {
+    //     ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
+    //       distinguishCancelAndClose: true,
+    //       confirmButtonText: '去保存',
+    //       cancelButtonText: '直接离开'
+    //     })
+    //       .then(() => {})
+    //       .catch(action => {
+    //         if (action === 'cancel') {
+    //           rawData.value = ''
+    //           tinyValue.value = ''
+    //           md.value = ''
+    //           callback()
+    //         }
+    //       })
+    //   } else {
+    //     callback()
+    //   }
+    // }
+
+    // // 使用路由守卫，在离开页面时，判断是否有未保存的内容
+    // router.beforeEach((to, from, next) => {
+    //   checkUnsavedContent(() => {
+    //     next()
+    //   })
+    // })
 
     // 返回
     const goBack = () => {
@@ -696,7 +716,7 @@ export default {
       MarkdownIt,
       uploadFile,
       // CKEditorInput,
-      beforeUnloadHandler,
+      // beforeUnloadHandler,
       flag,
       edit,
       input,
@@ -713,8 +733,8 @@ export default {
       spacename,
       commonLibraryData,
       username,
-      componentKey,
-      focus
+      focus,
+      unbindGuardRef
     }
   }
 }

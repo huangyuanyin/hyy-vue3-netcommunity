@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import { onMounted, reactive, toRefs, watch, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import { nextTick, onMounted, reactive, ref, toRefs, watch, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
@@ -60,6 +60,7 @@ export default {
   },
   setup(props, { emit }) {
     const route = useRoute()
+    const router = useRouter()
     const state = reactive({
       myInit: customer(init), // 初始化
       contentValue: props.modelValue, // 绑定文本
@@ -92,17 +93,16 @@ export default {
       () => route.query,
       () => {
         if (route.query && route.query.isAdd) {
-          state.contentValue = '  '
-          emit('update:modelValue', state.contentValue)
+          nextTick(() => {
+            state.contentValue = '  '
+            emit('update:modelValue', state.contentValue)
+          })
         }
+      },
+      {
+        immediate: true
       }
     )
-    watchEffect(() => {
-      if (route.query.isAdd) {
-        state.contentValue = '  '
-        emit('update:modelValue', state.contentValue)
-      }
-    })
 
     function debounce(fn, wait = 400) {
       // console.log('进到了防抖', wait)

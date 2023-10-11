@@ -134,6 +134,10 @@ const toConsole = () => {
 
 // 全局搜索
 const handleSearch = () => {
+  return ElMessage({
+    message: '该功能已禁用',
+    type: 'warning'
+  })
   router.push({ name: 'search', query: { content: filterText.value } })
   // filterText.value = ''
 }
