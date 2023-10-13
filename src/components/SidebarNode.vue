@@ -106,6 +106,12 @@
                         <svg-icon iconName="icon-fenxiang1" className="is-Folder" />分享
                       </div>
                     </el-dropdown-item>
+                    <el-dropdown-item
+                      :command="'move' + ',' + data.id + ',' + data.label + ',' + data.type + ',' + data.articleId"
+                      v-if="data.type !== 'l'"
+                    >
+                      <div class="copy" :data-clipboard-text="shareLink"><svg-icon iconName="icon-exit" className="is-Folder" />移动</div>
+                    </el-dropdown-item>
                     <el-dropdown-item :command="'remove' + ',' + data.id + ',' + data.type + ',' + data.author">
                       <svg-icon iconName="icon-shanchu1" className="is-Folder" />删除
                     </el-dropdown-item>
@@ -143,6 +149,15 @@
         </span>
       </template>
     </el-dialog>
+    <MoveDialog
+      :isShow="showMoveDialog"
+      @closeDialog="showMoveDialog = false"
+      :aId="aId"
+      :aname="aname"
+      :spacename="sname"
+      :aType="aType"
+      :ar="ar"
+    />
   </div>
 </template>
 
@@ -151,10 +166,11 @@ import { ref, computed, reactive, onMounted, watch, inject, nextTick, watchEffec
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
-import { getCategorysInfo, addCategorys, updateCategorys, deleteCategorys } from '@/api/category.js'
+import { getCategorysInfo, addCategorys, updateCategorys, getCategorys, deleteCategorys } from '@/api/category.js'
 import { addForum, updateForum, getForumInfo } from '@/api/forum.js'
 // import exampleData from 'simple-mind-map/example/exampleData';
 import bus from '@/utils/bus.js'
+import MoveDialog from '@/components/Dialog/MoveDialog.vue'
 import Clipboard from 'clipboard'
 
 const props = defineProps({
@@ -168,6 +184,8 @@ const reload = inject('reload')
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
+const sname = ref('')
+const showMoveDialog = ref(false)
 const loadingInstance = ref('')
 const shareLink = ref('') // 分享链接
 const spacename = computed(() => route.query.spacename || sessionStorage.getItem('spacename'))
@@ -353,7 +371,10 @@ const handleCommand = value => {
     dialogNode.value = true
   }
 }
-
+const aId = ref('')
+const aname = ref('')
+const aType = ref('')
+const ar = ref('')
 // 分组指令
 const handleRoot = command => {
   let tmp = command.split(',')
@@ -418,6 +439,14 @@ const handleRoot = command => {
       // 释放内存
       clipboard.destroy()
     })
+  }
+  if (tmp[0] === 'move') {
+    showMoveDialog.value = true
+    aId.value = tmp[1]
+    sname.value = route.query.spacename
+    aname.value = tmp[2]
+    aType.value = tmp[3]
+    ar.value = tmp[4]
   }
   if (tmp[0] === 'remove') {
     console.log(`output->tmp`, tmp)
