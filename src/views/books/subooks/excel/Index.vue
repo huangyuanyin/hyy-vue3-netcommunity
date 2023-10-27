@@ -209,8 +209,11 @@ const beforeUnloadHandler = e => {
 //     })
 // }
 
+const oldData = ref(null)
+
 const loadExcelForServer = () => {
   getForumInfo(route.query.eid).then(res => {
+    oldData.value = res.data.body
     form.author = res.data.author
     form.category = res.data.category
     // editCategory.value = res.data.category
@@ -371,29 +374,73 @@ const toDetail = eid => {
     router.replace({ name: 'excel', query: { eid: eid }, params: { isNoClick: true } })
   }
 }
-const unbindGuardRef = ref(null)
-unbindGuardRef.value = router.beforeEach((to, from, next) => {
-  console.log(`output->to, from, next`, to, from, next)
-  if (from.name === 'excel' && luckysheet && luckysheet.getAllSheets && luckysheet.getAllSheets().length > 0) {
+// const unbindGuardRef = ref(null)
+// unbindGuardRef.value = router.beforeEach((to, from, next) => {
+//   console.log(`output->to, from, next`, to, from, next)
+//   if (from.name === 'excel' && luckysheet && luckysheet.getAllSheets && luckysheet.getAllSheets().length > 0) {
+//     ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
+//       confirmButtonText: '确定',
+//       cancelButtonText: '取消',
+//       type: 'warning'
+//     })
+//       .then(() => {
+//         next()
+//       })
+//       .catch(() => {
+//         next(false)
+//       })
+//   } else {
+//     next()
+//   }
+// })
+
+const checkUnsavedContent = callback => {
+  const excelData = luckysheet.getAllSheets()
+  console.log(`output->excelData`, excelData, form.body)
+  if (oldData.value !== form.body) {
     ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+      confirmButtonText: '去保存',
+      cancelButtonText: '直接离开',
       type: 'warning'
     })
-      .then(() => {
-        next()
-      })
+      .then(() => {})
       .catch(() => {
-        next(false)
+        luckysheet.destroy()
+        callback()
       })
   } else {
-    next()
+    callback()
   }
-})
+}
+
+// 使用路由守卫，在离开页面时，判断是否有未保存的内容
+// router.beforeEach((to, from, next) => {
+//   console.log(`output->to`, to)
+//   if (to.name !== 'excel') {
+//     console.log(`output->to`, oldData.value)
+//     console.log(`output->form.body`, luckysheet.getAllSheets())
+//     if (oldData.value !== form.body && luckysheet.getAllSheets()) {
+//       ElMessageBox.confirm('有未保存的内容，确定离开？', '提示', {
+//         confirmButtonText: '去保存',
+//         cancelButtonText: '直接离开',
+//         type: 'warning'
+//       })
+//         .then(() => {})
+//         .catch(() => {
+//           next()
+//         })
+//     } else {
+//       next()
+//     }
+//   } else {
+//     next()
+//   }
+// })
+
 onBeforeUnmount(() => {
-  if (unbindGuardRef.value) {
-    unbindGuardRef.value()
-  }
+  // if (unbindGuardRef.value) {
+  //   unbindGuardRef.value()
+  // }
 })
 </script>
 

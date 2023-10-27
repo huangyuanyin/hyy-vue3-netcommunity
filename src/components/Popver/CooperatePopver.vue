@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
-import { selectUserInfoApi, getPermissionsApi, addPermissionsApi, deletePermissionsApi } from '@/api/base'
+import { selectUserInfoApi, getPermissionsApi, addPermissionsApi, deletePermissionsApi, selectUserApi } from '@/api/base'
 import { ElMessage } from 'element-plus/lib/components'
+import { Search } from '@element-plus/icons-vue'
 
 const props = defineProps({
   isDisabled: {
@@ -17,10 +18,46 @@ const searchList = []
 const selectedUserList = ref([])
 const isShowUserOperationPopver = ref(false)
 const article = ref(route.query.tid || route.query.wid || '')
+const dialogVisible = ref(false)
+const memberList = ref([])
+const selectTotal = ref(0)
+const total = ref(0)
+const page = ref(1)
+const size = ref(10)
+const selectMemberList = ref([])
+const inputName = ref('')
 
-watchEffect(() => {
+watchEffect(async () => {
   article.value = route.query.tid || route.query.wid || ''
 })
+
+watch(
+  () => dialogVisible.value,
+  async () => {
+    if (dialogVisible.value) {
+      console.log(`output->23`, 23)
+      page.value = 1
+      let res = await selectUserApi({ page: page.value })
+      if (res.code === 1000) {
+        memberList.value = res.data
+        total.value = res.total
+        for (let i = 0; i < memberList.value.length; i++) {
+          memberList.value[i].id = null
+          memberList.value[i].status = false // 默认设置为 false
+          for (let j = 0; j < selectedUserList.value.length; j++) {
+            if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+              memberList.value[i].id = selectedUserList.value[j].id
+              memberList.value[i].status = true // 如果找到匹配，设置为 true
+              break // 如果找到匹配，可以提前退出内层循环
+            }
+          }
+        }
+
+        console.log(`output->memberList.value`, memberList.value, selectedUserList.value)
+      }
+    }
+  }
+)
 
 const querySearch = async (queryString, cb) => {
   searchList.value = []
@@ -45,7 +82,8 @@ const addPermissions = async (permtype, permusername) => {
   let res = await addPermissionsApi(params)
   if (res.code === 1000) {
     ElMessage.success('添加成功')
-    getPermissions()
+    await getPermissions()
+    await handleCurrentChange(page.value)
   }
 }
 
@@ -63,7 +101,8 @@ const deletePermissions = async id => {
   let res = await deletePermissionsApi(id)
   if (res.code === 1000) {
     ElMessage.success('移除成功')
-    getPermissions()
+    await getPermissions()
+    await handleCurrentChange(page.value)
   }
 }
 
@@ -88,6 +127,84 @@ const onGetPermissions = () => {
   if (props.isDisabled) return ElMessage.error('非作者本人无操作权限')
   getPermissions()
 }
+
+const handleClose = async () => {
+  selectMemberList.value = []
+  dialogVisible.value = false
+}
+
+const handleSelectionChange = val => {
+  selectMemberList.value = val
+  selectTotal.value = val.length
+}
+
+const handleSizeChange = async value => {
+  size.value = value
+  console.log(`output->size.value`, size.value)
+  let res = await selectUserApi({ page: page.value })
+  if (res.code === 1000) {
+    memberList.value = res.data
+    total.value = res.total
+    for (let i = 0; i < memberList.value.length; i++) {
+      memberList.value[i].status = false // 默认设置为 false
+      for (let j = 0; j < selectedUserList.value.length; j++) {
+        if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+          memberList.value[i].status = true // 如果找到匹配，设置为 true
+          break // 如果找到匹配，可以提前退出内层循环
+        }
+      }
+    }
+  }
+}
+
+// 页码响应
+const handleCurrentChange = async value => {
+  page.value = value
+  let res = await selectUserApi({ page: page.value })
+  if (res.code === 1000) {
+    memberList.value = res.data
+    total.value = res.total
+    for (let i = 0; i < memberList.value.length; i++) {
+      memberList.value[i].id = null
+      memberList.value[i].status = false // 默认设置为 false
+      for (let j = 0; j < selectedUserList.value.length; j++) {
+        if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+          memberList.value[i].id = selectedUserList.value[j].id
+          memberList.value[i].status = true // 如果找到匹配，设置为 true
+          break // 如果找到匹配，可以提前退出内层循环
+        }
+      }
+    }
+  }
+}
+
+const toChangePermissions = (val, type) => {
+  console.log(`output->val`, val)
+  if (type === 'add') {
+    addPermissions('e', val.name)
+  } else {
+    deletePermissions(val.id)
+  }
+}
+
+const searchMember = async () => {
+  let res = await selectUserInfoApi({ name: inputName.value, page: 1 })
+  if (res.code === 1000) {
+    memberList.value = res.data
+    total.value = res.total
+    for (let i = 0; i < memberList.value.length; i++) {
+      memberList.value[i].id = null
+      memberList.value[i].status = false // 默认设置为 false
+      for (let j = 0; j < selectedUserList.value.length; j++) {
+        if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+          memberList.value[i].id = selectedUserList.value[j].id
+          memberList.value[i].status = true // 如果找到匹配，设置为 true
+          break // 如果找到匹配，可以提前退出内层循环
+        }
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -108,6 +225,7 @@ const onGetPermissions = () => {
     <div class="box">
       <div class="box-top" style="padding: 20px 20px 0 20px;">
         <span style="font-size: 16px;">文档协作者</span>
+        <el-button type="primary" link style="font-size: 14px; " @click="dialogVisible = true">+ 批量添加</el-button>
       </div>
       <div class="box-content">
         <div class="search">
@@ -208,6 +326,69 @@ const onGetPermissions = () => {
       </div>
     </div>
   </el-popover>
+
+  <el-dialog class="addMemberDialog" v-model="dialogVisible" title="批量添加" width="600" :before-close="handleClose" append-to-body>
+    <!-- <div class="header">仅展示无协作权限的人员</div> -->
+    <!-- <el-input v-model="inputName" placeholder="请输入姓名进行搜索" clearable :prefix-icon="Search" @change="searchMember" /> -->
+    <el-table
+      ref="memberListRef"
+      :data="memberList"
+      row-key="id"
+      @selection-change="handleSelectionChange"
+      min-height="100"
+      max-height="800"
+      empty-text="暂无可添加成员"
+      width="100%"
+    >
+      <!-- <el-table-column type="selection" :reserve-selection="true" width="55" /> -->
+      <el-table-column property="nickname" label="姓名" />
+      <el-table-column property="status" label="状态">
+        <template #default="{ row }">
+          <el-tag v-if="row.status">已添加</el-tag>
+          <span v-else></span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template #default="{ row }">
+          <el-button v-if="row.status" type="danger" @click="toChangePermissions(row, 'delete')">移除</el-button>
+          <el-button v-else type="success" @click="toChangePermissions(row, 'add')">添加</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      style="margin: 10px 0 20px 0;justify-content: flex-end"
+      :total="total"
+      :current-page="page"
+      :page-size="size"
+      :page-sizes="[10, 20, 50, 100]"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      layout="total, prev, pager, next, jumper"
+    ></el-pagination>
+    <!-- <template #footer>
+      <span class="footer">
+        <div class="left">
+          <span class="count">已选择 {{ selectTotal }}人</span>
+          <span>
+            添加为：
+            <el-dropdown trigger="click">
+              <span class="el-dropdown-link">
+                成员
+                <i-ep-ArrowDown />
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>成员</el-dropdown-item>
+                  <el-dropdown-item disabled>只读成员</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </span>
+        </div>
+        <el-button type="success" @click="toAddMember"> 添加 </el-button>
+      </span>
+    </template> -->
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>
@@ -215,6 +396,9 @@ const onGetPermissions = () => {
   box-sizing: border-box;
   .box {
     &-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 20px 20px 0 20px;
       span {
         text-align: left;
@@ -471,6 +655,51 @@ const onGetPermissions = () => {
         height: 32px;
         border-radius: 16px;
         margin-right: 12px;
+      }
+    }
+  }
+}
+.addMemberDialog {
+  .header {
+    margin-bottom: 16px;
+    padding: 0px 14px;
+    color: #000000;
+    background-color: #fff;
+  }
+  .el-dialog__body {
+    padding-top: 16px;
+  }
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .el-table__empty-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .footer {
+    padding: 0px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .left {
+      color: #8a8f8d;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      span {
+        display: flex;
+        align-items: center;
+      }
+      .count {
+        margin-right: 16px;
+      }
+      .el-dropdown-link {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
       }
     }
   }

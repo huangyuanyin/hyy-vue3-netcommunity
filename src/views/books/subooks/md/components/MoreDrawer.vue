@@ -226,7 +226,7 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane name="second">
+      <!-- <el-tab-pane name="second">
         <template #label>
           <svg
             width="1.5em"
@@ -423,7 +423,7 @@
             <div class="item-right">0</div>
           </div>
         </div>
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
   </el-drawer>
 </template>
@@ -506,7 +506,9 @@ const handleDownload = async id => {
   downloadFile.judgeType(id)
 }
 
-const handleClick = () => {}
+const handleClick = () => {
+  return ElMessage.info('暂未开放')
+}
 
 const noUse = () => {
   ElMessage.info('暂未开放')

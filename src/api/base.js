@@ -34,3 +34,12 @@ export function selectUserInfoApi(data) {
     data
   })
 }
+
+export function selectUserApi(data) {
+  return request({
+    url: '/user/select_UserList/',
+    method: 'post',
+    urlType: 'BASEUSER',
+    data
+  })
+}
