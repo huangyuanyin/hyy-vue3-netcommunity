@@ -139,39 +139,61 @@ const handleSelectionChange = val => {
 }
 
 const handleSizeChange = async value => {
-  size.value = value
-  console.log(`output->size.value`, size.value)
-  let res = await selectUserApi({ page: page.value })
-  if (res.code === 1000) {
-    memberList.value = res.data
-    total.value = res.total
-    for (let i = 0; i < memberList.value.length; i++) {
-      memberList.value[i].status = false // 默认设置为 false
-      for (let j = 0; j < selectedUserList.value.length; j++) {
-        if (memberList.value[i].name === selectedUserList.value[j].permusername) {
-          memberList.value[i].status = true // 如果找到匹配，设置为 true
-          break // 如果找到匹配，可以提前退出内层循环
-        }
-      }
-    }
-  }
+  // size.value = value
+  // console.log(`output->size.value`, size.value)
+  // let res = await selectUserApi({ page: page.value })
+  // if (res.code === 1000) {
+  //   memberList.value = res.data
+  //   total.value = res.total
+  //   for (let i = 0; i < memberList.value.length; i++) {
+  //     memberList.value[i].status = false // 默认设置为 false
+  //     for (let j = 0; j < selectedUserList.value.length; j++) {
+  //       if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+  //         memberList.value[i].status = true // 如果找到匹配，设置为 true
+  //         break // 如果找到匹配，可以提前退出内层循环
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 // 页码响应
 const handleCurrentChange = async value => {
-  page.value = value
-  let res = await selectUserApi({ page: page.value })
-  if (res.code === 1000) {
-    memberList.value = res.data
-    total.value = res.total
-    for (let i = 0; i < memberList.value.length; i++) {
-      memberList.value[i].id = null
-      memberList.value[i].status = false // 默认设置为 false
-      for (let j = 0; j < selectedUserList.value.length; j++) {
-        if (memberList.value[i].name === selectedUserList.value[j].permusername) {
-          memberList.value[i].id = selectedUserList.value[j].id
-          memberList.value[i].status = true // 如果找到匹配，设置为 true
-          break // 如果找到匹配，可以提前退出内层循环
+  if (inputName.value === '') {
+    page.value = value
+    memberList.value = []
+    let res = await selectUserApi({ page: page.value })
+    if (res.code === 1000) {
+      memberList.value = res.data
+      total.value = res.total
+      for (let i = 0; i < memberList.value.length; i++) {
+        memberList.value[i].id = null
+        memberList.value[i].status = false // 默认设置为 false
+        for (let j = 0; j < selectedUserList.value.length; j++) {
+          if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+            memberList.value[i].id = selectedUserList.value[j].id
+            memberList.value[i].status = true // 如果找到匹配，设置为 true
+            break // 如果找到匹配，可以提前退出内层循环
+          }
+        }
+      }
+    }
+  } else {
+    page.value = value
+    memberList.value = []
+    let res = await selectUserInfoApi({ name: inputName.value, page: page.value })
+    if (res.code === 1000) {
+      memberList.value = res.data
+      total.value = res.total
+      for (let i = 0; i < memberList.value.length; i++) {
+        memberList.value[i].id = null
+        memberList.value[i].status = false // 默认设置为 false
+        for (let j = 0; j < selectedUserList.value.length; j++) {
+          if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+            memberList.value[i].id = selectedUserList.value[j].id
+            memberList.value[i].status = true // 如果找到匹配，设置为 true
+            break // 如果找到匹配，可以提前退出内层循环
+          }
         }
       }
     }
@@ -188,18 +210,40 @@ const toChangePermissions = (val, type) => {
 }
 
 const searchMember = async () => {
-  let res = await selectUserInfoApi({ name: inputName.value, page: 1 })
-  if (res.code === 1000) {
-    memberList.value = res.data
-    total.value = res.total
-    for (let i = 0; i < memberList.value.length; i++) {
-      memberList.value[i].id = null
-      memberList.value[i].status = false // 默认设置为 false
-      for (let j = 0; j < selectedUserList.value.length; j++) {
-        if (memberList.value[i].name === selectedUserList.value[j].permusername) {
-          memberList.value[i].id = selectedUserList.value[j].id
-          memberList.value[i].status = true // 如果找到匹配，设置为 true
-          break // 如果找到匹配，可以提前退出内层循环
+  if (inputName.value === '') {
+    memberList.value = []
+    page.value = 1
+    let res = await selectUserApi({ page: page.value })
+    if (res.code === 1000) {
+      memberList.value = res.data
+      total.value = res.total
+      for (let i = 0; i < memberList.value.length; i++) {
+        memberList.value[i].id = null
+        memberList.value[i].status = false // 默认设置为 false
+        for (let j = 0; j < selectedUserList.value.length; j++) {
+          if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+            memberList.value[i].id = selectedUserList.value[j].id
+            memberList.value[i].status = true // 如果找到匹配，设置为 true
+            break // 如果找到匹配，可以提前退出内层循环
+          }
+        }
+      }
+    }
+  } else {
+    memberList.value = []
+    let res = await selectUserInfoApi({ name: inputName.value, page: 1 })
+    if (res.code === 1000) {
+      memberList.value = res.data
+      total.value = res.total
+      for (let i = 0; i < memberList.value.length; i++) {
+        memberList.value[i].id = null
+        memberList.value[i].status = false // 默认设置为 false
+        for (let j = 0; j < selectedUserList.value.length; j++) {
+          if (memberList.value[i].name === selectedUserList.value[j].permusername) {
+            memberList.value[i].id = selectedUserList.value[j].id
+            memberList.value[i].status = true // 如果找到匹配，设置为 true
+            break // 如果找到匹配，可以提前退出内层循环
+          }
         }
       }
     }
@@ -329,7 +373,9 @@ const searchMember = async () => {
 
   <el-dialog class="addMemberDialog" v-model="dialogVisible" title="批量添加" width="600" :before-close="handleClose" append-to-body>
     <!-- <div class="header">仅展示无协作权限的人员</div> -->
-    <!-- <el-input v-model="inputName" placeholder="请输入姓名进行搜索" clearable :prefix-icon="Search" @change="searchMember" /> -->
+    <div class="searchInput">
+      <el-input v-model="inputName" placeholder="请输入姓名进行搜索" clearable :prefix-icon="Search" @change="searchMember" />
+    </div>
     <el-table
       ref="memberListRef"
       :data="memberList"
@@ -661,13 +707,23 @@ const searchMember = async () => {
 }
 .addMemberDialog {
   .header {
-    margin-bottom: 16px;
+    // margin-bottom: 16px;
     padding: 0px 14px;
     color: #000000;
     background-color: #fff;
   }
   .el-dialog__body {
-    padding-top: 16px;
+    padding-top: 8px;
+  }
+  .searchInput {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    .el-input {
+      width: 300px;
+    }
   }
   .cell {
     display: flex;

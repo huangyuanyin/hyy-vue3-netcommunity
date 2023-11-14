@@ -75,10 +75,10 @@
                   <span>{{ fourumdata.author }}</span>
                 </div>
               </el-tooltip>
-              <el-tooltip class="box-item" effect="dark" :content="`更新于${fourumdata.pub_time}`" placement="top">
+              <el-tooltip class="box-item" effect="dark" :content="`更新于${fourumdata.last_mod_time}`" placement="top">
                 <div class="ignore-item">
                   <el-icon><Clock /></el-icon>
-                  <span>{{ fourumdata.pub_time }}</span>
+                  <span>{{ fourumdata.last_mod_time }}</span>
                 </div>
               </el-tooltip>
               <el-tooltip class="box-item" effect="dark" :content="`浏览量：${fourumdata.views}`" placement="top">
